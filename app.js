@@ -1,4 +1,3 @@
-function vornexDiscount(price,mrp){ const p=Number(price),m=Number(mrp); return m>p?Math.round(((m-p)/m)*100)+"% OFF":""; }
 // ============================================================
 // VORNEX STORE - FULL FIREBASE SYNCED APP
 // ============================================================
@@ -2426,113 +2425,152 @@ function openOrderTracking() {
 }
 
 // ============================================================
-// HERO MEDIA + HERO CONTENT (Firebase compatible)
+// HERO MEDIA
 // ============================================================
+
 function loadHeroMedia() {
+
     db.ref("media/hero").on("value", snapshot => {
+
         const data = snapshot.val();
         heroMedia = [];
 
         if (Array.isArray(data)) {
-            // Legacy multi-image hero format
             heroMedia = data;
-        } else if (data && typeof data === "object") {
-            // New Hero control format: one object containing image + text
-            if (data.image || data.url || data.src || data.type || data.badge || data.tag || data.heading || data.title || data.subtitle || data.buttonText || data.buttonLink) {
+        } else if (data) {
+            // New single hero is stored at media/hero/0.
+            if (data["0"] && typeof data["0"] === "object") {
+                heroMedia = [data["0"]];
+            } else if (data.url || data.image || data.src) {
                 heroMedia = [data];
             } else {
-                // Legacy keyed media format
                 Object.keys(data).forEach(key => {
                     const item = data[key];
                     if (typeof item === "string") {
-                        heroMedia.push({type:"image", url:item});
+                        heroMedia.push({type:"image",url:item});
                     } else if (item && typeof item === "object") {
                         heroMedia.push(item);
                     }
                 });
             }
-        } else if (typeof data === "string" && data) {
-            heroMedia = [{type:"image", url:data}];
         }
 
         renderHeroMedia();
+    }, error => {
+        console.error("Hero Firebase sync error:", error);
     });
 }
 
 function renderHeroMedia() {
-    const layer = document.getElementById("heroMediaLayer");
-    const dots = document.getElementById("heroDots");
+
+    const layer =
+        document.getElementById(
+            "heroMediaLayer"
+        );
+
+    const dots =
+        document.getElementById(
+            "heroDots"
+        );
+
     if (!layer) return;
 
     if (!heroMedia.length) {
+
         layer.innerHTML = "";
-        if (dots) dots.innerHTML = "";
-        applyHeroContent({});
+
+        if (dots)
+            dots.innerHTML = "";
+
         return;
     }
 
     heroIndex = 0;
+
     renderHeroSlide();
+
     clearInterval(heroTimer);
 
     if (heroMedia.length > 1) {
-        heroTimer = setInterval(() => {
-            heroIndex++;
-            if (heroIndex >= heroMedia.length) heroIndex = 0;
-            renderHeroSlide();
-        }, 5000);
-    }
-}
 
-function applyHeroContent(item) {
-    const tag = document.querySelector(".hero-tag");
-    const title = document.querySelector(".hero-title");
-    const subtitle = document.querySelector(".hero-subtitle");
-    const button = document.querySelector(".hero-btn");
+        heroTimer =
+            setInterval(() => {
 
-    if (tag && (item.badge !== undefined || item.tag !== undefined)) {
-        tag.textContent = item.badge ?? item.tag ?? "";
-    }
-    if (title && (item.heading !== undefined || item.title !== undefined)) {
-        const value = String(item.heading ?? item.title ?? "");
-        title.innerHTML = escapeHtml(value).replace(/\n|<br\s*\/?>/gi, "<br>");
-    }
-    if (subtitle && item.subtitle !== undefined) {
-        subtitle.textContent = item.subtitle || "";
-    }
-    if (button && (item.buttonText !== undefined || item.cta !== undefined)) {
-        button.textContent = item.buttonText ?? item.cta ?? "";
-    }
-    if (button && (item.buttonLink !== undefined || item.link !== undefined)) {
-        button.href = item.buttonLink ?? item.link ?? "#storeGrid";
+                heroIndex++;
+
+                if (
+                    heroIndex >=
+                    heroMedia.length
+                ) {
+                    heroIndex = 0;
+                }
+
+                renderHeroSlide();
+
+            }, 5000);
     }
 }
 
 function renderHeroSlide() {
+
     const layer = document.getElementById("heroMediaLayer");
     const dots = document.getElementById("heroDots");
     const item = heroMedia[heroIndex];
+
     if (!item) return;
 
-    const url = typeof item === "string" ? item : (item.url || item.image || item.src || "");
-    const type = typeof item === "string" ? "image" : String(item.type || item.mediaType || "image").toLowerCase();
+    const url =
+        typeof item === "string"
+        ? item
+        : item.url || item.image || item.src || "";
 
-    if (type === "video" || /\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) {
-        layer.innerHTML = `<video src="${escapeHtml(url)}" autoplay muted loop playsinline></video>`;
-    } else if (url) {
-        layer.innerHTML = `<img src="${escapeHtml(url)}" alt="VORNEX Hero">`;
-    } else {
-        layer.innerHTML = "";
+    const type =
+        typeof item === "string"
+        ? "image"
+        : String(item.type || item.mediaType || "image").toLowerCase();
+
+    if (layer) {
+        if (type === "video" || /\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) {
+            layer.innerHTML = `
+                <video src="${escapeHtml(url)}" autoplay muted loop playsinline></video>
+            `;
+        } else if (url) {
+            layer.innerHTML = `
+                <img src="${escapeHtml(url)}" alt="VORNEX Hero">
+            `;
+        }
     }
 
-    // Only apply text controls when the Firebase item actually contains them.
-    // Legacy image-only hero keeps the existing HTML text unchanged.
-    if (typeof item === "object") applyHeroContent(item);
+    // Sync Hero text from Admin without changing the Hero layout.
+    const badge = document.querySelector(".hero-tag");
+    const title = document.querySelector(".hero-title");
+    const subtitle = document.querySelector(".hero-subtitle");
+    const button = document.querySelector(".hero-btn");
+
+    if (typeof item === "object") {
+        if (badge && (item.badge !== undefined || item.tag !== undefined)) {
+            badge.textContent = item.badge ?? item.tag ?? "";
+        }
+        if (title && (item.title !== undefined || item.heading !== undefined)) {
+            title.textContent = item.title ?? item.heading ?? "";
+        }
+        if (subtitle && item.subtitle !== undefined) {
+            subtitle.textContent = item.subtitle ?? "";
+        }
+        if (button) {
+            if (item.buttonText !== undefined || item.cta !== undefined) {
+                button.textContent = item.buttonText ?? item.cta ?? "";
+            }
+            if (item.buttonLink !== undefined || item.link !== undefined) {
+                button.href = item.buttonLink ?? item.link ?? "#storeGrid";
+            }
+        }
+    }
 
     if (dots) {
-        dots.innerHTML = heroMedia.length > 1
-            ? heroMedia.map((_, index) => `<span class="${index === heroIndex ? "active" : ""}"></span>`).join("")
-            : "";
+        dots.innerHTML = heroMedia.map((_,index) =>
+            `<span class="${index === heroIndex ? "active" : ""}"></span>`
+        ).join("");
     }
 }
 
