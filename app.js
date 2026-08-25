@@ -1,3 +1,4 @@
+function vornexDiscount(price,mrp){ const p=Number(price),m=Number(mrp); return m>p?Math.round(((m-p)/m)*100)+"% OFF":""; }
 // ============================================================
 // VORNEX STORE - FULL FIREBASE SYNCED APP
 // ============================================================
@@ -494,17 +495,17 @@ function handleBackNavigation() {
 
 function setTheme(themeName) {
 
-    if (!["dark","light"].includes(themeName)) {
-        themeName = "dark";
-    }
-
     document.body.classList.remove(
-        "theme-dark", "theme-light",
-        "theme-neon", "theme-gold", "theme-emerald",
-        "theme-violet", "theme-amber"
+        "theme-neon",
+        "theme-gold",
+        "theme-emerald",
+        "theme-violet",
+        "theme-amber"
     );
 
-    document.body.classList.add(`theme-${themeName}`);
+    if (themeName !== "dark") {
+        document.body.classList.add(`theme-${themeName}`);
+    }
 
     localStorage.setItem("vornex_theme", themeName);
 
@@ -2430,37 +2431,158 @@ function openOrderTracking() {
 
 function loadHeroMedia() {
 
-    db.ref("media/heroConfig").on("value", snapshot => {
-        const config = snapshot.val() || {};
-        const tag = document.getElementById("heroTag");
-        const title = document.getElementById("heroTitle");
-        const subtitle = document.getElementById("heroSubtitle");
-        const button = document.getElementById("heroButton");
-        const layer = document.getElementById("heroMediaLayer");
+    db.ref("media/hero").on(
+        "value",
+        snapshot => {
 
-        if (tag) tag.textContent = config.tag || "NEW DROP 2026";
-        if (title) {
-            const text = String(config.title || "OVERSIZED\nCOLLECTION");
-            title.textContent = "";
-            text.split(/\r?\n/).forEach((line,index)=>{
-                if(index) title.appendChild(document.createElement("br"));
-                title.appendChild(document.createTextNode(line));
-            });
-        }
-        if (subtitle) subtitle.textContent = config.subtitle || "Premium Streetwear • 240 GSM French Terry Cotton";
-        if (button) {
-            button.textContent = config.buttonText || "EXPLORE NOW";
-            button.href = config.buttonLink || "#storeGrid";
-        }
-        if (layer && config.backgroundImage) {
-            layer.innerHTML = "";
-            const img = document.createElement("img");
-            img.src = config.backgroundImage;
-            img.alt = "VORNEX Hero";
-            layer.appendChild(img);
-        }
-    });
+            const data =
+                snapshot.val();
 
+            heroMedia = [];
+
+            if (Array.isArray(data)) {
+
+                heroMedia = data;
+
+            } else if (data) {
+
+                Object.keys(data).forEach(key => {
+
+                    const item = data[key];
+
+                    if (typeof item === "string") {
+
+                        heroMedia.push({
+                            type: "image",
+                            url: item
+                        });
+
+                    } else {
+
+                        heroMedia.push(item);
+                    }
+                });
+            }
+
+            renderHeroMedia();
+        }
+    );
+}
+
+function renderHeroMedia() {
+
+    const layer =
+        document.getElementById(
+            "heroMediaLayer"
+        );
+
+    const dots =
+        document.getElementById(
+            "heroDots"
+        );
+
+    if (!layer) return;
+
+    if (!heroMedia.length) {
+
+        layer.innerHTML = "";
+
+        if (dots)
+            dots.innerHTML = "";
+
+        return;
+    }
+
+    heroIndex = 0;
+
+    renderHeroSlide();
+
+    clearInterval(heroTimer);
+
+    if (heroMedia.length > 1) {
+
+        heroTimer =
+            setInterval(() => {
+
+                heroIndex++;
+
+                if (
+                    heroIndex >=
+                    heroMedia.length
+                ) {
+                    heroIndex = 0;
+                }
+
+                renderHeroSlide();
+
+            }, 5000);
+    }
+}
+
+function renderHeroSlide() {
+
+    const layer =
+        document.getElementById(
+            "heroMediaLayer"
+        );
+
+    const dots =
+        document.getElementById(
+            "heroDots"
+        );
+
+    const item =
+        heroMedia[heroIndex];
+
+    if (!item) return;
+
+    const url =
+        typeof item === "string"
+        ? item
+        : item.url ||
+          item.image ||
+          item.src ||
+          "";
+
+    const type =
+        typeof item === "string"
+        ? "image"
+        : String(
+            item.type ||
+            item.mediaType ||
+            "image"
+          ).toLowerCase();
+
+    if (type === "video" ||
+        /\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) {
+
+        layer.innerHTML = `
+            <video
+                src="${escapeHtml(url)}"
+                autoplay
+                muted
+                loop
+                playsinline
+            ></video>
+        `;
+
+    } else {
+
+        layer.innerHTML = `
+            <img
+                src="${escapeHtml(url)}"
+                alt="VORNEX Hero"
+            >
+        `;
+    }
+
+    if (dots) {
+
+        dots.innerHTML =
+            heroMedia.map((_,index) =>
+                `<span class="${index === heroIndex ? "active" : ""}"></span>`
+            ).join("");
+    }
 }
 
 // ============================================================
