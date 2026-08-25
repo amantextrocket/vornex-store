@@ -1206,6 +1206,192 @@ a{
     color:#333;
 }
 </style>
+
+<style id="vornex-dark-light-final">
+/* =========================================================
+   VORNEX FINAL THEME SYSTEM — DARK / LIGHT ONLY
+   ========================================================= */
+body.theme-dark-active{
+    --v-bg:#070707;
+    --v-surface:#111111;
+    --v-surface-2:#171717;
+    --v-text:#ffffff;
+    --v-muted:#b7b7b7;
+    --v-border:rgba(255,255,255,.12);
+    --v-input:#101010;
+    background:#070707 !important;
+    color:#fff !important;
+}
+
+body.theme-light-active{
+    --v-bg:#f5f5f5;
+    --v-surface:#ffffff;
+    --v-surface-2:#eeeeee;
+    --v-text:#111111;
+    --v-muted:#4b5563;
+    --v-border:rgba(17,17,17,.14);
+    --v-input:#ffffff;
+    background:#f5f5f5 !important;
+    color:#111111 !important;
+}
+
+body.theme-dark-active .vornex-header,
+body.theme-dark-active .ios-drawer,
+body.theme-dark-active .cart-drawer,
+body.theme-dark-active .modal-card,
+body.theme-dark-active .product-detail-card,
+body.theme-dark-active .filter-bar,
+body.theme-dark-active .site-footer,
+body.theme-dark-active .glass-bottom-bar{
+    background:rgba(12,12,12,.97) !important;
+    color:var(--v-text) !important;
+    border-color:var(--v-border) !important;
+}
+
+body.theme-light-active .vornex-header,
+body.theme-light-active .ios-drawer,
+body.theme-light-active .cart-drawer,
+body.theme-light-active .modal-card,
+body.theme-light-active .product-detail-card,
+body.theme-light-active .filter-bar,
+body.theme-light-active .site-footer,
+body.theme-light-active .glass-bottom-bar{
+    background:#ffffff !important;
+    color:var(--v-text) !important;
+    border-color:var(--v-border) !important;
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+
+body.theme-light-active .drawer-overlay{background:rgba(0,0,0,.35) !important;}
+
+body.theme-dark-active .hero-title,
+body.theme-dark-active .hero-subtitle,
+body.theme-dark-active .hero-tag,
+body.theme-dark-active .logo,
+body.theme-dark-active .drawer-header,
+body.theme-dark-active .drawer-content,
+body.theme-dark-active .menu-item-btn,
+body.theme-dark-active .acc-btn,
+body.theme-dark-active .menu-sub-btn,
+body.theme-dark-active .about-card,
+body.theme-dark-active .bar-title{color:#fff !important;}
+
+body.theme-light-active .hero-title,
+body.theme-light-active .hero-subtitle,
+body.theme-light-active .hero-tag,
+body.theme-light-active .logo,
+body.theme-light-active .drawer-header,
+body.theme-light-active .drawer-content,
+body.theme-light-active .menu-item-btn,
+body.theme-light-active .acc-btn,
+body.theme-light-active .menu-sub-btn,
+body.theme-light-active .about-card,
+body.theme-light-active .bar-title{color:#111 !important;}
+
+body.theme-light-active .hero-subtitle,
+body.theme-light-active .bar-sub,
+body.theme-light-active .user-profile-preview p,
+body.theme-light-active .about-card p,
+body.theme-light-active .theme-picker-section h4{color:#4b5563 !important;}
+
+body.theme-dark-active .hero-subtitle,
+body.theme-dark-active .bar-sub,
+body.theme-dark-active .user-profile-preview p,
+body.theme-dark-active .about-card p,
+body.theme-dark-active .theme-picker-section h4{color:#b7b7b7 !important;}
+
+body.theme-light-active input,
+body.theme-light-active textarea,
+body.theme-light-active select,
+body.theme-light-active .search-wrapper input,
+body.theme-light-active .cat-btn,
+body.theme-light-active .menu-sub-btn{
+    background:#fff !important;
+    color:#111 !important;
+    border-color:#cbd5e1 !important;
+}
+
+body.theme-dark-active input,
+body.theme-dark-active textarea,
+body.theme-dark-active select,
+body.theme-dark-active .search-wrapper input,
+body.theme-dark-active .cat-btn,
+body.theme-dark-active .menu-sub-btn{
+    background:#111 !important;
+    color:#fff !important;
+    border-color:#333 !important;
+}
+
+body.theme-light-active input::placeholder,
+body.theme-light-active textarea::placeholder{color:#6b7280 !important;opacity:1;}
+body.theme-dark-active input::placeholder,
+body.theme-dark-active textarea::placeholder{color:#9ca3af !important;opacity:1;}
+
+body.theme-light-active .product-card,
+body.theme-light-active .accordion-card,
+body.theme-light-active .theme-picker-section,
+body.theme-light-active .about-card,
+body.theme-light-active .coupon-item{
+    background:#fff !important;
+    color:#111 !important;
+    border-color:#d1d5db !important;
+}
+
+body.theme-dark-active .product-card,
+body.theme-dark-active .accordion-card,
+body.theme-dark-active .theme-picker-section,
+body.theme-dark-active .about-card,
+body.theme-dark-active .coupon-item{
+    background:#111 !important;
+    color:#fff !important;
+    border-color:#2b2b2b !important;
+}
+
+body.theme-light-active .p-title,
+body.theme-light-active .detail-description,
+body.theme-light-active .footer-column a,
+body.theme-light-active .footer-column h4,
+body.theme-light-active .summary-row,
+body.theme-light-active .order-info{color:#111 !important;}
+body.theme-dark-active .p-title,
+body.theme-dark-active .detail-description,
+body.theme-dark-active .footer-column a,
+body.theme-dark-active .footer-column h4,
+body.theme-dark-active .summary-row,
+body.theme-dark-active .order-info{color:#fff !important;}
+
+body.theme-light-active .hero-section{background:#e9e9e9 !important;}
+body.theme-dark-active .hero-section{background:#111 !important;}
+
+.hero-media-layer{
+    position:absolute !important;
+    inset:0 !important;
+    z-index:0 !important;
+    overflow:hidden !important;
+}
+.hero-media-layer img,
+.hero-media-layer video{
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+    display:block !important;
+}
+.hero-overlay{z-index:1 !important;}
+.hero-content{z-index:2 !important;}
+
+.theme-grid{grid-template-columns:repeat(2,1fr) !important;}
+.theme-chip.theme-dark{background:#111 !important;color:#fff !important;}
+.theme-chip.theme-light{background:#fff !important;color:#111 !important;border-color:#bbb !important;}
+
+/* Remove any legacy theme visual classes if old code adds them. */
+body.theme-neon,body.theme-gold,body.theme-emerald,body.theme-violet,body.theme-amber,
+body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.theme-violet-active,body.theme-amber-active{
+    --bg-black:#070707 !important;
+    --card-bg:#111 !important;
+    --accent-color:#fff !important;
+}
+</style>
+
 </head>
 
 <body>
@@ -1280,10 +1466,6 @@ a{
 
             <div class="theme-grid">
                 <div class="theme-chip theme-dark" onclick="setTheme('dark')">DARK</div>
-                <div class="theme-chip theme-neon" onclick="setTheme('neon')">NEON</div>
-                <div class="theme-chip theme-gold" onclick="setTheme('gold')">GOLD</div>
-                <div class="theme-chip theme-emerald" onclick="setTheme('emerald')">EMERALD</div>
-                <div class="theme-chip theme-violet" onclick="setTheme('violet')">VIOLET</div>
                 <div class="theme-chip theme-light" onclick="setTheme('light')">LIGHT</div>
             </div>
         </div>
@@ -1316,18 +1498,18 @@ a{
 
     <div class="hero-content">
 
-        <span class="hero-tag">NEW DROP 2026</span>
+        <span class="hero-tag" id="heroTag">NEW DROP 2026</span>
 
-        <h1 class="hero-title">
+        <h1 class="hero-title" id="heroTitle">
             OVERSIZED<br>
             COLLECTION
         </h1>
 
-        <p class="hero-subtitle">
+        <p class="hero-subtitle" id="heroSubtitle">
             Premium Streetwear • 240 GSM French Terry Cotton
         </p>
 
-        <a href="#storeGrid" class="hero-btn">
+        <a href="#storeGrid" class="hero-btn" id="heroButton">
             EXPLORE NOW
         </a>
 
@@ -5717,34 +5899,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 /* =========================================================
-   9. THEME — FORCE WORKING
+   9. THEME — DARK / LIGHT ONLY
    ========================================================= */
 
 (function () {
 
-    const originalSetTheme =
-        window.setTheme;
+    const allowedThemes = ["dark", "light"];
 
-    window.setTheme = function (theme) {
-
-        const validThemes = [
-            "dark",
-            "neon",
-            "gold",
-            "emerald",
-            "violet",
-            "amber"
-        ];
-
-        if (
-            !validThemes.includes(theme)
-        ) {
-
-            theme = "dark";
-
-        }
+    function applyVornexTheme(theme) {
+        if (!allowedThemes.includes(theme)) theme = "dark";
 
         document.body.classList.remove(
+            "theme-dark-active",
+            "theme-light-active",
+            "theme-neon-active",
+            "theme-gold-active",
+            "theme-emerald-active",
+            "theme-violet-active",
+            "theme-amber-active",
             "theme-neon",
             "theme-gold",
             "theme-emerald",
@@ -5752,969 +5924,86 @@ document.addEventListener("DOMContentLoaded", function () {
             "theme-amber"
         );
 
-        if (theme !== "dark") {
-
-            document.body.classList.add(
-                "theme-" + theme
-            );
-
-        }
-
-        localStorage.setItem(
-            "vornex_theme",
-            theme
-        );
-
-        if (
-            typeof Toastify ===
-            "function"
-        ) {
-
-            toast(
-                "Theme: " +
-                theme.toUpperCase()
-            );
-
-        }
-
-    };
-
-})();
-
-
-/* =========================================================
-   10. MENU BACKDROP — TAP TO CLOSE
-   ========================================================= */
-
-document.addEventListener(
-    "click",
-    function (event) {
-
-        const overlay =
-            document.getElementById(
-                "drawerOverlay"
-            );
-
-        const drawer =
-            document.getElementById(
-                "iosMenuDrawer"
-            );
-
-        if (
-            !overlay ||
-            !drawer
-        )
-            return;
-
-        if (
-            overlay.classList.contains(
-                "active"
-            ) &&
-            event.target === overlay
-        ) {
-
-            closeMenuOnly();
-
-        }
-
-    },
-    true
-);
-
-
-/* =========================================================
-   11. PREVENT MENU TOUCH FROM SCROLLING PAGE
-   ========================================================= */
-
-document.addEventListener(
-    "touchmove",
-    function (event) {
-
-        const drawer =
-            document.getElementById(
-                "iosMenuDrawer"
-            );
-
-        if (
-            drawer &&
-            drawer.classList.contains(
-                "active"
-            )
-        ) {
-
-            const content =
-                drawer.querySelector(
-                    ".drawer-content"
-                );
-
-            if (
-                content &&
-                content.contains(
-                    event.target
-                )
-            ) {
-
-                return;
-
-            }
-
-            event.preventDefault();
-
-        }
-
-    },
-    {
-        passive:false
+        document.body.classList.add("theme-" + theme + "-active");
+        localStorage.setItem("vornex_theme", theme);
     }
-);
 
-
-/* =========================================================
-   12. DETAIL RIGHT SWIPE = BACK
-   ========================================================= */
-
-(function () {
-
-    let startX = 0;
-    let startY = 0;
-
-    document.addEventListener(
-        "touchstart",
-        function (event) {
-
-            const detail =
-                document.getElementById(
-                    "productDetailView"
-                );
-
-            if (
-                !detail ||
-                !detail.classList.contains(
-                    "active"
-                )
-            )
-                return;
-
-            startX =
-                event.touches[0].clientX;
-
-            startY =
-                event.touches[0].clientY;
-
-        },
-        {
-            passive:true
+    window.setTheme = function(theme) {
+        applyVornexTheme(theme);
+        if (typeof showToast === "function") {
+            showToast("Theme: " + (allowedThemes.includes(theme) ? theme : "dark").toUpperCase(), "info");
         }
-    );
+    };
 
+    window.loadSavedTheme = function() {
+        const saved = localStorage.getItem("vornex_theme") || "dark";
+        applyVornexTheme(allowedThemes.includes(saved) ? saved : "dark");
+    };
 
-    document.addEventListener(
-        "touchend",
-        function (event) {
-
-            const detail =
-                document.getElementById(
-                    "productDetailView"
-                );
-
-            if (
-                !detail ||
-                !detail.classList.contains(
-                    "active"
-                )
-            )
-                return;
-
-            const endX =
-                event.changedTouches[0].clientX;
-
-            const endY =
-                event.changedTouches[0].clientY;
-
-            const dx =
-                endX - startX;
-
-            const dy =
-                endY - startY;
-
-            if (
-                dx > 100 &&
-                Math.abs(dx) >
-                Math.abs(dy)
-            ) {
-
-                closeProductDetail();
-
-            }
-
-        },
-        {
-            passive:true
-        }
-    );
-
-})();
-
-
-/* =========================================================
-   13. X BUTTON = ONLY ONE STEP BACK
-   ========================================================= */
-
-(function () {
-
-    const originalClose =
-        window.closeModalStepBack;
-
-    window.closeModalStepBack =
-        function (id) {
-
-            const modal =
-                document.getElementById(id);
-
-            if (!modal)
-                return;
-
-            modal.classList.remove(
-                "active"
-            );
-
-            /* restore body */
-
-            if (
-                !document.querySelector(
-                    ".custom-modal.active"
-                ) &&
-                !document.getElementById(
-                    "productDetailView"
-                )?.classList.contains(
-                    "active"
-                )
-            ) {
-
-                document.body.style.overflow =
-                    "";
-
-            }
-
-        };
-
-})();
-
-
-/* =========================================================
-   14. PRODUCT CARD — LIKE ANIMATION STATE
-   ========================================================= */
-
-(function () {
-
-    const originalToggle =
-        window.toggleWishlist;
-
-    window.toggleWishlist =
-        function (id) {
-
-            if (
-                typeof originalToggle ===
-                "function"
-            ) {
-
-                originalToggle(id);
-
-            }
-
-            setTimeout(() => {
-
-                const button =
-                    document.querySelector(
-                        `.wishlist-btn[onclick*="${id}"]`
-                    );
-
-                if (button) {
-
-                    const liked =
-                        wishlist.some(
-                            p => p.id === id
-                        );
-
-                    button.classList.toggle(
-                        "active",
-                        liked
-                    );
-
-                    const icon =
-                        button.querySelector(
-                            "i"
-                        );
-
-                    if (icon) {
-
-                        icon.className =
-                            liked
-                                ? "fa-solid fa-heart"
-                                : "fa-regular fa-heart";
-
-                    }
-
-                }
-
-                if (
-                    currentProduct &&
-                    currentProduct.id === id
-                ) {
-
-                    updateDetailHeart();
-
-                }
-
-            },50);
-
-        };
-
-})();
-
-
-/* =========================================================
-   15. KEEP CART / WISHLIST SYNCHRONIZED
-   ========================================================= */
-
-window.addEventListener(
-    "storage",
-    function () {
-
-        try {
-
-            cart =
-                JSON.parse(
-                    localStorage.getItem(
-                        "vornex_cart"
-                    )
-                ) || [];
-
-            wishlist =
-                JSON.parse(
-                    localStorage.getItem(
-                        "vornex_wishlist"
-                    )
-                ) || [];
-
-            renderCart();
-            renderWishlist();
-            updateBadges();
-
-        } catch (error) {
-
-            console.error(
-                "VORNEX storage sync:",
-                error
-            );
-
-        }
-
+    if (document.readyState !== "loading") {
+        window.loadSavedTheme();
     }
-);
 
+})();
 
-/* =========================================================
-   16. FINAL INITIAL SYNC
-   ========================================================= */
 
-setTimeout(
-    function () {
+/* ---------- HERO CONFIG — FIREBASE ---------- */
 
-        try {
+(function () {
 
-            updateBadges();
+    function applyHeroConfig(config) {
+        config = config || {};
 
-            renderCart();
+        const tag = document.getElementById("heroTag");
+        const title = document.getElementById("heroTitle");
+        const subtitle = document.getElementById("heroSubtitle");
+        const button = document.getElementById("heroButton");
+        const layer = document.getElementById("heroMediaLayer");
 
-            renderWishlist();
+        if (tag) tag.textContent = config.tag || "NEW DROP 2026";
 
-            restoreTheme();
-
-        } catch (error) {
-
-            console.error(
-                "VORNEX final sync:",
-                error
-            );
-
-        }
-
-    },
-    800
-);
-  
-
-
-/* =========================================================
-   VORNEX REQUIREMENTS — FINAL USER REQUEST PATCH
-   INDEX.HTML ONLY
-========================================================= */
-(function(){
-
-    /* ---------- PREMIUM THEME ENGINE: EXACTLY 4 THEMES ---------- */
-
-    const themeStyle=document.createElement("style");
-    themeStyle.id="vornex-final-requirements-style";
-    themeStyle.textContent=`
-
-        /* ---------- HERO VIDEO ---------- */
-        .hero-section{
-            isolation:isolate;
-        }
-
-        .hero-media-layer{
-            position:absolute;
-            inset:0;
-            z-index:0;
-            overflow:hidden;
-            background:
-                radial-gradient(circle at 70% 20%,#2a2a2a,transparent 38%),
-                linear-gradient(145deg,#101010,#020202);
-        }
-
-        .hero-media-layer video,
-        .hero-media-layer img{
-            width:100%;
-            height:100%;
-            object-fit:cover;
-            display:block;
-            filter:saturate(1.05) contrast(1.05);
-        }
-
-        .hero-media-layer video{
-            pointer-events:none;
-        }
-
-        .hero-overlay{
-            z-index:1 !important;
-        }
-
-        .hero-content{
-            z-index:2 !important;
-        }
-
-        /* ---------- PRODUCT BADGE: NEVER COVER PRODUCT ---------- */
-        .product-badge-inline{
-            position:static !important;
-            display:inline-flex !important;
-            width:max-content;
-            max-width:100%;
-            margin:0 0 7px 0 !important;
-            padding:5px 9px !important;
-            border-radius:999px !important;
-            font-size:7px !important;
-            letter-spacing:.7px;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
-            background:rgba(255,255,255,.10) !important;
-            color:#fff !important;
-            border:1px solid rgba(255,255,255,.16);
-            backdrop-filter:blur(12px);
-            -webkit-backdrop-filter:blur(12px);
-        }
-
-        .theme-light-active .product-badge-inline{
-            background:#111 !important;
-            color:#fff !important;
-            border-color:#111 !important;
-        }
-
-        /* ---------- LIKE ---------- */
-        .product-card .wishlist-btn{
-            will-change:transform;
-        }
-
-        .product-card .wishlist-btn.active{
-            background:linear-gradient(135deg,#ff3b5f,#e4002b) !important;
-            color:#fff !important;
-            border-color:rgba(255,255,255,.35) !important;
-        }
-
-        /* ---------- ADD TO BAG ---------- */
-        .product-card .add-btn.added{
-            background:linear-gradient(135deg,#fff16a,#ffd400) !important;
-            color:#000 !important;
-            box-shadow:0 0 0 1px rgba(255,255,255,.45),
-                       0 10px 35px rgba(255,212,0,.28) !important;
-            transform:scale(1.025);
-        }
-
-        /* ---------- HOME CHECKOUT ---------- */
-        .home-checkout-glass{
-            position:fixed;
-            left:14px;
-            right:14px;
-            bottom:calc(12px + env(safe-area-inset-bottom));
-            z-index:900;
-            min-height:62px;
-            padding:10px 16px;
-            border-radius:22px;
-            border:1px solid rgba(255,255,255,.22);
-            background:rgba(18,18,18,.72);
-            color:#fff;
-            backdrop-filter:blur(28px) saturate(180%);
-            -webkit-backdrop-filter:blur(28px) saturate(180%);
-            box-shadow:
-                0 18px 50px rgba(0,0,0,.48),
-                inset 0 1px 0 rgba(255,255,255,.12);
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:12px;
-            font-size:11px;
-            font-weight:900;
-            letter-spacing:1.2px;
-            transition:transform .25s ease,box-shadow .25s ease;
-        }
-
-        .home-checkout-glass:active{
-            transform:scale(.97);
-        }
-
-        .home-checkout-glass span{
-            display:flex;
-            align-items:center;
-            gap:9px;
-        }
-
-        .home-checkout-glass i{
-            color:#ffd400;
-        }
-
-        .home-checkout-glass strong{
-            font-size:8px;
-            opacity:.72;
-            letter-spacing:1px;
-        }
-
-        .theme-light-active .home-checkout-glass{
-            background:rgba(255,255,255,.78);
-            color:#111;
-            border-color:rgba(17,17,17,.14);
-            box-shadow:0 18px 50px rgba(0,0,0,.18);
-        }
-
-        .theme-light-active .home-checkout-glass i{
-            color:#111;
-        }
-
-        body.checkout-open #homeCheckoutBtn{
-            opacity:0;
-            pointer-events:none;
-            transform:translateY(20px);
-        }
-
-        /* ---------- CHECKOUT ---------- */
-        #checkoutModal .modal-card{
-            padding-bottom:calc(24px + env(safe-area-inset-bottom));
-        }
-
-        #checkoutModal .input-group input{
-            font-size:13px !important;
-        }
-
-        #checkoutModal .coupon-row{
-            align-items:stretch;
-        }
-
-        #checkoutModal .coupon-row input{
-            min-height:48px;
-        }
-
-        #checkoutModal .coupon-row button{
-            min-height:48px;
-            border-radius:14px !important;
-        }
-
-        /* ---------- DETAIL: BIGGER GLASS ACTIONS ---------- */
-        #productDetailModal .detail-actions{
-            min-height:92px !important;
-            padding:
-                12px 14px
-                calc(14px + env(safe-area-inset-bottom)) !important;
-            gap:10px !important;
-            background:rgba(12,12,12,.68) !important;
-            border-top:1px solid rgba(255,255,255,.16) !important;
-            backdrop-filter:blur(30px) saturate(180%) !important;
-            -webkit-backdrop-filter:blur(30px) saturate(180%) !important;
-            box-shadow:0 -18px 55px rgba(0,0,0,.45) !important;
-        }
-
-        #productDetailModal .detail-action-btn,
-        #productDetailModal .detail-cart-btn,
-        #productDetailModal .detail-buy-btn{
-            min-height:68px !important;
-            border-radius:22px !important;
-            font-size:11px !important;
-            font-weight:900 !important;
-            transition:transform .22s ease,box-shadow .22s ease,background .22s ease !important;
-        }
-
-        #productDetailModal .detail-cart-btn:active,
-        #productDetailModal .detail-buy-btn:active{
-            transform:scale(.95) !important;
-        }
-
-        /* ---------- PRODUCT IMAGE ZOOM / HOLD ---------- */
-        #productDetailModal .detail-slider{
-            touch-action:none !important;
-            cursor:zoom-in;
-        }
-
-        #productDetailModal .detail-slider img{
-            transform-origin:center center;
-            transition:transform .18s ease;
-            will-change:transform;
-            user-select:none;
-            -webkit-user-drag:none;
-        }
-
-        #productDetailModal .detail-slider.is-zoomed{
-            cursor:grab;
-        }
-
-        #productDetailModal .detail-slider.is-zoomed:active{
-            cursor:grabbing;
-        }
-
-        /* ---------- MENU ACCOUNT ---------- */
-        .account-menu{
-            display:grid !important;
-            grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-            gap:12px !important;
-        }
-
-        .account-menu button{
-            min-height:92px !important;
-            border-radius:22px !important;
-            display:flex !important;
-            flex-direction:column !important;
-            align-items:center !important;
-            justify-content:center !important;
-            gap:10px !important;
-            text-align:center !important;
-            padding:14px 8px !important;
-            border:1px solid rgba(255,255,255,.12) !important;
-            background:rgba(255,255,255,.055) !important;
-            backdrop-filter:blur(18px);
-            -webkit-backdrop-filter:blur(18px);
-            font-size:9px !important;
-            font-weight:900 !important;
-            transition:transform .22s ease,background .22s ease !important;
-        }
-
-        .account-menu button:active{
-            transform:scale(.95);
-        }
-
-        .account-menu button i{
-            font-size:22px !important;
-        }
-
-        .theme-light-active .account-menu button{
-            background:#fff !important;
-            color:#111 !important;
-            border-color:#e5e7eb !important;
-        }
-
-        /* ---------- YOUR ORDERS PREMIUM ---------- */
-        #ordersModal .modal-card{
-            width:min(94vw,620px) !important;
-            max-height:88dvh !important;
-            border-radius:30px !important;
-            padding:20px !important;
-        }
-
-        #ordersModal #ordersList{
-            max-height:58dvh;
-            overflow-y:auto;
-            padding:4px 2px 12px;
-        }
-
-        #ordersModal .order-card{
-            padding:18px !important;
-            margin:12px 0 !important;
-            border-radius:22px !important;
-            background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025)) !important;
-            border:1px solid rgba(255,255,255,.12) !important;
-            box-shadow:0 15px 40px rgba(0,0,0,.25) !important;
-            font-size:12px !important;
-        }
-
-        #ordersModal .order-id{
-            font-size:14px !important;
-            font-weight:900 !important;
-            letter-spacing:.7px;
-        }
-
-        #ordersModal .order-status{
-            padding:6px 10px !important;
-            border-radius:999px !important;
-            font-size:8px !important;
-            font-weight:900 !important;
-            background:rgba(16,185,129,.16) !important;
-            color:#34d399 !important;
-        }
-
-        #ordersModal .order-date{
-            margin-top:8px !important;
-            font-size:9px !important;
-            opacity:.62;
-        }
-
-        #ordersModal .order-products{
-            margin-top:14px !important;
-            padding-top:12px !important;
-            border-top:1px solid rgba(255,255,255,.08) !important;
-            line-height:1.8 !important;
-            font-size:11px !important;
-        }
-
-        #ordersModal .order-total{
-            margin-top:14px !important;
-            font-size:15px !important;
-            font-weight:900 !important;
-        }
-
-        .orders-track-inline{
-            margin:10px 0 12px;
-        }
-
-        .orders-track-inline button{
-            width:100%;
-            min-height:52px;
-            border:1px solid rgba(255,255,255,.14);
-            border-radius:17px;
-            background:rgba(255,255,255,.07);
-            color:#fff;
-            backdrop-filter:blur(18px);
-            -webkit-backdrop-filter:blur(18px);
-            font-weight:900;
-            letter-spacing:1px;
-        }
-
-        .orders-track-inline button i{
-            margin-right:8px;
-            color:#ffd400;
-        }
-
-        .theme-light-active .orders-track-inline button{
-            color:#111;
-            background:#fff;
-            border-color:#e5e7eb;
-        }
-
-        /* ---------- FULL THEME: DARK ---------- */
-        body.theme-dark-active{
-            background:#050505 !important;
-            color:#fff !important;
-        }
-
-        body.theme-dark-active .vornex-header,
-        body.theme-dark-active .filter-bar,
-        body.theme-dark-active .cart-drawer,
-        body.theme-dark-active .modal-card,
-        body.theme-dark-active .product-detail-card,
-        body.theme-dark-active .ios-drawer,
-        body.theme-dark-active .site-footer{
-            background:#070707 !important;
-            color:#fff !important;
-        }
-
-        /* ---------- FULL THEME: LIGHT ---------- */
-        body.theme-light-active{
-            background:#f4f6f8 !important;
-            color:#111 !important;
-        }
-
-        body.theme-light-active .vornex-header{
-            background:rgba(255,255,255,.86) !important;
-            color:#111 !important;
-            border-bottom:1px solid #e5e7eb !important;
-        }
-
-        body.theme-light-active .product-card,
-        body.theme-light-active .modal-card,
-        body.theme-light-active .cart-drawer,
-        body.theme-light-active .product-detail-card,
-        body.theme-light-active .ios-drawer,
-        body.theme-light-active .site-footer{
-            background:#fff !important;
-            color:#111 !important;
-            border-color:#e5e7eb !important;
-        }
-
-        body.theme-light-active .p-title,
-        body.theme-light-active .p-price,
-        body.theme-light-active .modal-header h3,
-        body.theme-light-active .cart-item-name,
-        body.theme-light-active .account-name,
-        body.theme-light-active .detail-title,
-        body.theme-light-active .detail-price{
-            color:#111 !important;
-        }
-
-        body.theme-light-active .p-category,
-        body.theme-light-active .detail-description,
-        body.theme-light-active .footer-column a{
-            color:#6b7280 !important;
-        }
-
-        body.theme-light-active .search-wrapper input,
-        body.theme-light-active .cat-btn,
-        body.theme-light-active input,
-        body.theme-light-active textarea,
-        body.theme-light-active select{
-            background:#fff !important;
-            color:#111 !important;
-            border-color:#d1d5db !important;
-        }
-
-        body.theme-light-active .hero-section{
-            background:#e8ebef !important;
-        }
-
-        body.theme-light-active .hero-overlay{
-            background:linear-gradient(transparent 15%,rgba(255,255,255,.9)) !important;
-        }
-
-        body.theme-light-active .hero-title,
-        body.theme-light-active .hero-subtitle,
-        body.theme-light-active .hero-tag{
-            color:#111 !important;
-        }
-
-        body.theme-light-active .site-footer{
-            border-top-color:#e5e7eb !important;
-        }
-
-        /* ---------- FULL THEME: EMERALD ---------- */
-        body.theme-emerald-active{
-            background:#06100d !important;
-            color:#f5fffb !important;
-        }
-
-        body.theme-emerald-active .vornex-header,
-        body.theme-emerald-active .filter-bar,
-        body.theme-emerald-active .cart-drawer,
-        body.theme-emerald-active .modal-card,
-        body.theme-emerald-active .product-detail-card,
-        body.theme-emerald-active .ios-drawer,
-        body.theme-emerald-active .site-footer{
-            background:linear-gradient(145deg,#0b1713,#050b09) !important;
-            color:#f5fffb !important;
-            border-color:rgba(52,211,153,.18) !important;
-        }
-
-        body.theme-emerald-active .hero-section{
-            background:
-                radial-gradient(circle at 70% 20%,rgba(16,185,129,.30),transparent 38%),
-                linear-gradient(145deg,#0b2119,#020806) !important;
-        }
-
-        body.theme-emerald-active .hero-btn,
-        body.theme-emerald-active .checkout-btn,
-        body.theme-emerald-active .submit-order-btn{
-            background:linear-gradient(135deg,#34d399,#059669) !important;
-            color:#00140d !important;
+        if (title) {
+            const safeTitle = String(config.title || "OVERSIZED\nCOLLECTION");
+            title.innerHTML = (typeof escapeHtml === "function" ? escapeHtml(safeTitle) : safeTitle)
+                .replace(/\r?\n/g, "<br>");
         }
 
-        body.theme-emerald-active .p-price,
-        body.theme-emerald-active .detail-price,
-        body.theme-emerald-active .summary-row.total span:last-child{
-            color:#34d399 !important;
+        if (subtitle) {
+            subtitle.textContent = config.subtitle || "Premium Streetwear • 240 GSM French Terry Cotton";
         }
 
-        /* ---------- FULL THEME: VIOLET ---------- */
-        body.theme-violet-active{
-            background:#0b0714 !important;
-            color:#fbf8ff !important;
+        if (button) {
+            button.textContent = config.buttonText || "EXPLORE NOW";
+            button.setAttribute("href", config.buttonLink || "#storeGrid");
         }
 
-        body.theme-violet-active .vornex-header,
-        body.theme-violet-active .filter-bar,
-        body.theme-violet-active .cart-drawer,
-        body.theme-violet-active .modal-card,
-        body.theme-violet-active .product-detail-card,
-        body.theme-violet-active .ios-drawer,
-        body.theme-violet-active .site-footer{
-            background:linear-gradient(145deg,#160d24,#08050e) !important;
-            color:#fbf8ff !important;
-            border-color:rgba(167,139,250,.18) !important;
+        if (layer && config.backgroundImage) {
+            layer.innerHTML = `<img src="${typeof escapeHtml === "function" ? escapeHtml(config.backgroundImage) : config.backgroundImage}" alt="VORNEX Hero">`;
         }
+    }
 
-        body.theme-violet-active .hero-section{
-            background:
-                radial-gradient(circle at 70% 20%,rgba(139,92,246,.34),transparent 38%),
-                linear-gradient(145deg,#1a1030,#05030a) !important;
-        }
-
-        body.theme-violet-active .hero-btn,
-        body.theme-violet-active .checkout-btn,
-        body.theme-violet-active .submit-order-btn{
-            background:linear-gradient(135deg,#c4b5fd,#8b5cf6) !important;
-            color:#10071f !important;
-        }
-
-        body.theme-violet-active .p-price,
-        body.theme-violet-active .detail-price,
-        body.theme-violet-active .summary-row.total span:last-child{
-            color:#c4b5fd !important;
-        }
+    function loadHeroConfig() {
+        if (typeof db === "undefined" || !db) return;
 
-        /* ---------- MOBILE ---------- */
-        @media(max-width:600px){
-            .home-checkout-glass{
-                min-height:58px;
-                border-radius:20px;
-            }
+        db.ref("media/heroConfig").on("value", snapshot => {
+            applyHeroConfig(snapshot.val() || {});
+        });
+    }
 
-            #productDetailModal .detail-actions{
-                margin:0 8px;
-                border-radius:24px;
-                bottom:calc(8px + env(safe-area-inset-bottom));
-            }
-
-            #productDetailModal .detail-cart-btn,
-            #productDetailModal .detail-buy-btn{
-                min-height:70px !important;
-            }
-        }
-    `;
-    document.head.appendChild(themeStyle);
-
-    /* ---------- EXACTLY FOUR THEMES + PERSISTENCE ---------- */
-    const allowedThemes=["dark","light","emerald","violet"];
-
-    window.setTheme=function(theme){
-        if(!allowedThemes.includes(theme)){
-            theme="dark";
-        }
+    window.loadVornexHeroConfig = loadHeroConfig;
 
-        document.body.classList.remove(
-            "theme-dark-active",
-            "theme-light-active",
-            "theme-emerald-active",
-            "theme-violet-active",
-            "theme-neon-active",
-            "theme-gold-active",
-            "theme-amber-active"
-        );
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", loadHeroConfig);
+    } else {
+        loadHeroConfig();
+    }
 
-        document.body.classList.add("theme-"+theme+"-active");
-        localStorage.setItem("vornex_theme",theme);
+})();
 
-        showToast("Theme: "+theme.toUpperCase(),"info");
-    };
 
-    window.loadSavedTheme=function(){
-        const saved=localStorage.getItem("vornex_theme")||"dark";
-        setTheme(allowedThemes.includes(saved)?saved:"dark");
-    };
+(function () {
 
-    /* ---------- HOME CHECKOUT COUNT ---------- */
+/* ---------- HOME CHECKOUT COUNT ---------- */
     window.updateHomeCheckoutButton=function(){
         const countEl=document.getElementById("homeCheckoutCount");
         const btn=document.getElementById("homeCheckoutBtn");
@@ -6991,6 +6280,62 @@ setTimeout(
 
 })();
 
+</script>
+
+
+<script id="vornex-final-controls">
+(function(){
+    const allowed=["dark","light"];
+
+    window.setTheme=function(theme){
+        if(!allowed.includes(theme)) theme="dark";
+        document.body.classList.remove(
+            "theme-dark-active","theme-light-active",
+            "theme-neon-active","theme-gold-active","theme-emerald-active",
+            "theme-violet-active","theme-amber-active",
+            "theme-neon","theme-gold","theme-emerald","theme-violet","theme-amber"
+        );
+        document.body.classList.add("theme-"+theme+"-active");
+        localStorage.setItem("vornex_theme",theme);
+    };
+
+    window.loadSavedTheme=function(){
+        const saved=localStorage.getItem("vornex_theme");
+        window.setTheme(allowed.includes(saved)?saved:"dark");
+    };
+
+    function applyHero(config){
+        config=config||{};
+        const tag=document.getElementById("heroTag");
+        const title=document.getElementById("heroTitle");
+        const sub=document.getElementById("heroSubtitle");
+        const btn=document.getElementById("heroButton");
+        const layer=document.getElementById("heroMediaLayer");
+        if(tag) tag.textContent=config.tag || "NEW DROP 2026";
+        if(title){
+            const t=String(config.title || "OVERSIZED COLLECTION");
+            title.textContent=t;
+            title.style.whiteSpace="pre-line";
+        }
+        if(sub) sub.textContent=config.subtitle || "Premium Streetwear • 240 GSM French Terry Cotton";
+        if(btn){
+            btn.textContent=config.buttonText || "EXPLORE NOW";
+            btn.href=config.buttonLink || "#storeGrid";
+        }
+        if(layer && config.backgroundImage){
+            const safe=typeof escapeHtml==="function"?escapeHtml(config.backgroundImage):config.backgroundImage;
+            layer.innerHTML='<img src="'+safe+'" alt="VORNEX Hero">';
+        }
+    }
+
+    function bindHero(){
+        if(typeof db==="undefined" || !db) return;
+        db.ref("media/heroConfig").on("value",function(snap){applyHero(snap.val()||{});});
+    }
+
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",function(){loadSavedTheme();bindHero();});
+    else {loadSavedTheme();bindHero();}
+})();
 </script>
 
 </body>
