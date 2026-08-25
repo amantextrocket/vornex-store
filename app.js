@@ -144,11 +144,7 @@ function recordDailyView() {
 
     const now = new Date();
 
-    const date = `${now.getFullYear()}-${String(
-        now.getMonth() + 1
-    ).padStart(2, "0")}-${String(
-        now.getDate()
-    ).padStart(2, "0")}`;
+    const date = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
 
     db.ref(`analytics/daily_views/${date}`).transaction(
         current => (current || 0) + 1
@@ -271,7 +267,8 @@ function renderProducts(productsList) {
                 </div>
 
                 <div class="p-price">
-                    ${money(product.price)}
+                    <span class="current-price">${money(product.price)}</span>
+                    ${Number(product.mrp||0)>Number(product.price||0)?`<span class="mrp-price">${money(product.mrp)}</span><span class="discount-off">${Math.round(((Number(product.mrp)-Number(product.price))/Number(product.mrp))*100)}% OFF</span>`:""}
                 </div>
 
                 <small style="color:#777;">
