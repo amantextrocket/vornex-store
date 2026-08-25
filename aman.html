@@ -669,14 +669,6 @@ button:active{
         grid-template-columns:1fr;
     }
 }
-
-/* VORNEX HERO ADMIN */
-#heroSection .media-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-#heroSection .media-control{background:#0a0a0a;border:1px solid #222;border-radius:10px;padding:15px}
-#heroSection .media-control h3{font-size:.78rem;margin-bottom:8px}
-#heroSection .media-preview{max-height:230px}
-@media(max-width:700px){#heroSection .media-grid{grid-template-columns:1fr}}
-
 </style>
 </head>
 
@@ -1088,86 +1080,54 @@ Loading active coupons...
 
 <div class="card">
 
-<h2>🖼️ HERO BANNER CONTROL</h2>
+<h2>🖼️ HERO / BANNER CONTROLS</h2>
 
 <p style="font-size:.72rem;color:#777;margin-bottom:15px;">
-यहाँ से Main Website के Hero Banner की image और सभी text Firebase में sync होंगे।
+यहाँ से website के Hero banner का background और सभी visible text बदला जा सकता है।
 </p>
 
-<div class="media-grid">
+<form id="heroForm" onsubmit="saveHeroSettings(event)">
 
-<div class="media-control">
-
-<h3>🖼️ Hero Background</h3>
-
-<input
-type="file"
-id="heroImageFile"
-accept="image/*"
-onchange="previewMediaImage(this,'heroImagePreview')">
-
-<img
-id="heroImagePreview"
-class="media-preview">
-
+<div class="form-group">
+<label>Hero Background Image</label>
+<input type="file" id="heroBackgroundFile" accept="image/*" onchange="previewHeroBackground(this)">
+<img id="heroBackgroundPreview" class="media-preview" alt="Hero Preview">
 </div>
 
-<div class="media-control">
-
-<h3>🏷️ Badge / Tag</h3>
-
-<input
-type="text"
-id="heroBadge"
-placeholder="NEW DROP 2026">
-
-<h3 style="margin-top:12px;">Main Heading</h3>
-
-<input
-type="text"
-id="heroTitle"
-placeholder="OVERSIZED COLLECTION">
-
-<h3 style="margin-top:12px;">Subtitle</h3>
-
-<input
-type="text"
-id="heroSubtitle"
-placeholder="Premium Streetwear">
-
-<h3 style="margin-top:12px;">Button Text</h3>
-
-<input
-type="text"
-id="heroButtonText"
-placeholder="EXPLORE NOW">
-
-<h3 style="margin-top:12px;">Button Link</h3>
-
-<input
-type="text"
-id="heroButtonLink"
-placeholder="#storeGrid">
-
+<div class="form-group">
+<label>Small Tag</label>
+<input type="text" id="heroTagInput" placeholder="NEW DROP 2026">
 </div>
 
+<div class="form-group">
+<label>Main Heading</label>
+<textarea id="heroTitleInput" rows="3" placeholder="OVERSIZED
+COLLECTION"></textarea>
 </div>
 
-<button
-onclick="saveHeroBanner()"
-style="background:#fff;color:#000;">
+<div class="form-group">
+<label>Subtitle</label>
+<input type="text" id="heroSubtitleInput" placeholder="Premium Streetwear • 240 GSM French Terry Cotton">
+</div>
+
+<div class="form-group">
+<label>Button Text</label>
+<input type="text" id="heroButtonTextInput" placeholder="EXPLORE NOW">
+</div>
+
+<div class="form-group">
+<label>Button Link</label>
+<input type="text" id="heroButtonLinkInput" placeholder="#storeGrid">
+</div>
+
+<button type="submit" style="background:#3b82f6;color:#fff;">
 SAVE HERO
 </button>
 
-<button
-onclick="resetHeroBanner()"
-style="background:#222;color:#fff;border:1px solid #444;">
-RESET HERO
-</button>
+</form>
 
-<div id="heroSyncStatus"
-style="font-size:.72rem;color:#777;margin-top:10px;text-align:center;">
-Firebase: checking…
+<div id="heroCurrentStatus" style="margin-top:15px;color:#777;font-size:.7rem;">
+Loading current Hero settings...
 </div>
 
 </div>
@@ -1387,6 +1347,7 @@ const analyticsRef=db.ref("analytics/daily_views");
 const adminAuthRef=db.ref("admin_settings/password");
 const couponsRef=db.ref("coupons");
 const mediaRef=db.ref("media");
+const heroRef=db.ref("media/heroConfig");
 const ordersRef=db.ref("orders");
 
 
@@ -1489,8 +1450,8 @@ function switchSection(sectionId,btn){
         loadOrders();
     }
 
-    if(sectionId==="mediaSection"){
-        loadHeroBanner();
+    if(sectionId==="heroSection"){
+        loadHeroSettings();
     }
 
 }
@@ -2570,537 +2531,111 @@ function deleteCoupon(code){
 }
 
 
-
 /* =====================================================
-   VORNEX HERO - FIREBASE SYNC
-   Uses the SAME media/hero structure expected by the
-   current main website: media/hero/0
+   HERO SETTINGS
 ===================================================== */
 
-function previewHeroImage(input){
-    previewMediaImage(input,"heroImagePreview");
+let currentHeroSettings={};
+
+function previewHeroBackground(input){
+    const file=input && input.files ? input.files[0] : null;
+    if(!file)return;
+
+    const img=document.getElementById("heroBackgroundPreview");
+    if(!img)return;
+
+    img.src=URL.createObjectURL(file);
+    img.style.display="block";
 }
 
-function loadHeroBanner(){
-    const ref = db.ref("media/hero/0");
-
-    ref.once("value").then(snapshot=>{
-        const data = snapshot.val() || {};
-
-        const badge = data.badge ?? data.tag ?? "NEW DROP 2026";
-        const title = data.title ?? data.heading ?? "OVERSIZED COLLECTION";
-        const subtitle = data.subtitle ?? "Premium Streetwear • 240 GSM French Terry Cotton";
-        const buttonText = data.buttonText ?? data.cta ?? "EXPLORE NOW";
-        const buttonLink = data.buttonLink ?? data.link ?? "#storeGrid";
-
-        const el = id => document.getElementById(id);
-
-        if(el("heroBadge")) el("heroBadge").value = badge;
-        if(el("heroTitle")) el("heroTitle").value = title;
-        if(el("heroSubtitle")) el("heroSubtitle").value = subtitle;
-        if(el("heroButtonText")) el("heroButtonText").value = buttonText;
-        if(el("heroButtonLink")) el("heroButtonLink").value = buttonLink;
-
-        if(el("heroImagePreview") && (data.url || data.image)){
-            el("heroImagePreview").src = data.url || data.image;
-            el("heroImagePreview").style.display = "block";
-        }
-
-        if(el("heroSyncStatus")){
-            el("heroSyncStatus").textContent = "Firebase: Hero loaded ✓";
-            el("heroSyncStatus").style.color = "#40c057";
-        }
-    }).catch(err=>{
-        if(document.getElementById("heroSyncStatus")){
-            document.getElementById("heroSyncStatus").textContent = "Firebase: " + err.message;
-            document.getElementById("heroSyncStatus").style.color = "#ff6b6b";
-        }
+function loadHeroSettings(){
+    heroRef.once("value",snapshot=>{
+        currentHeroSettings=snapshot.val()||{};
+        populateHeroForm(currentHeroSettings);
     });
 }
 
-async function saveHeroBanner(){
+function populateHeroForm(data){
+    data=data||{};
+
+    const tag=document.getElementById("heroTagInput");
+    const title=document.getElementById("heroTitleInput");
+    const subtitle=document.getElementById("heroSubtitleInput");
+    const buttonText=document.getElementById("heroButtonTextInput");
+    const buttonLink=document.getElementById("heroButtonLinkInput");
+    const preview=document.getElementById("heroBackgroundPreview");
+    const status=document.getElementById("heroCurrentStatus");
+
+    if(tag)tag.value=data.tag||"NEW DROP 2026";
+    if(title)title.value=data.title||"OVERSIZED\nCOLLECTION";
+    if(subtitle)subtitle.value=data.subtitle||"Premium Streetwear • 240 GSM French Terry Cotton";
+    if(buttonText)buttonText.value=data.buttonText||"EXPLORE NOW";
+    if(buttonLink)buttonLink.value=data.buttonLink||"#storeGrid";
+
+    if(preview && data.backgroundImage){
+        preview.src=data.backgroundImage;
+        preview.style.display="block";
+    }
+
+    if(status){
+        status.textContent=data.backgroundImage
+            ?"Current Hero settings loaded. Save changes to update the website."
+            :"No custom Hero background saved yet. Website default background will remain active.";
+    }
+}
+
+async function saveHeroSettings(event){
+    if(event)event.preventDefault();
+
+    const tag=document.getElementById("heroTagInput").value.trim();
+    const title=document.getElementById("heroTitleInput").value.trim();
+    const subtitle=document.getElementById("heroSubtitleInput").value.trim();
+    const buttonText=document.getElementById("heroButtonTextInput").value.trim();
+    const buttonLink=document.getElementById("heroButtonLinkInput").value.trim();
+    const file=document.getElementById("heroBackgroundFile").files[0];
+
+    const data={
+        tag:tag||"NEW DROP 2026",
+        title:title||"OVERSIZED\nCOLLECTION",
+        subtitle:subtitle||"Premium Streetwear • 240 GSM French Terry Cotton",
+        buttonText:buttonText||"EXPLORE NOW",
+        buttonLink:buttonLink||"#storeGrid",
+        updatedAt:new Date().toISOString()
+    };
+
     try{
-        const fileInput = document.getElementById("heroImageFile");
-        const file = fileInput && fileInput.files ? fileInput.files[0] : null;
-
-        const ref = db.ref("media/hero/0");
-        const oldSnap = await ref.once("value");
-        const old = oldSnap.val() || {};
-
-        let imageUrl = old.url || old.image || "";
+        showToast("⏳ Saving Hero...","info");
 
         if(file){
-            imageUrl = await fileToBase64(file);
+            data.backgroundImage=await fileToBase64(file);
+        }else if(currentHeroSettings.backgroundImage){
+            data.backgroundImage=currentHeroSettings.backgroundImage;
         }
 
-        if(!imageUrl){
-            showToast("⚠️ पहले Hero image select करें या existing image रहने दें!","error");
-            return;
-        }
+        heroRef.set(data,err=>{
+            if(err){
+                showToast("Error: "+err.message,"error");
+                return;
+            }
 
-        const data = {
-            type: "image",
-            url: imageUrl,
-            image: imageUrl,
-            badge: document.getElementById("heroBadge")?.value.trim() || "",
-            tag: document.getElementById("heroBadge")?.value.trim() || "",
-            title: document.getElementById("heroTitle")?.value.trim() || "",
-            heading: document.getElementById("heroTitle")?.value.trim() || "",
-            subtitle: document.getElementById("heroSubtitle")?.value.trim() || "",
-            buttonText: document.getElementById("heroButtonText")?.value.trim() || "",
-            buttonLink: document.getElementById("heroButtonLink")?.value.trim() || "#storeGrid",
-            updatedAt: new Date().toISOString()
-        };
-
-        await ref.set(data);
-
-        document.getElementById("heroImageFile").value = "";
-
-        if(document.getElementById("heroSyncStatus")){
-            document.getElementById("heroSyncStatus").textContent = "Firebase: Hero saved & synced ✓";
-            document.getElementById("heroSyncStatus").style.color = "#40c057";
-        }
-
-        showToast("🖼️ HERO saved successfully!","success");
-    }catch(err){
-        console.error("Hero save error:",err);
-        showToast("Hero save failed: " + err.message,"error");
-    }
-}
-
-async function resetHeroBanner(){
-    if(!confirm("Reset Hero Banner to default?")) return;
-
-    try{
-        await db.ref("media/hero/0").set({
-            type:"image",
-            url:"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1000",
-            image:"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1000",
-            badge:"NEW DROP 2026",
-            tag:"NEW DROP 2026",
-            title:"OVERSIZED COLLECTION",
-            heading:"OVERSIZED COLLECTION",
-            subtitle:"Premium Streetwear • 240 GSM French Terry Cotton",
-            buttonText:"EXPLORE NOW",
-            buttonLink:"#storeGrid",
-            updatedAt:new Date().toISOString()
+            currentHeroSettings=data;
+            document.getElementById("heroBackgroundFile").value="";
+            showToast("✅ Hero updated successfully!","success");
+            loadHeroSettings();
         });
 
-        showToast("Hero reset successfully!","success");
-        loadHeroBanner();
-    }catch(err){
-        showToast("Reset failed: " + err.message,"error");
+    }catch(error){
+        showToast("Hero image processing failed!","error");
     }
 }
 
-
-/* =====================================================
-   MEDIA - IMAGE GALLERY
-===================================================== */
-
-function previewMediaImage(input,id){
-
-    const file=input.files[0];
-
-    if(!file)return;
-
-    const img=
-    document.getElementById(id);
-
-    img.src=
-    URL.createObjectURL(file);
-
-    img.style.display="block";
-
-}
-
-
-function previewMediaVideo(input){
-
-    const file=input.files[0];
-
-    if(!file)return;
-
-    const video=
-    document.getElementById("videoPreview");
-
-    video.src=
-    URL.createObjectURL(file);
-
-    video.style.display="block";
-
-}
-
-
-async function addMediaPhoto(){
-
-    const file=
-    document
-    .getElementById("mediaPhotoFile")
-    .files[0];
-
-    const title=
-    document
-    .getElementById("mediaPhotoTitle")
-    .value
-    .trim();
-
-    if(!file){
-
-        showToast(
-            "📷 पहले Gallery से image select करें!",
-            "error"
-        );
-
-        return;
+heroRef.on("value",snapshot=>{
+    currentHeroSettings=snapshot.val()||{};
+    const section=document.getElementById("heroSection");
+    if(section && section.classList.contains("active-section")){
+        populateHeroForm(currentHeroSettings);
     }
-
-    const image=
-    await fileToBase64(file);
-
-    mediaRef
-    .child("photos")
-    .push({
-
-        title:title||"Photo",
-
-        image:image,
-
-        createdAt:
-        new Date().toISOString()
-
-    },err=>{
-
-        if(!err){
-
-            showToast(
-                "🖼️ Photo added!",
-                "success"
-            );
-
-            document
-            .getElementById("mediaPhotoFile")
-            .value="";
-
-            document
-            .getElementById("mediaPhotoTitle")
-            .value="";
-
-            document
-            .getElementById("photoPreview")
-            .style.display="none";
-
-        }
-
-    });
-
-}
-
-
-async function addMediaVideo(){
-
-    const file=
-    document
-    .getElementById("mediaVideoFile")
-    .files[0];
-
-    const title=
-    document
-    .getElementById("mediaVideoTitle")
-    .value
-    .trim();
-
-    if(!file){
-
-        showToast(
-            "🎥 पहले Gallery से video select करें!",
-            "error"
-        );
-
-        return;
-    }
-
-    const video=
-    await fileToBase64(file);
-
-    mediaRef
-    .child("videos")
-    .push({
-
-        title:title||"Video",
-
-        video:video,
-
-        createdAt:
-        new Date().toISOString()
-
-    },err=>{
-
-        if(!err){
-
-            showToast(
-                "🎥 Video added!",
-                "success"
-            );
-
-            document
-            .getElementById("mediaVideoFile")
-            .value="";
-
-            document
-            .getElementById("mediaVideoTitle")
-            .value="";
-
-            document
-            .getElementById("videoPreview")
-            .style.display="none";
-
-        }
-
-    });
-
-}
-
-
-/* =====================================================
-   MEDIA TEXT CONTROLS
-===================================================== */
-
-function saveMediaText(type){
-
-    let value="";
-
-    if(type==="instagram"){
-
-        value=
-        document
-        .getElementById("instagramValue")
-        .value
-        .trim();
-
-    }
-
-    if(type==="whatsapp"){
-
-        value=
-        document
-        .getElementById("whatsappValue")
-        .value
-        .trim();
-
-    }
-
-    if(type==="sms"){
-
-        value=
-        document
-        .getElementById("smsValue")
-        .value
-        .trim();
-
-    }
-
-    if(!value){
-
-        showToast(
-            "⚠️ Value खाली है!",
-            "error"
-        );
-
-        return;
-    }
-
-    mediaRef
-    .child("links")
-    .child(type)
-    .set({
-
-        value:value,
-
-        updatedAt:
-        new Date().toISOString()
-
-    },err=>{
-
-        if(!err){
-
-            showToast(
-                "✅ "+type.toUpperCase()+" saved!",
-                "success"
-            );
-
-        }else{
-
-            showToast(
-                "Error: "+err.message,
-                "error"
-            );
-
-        }
-
-    });
-
-}
-
-
-/* =====================================================
-   LOAD MEDIA
-===================================================== */
-
-function loadMedia(){
-
-    mediaRef.once("value",snapshot=>{
-
-        const data=snapshot.val()||{};
-
-        const list=
-        document.getElementById("mediaList");
-
-        let html="";
-
-        if(data.links){
-
-            Object.keys(data.links)
-            .forEach(key=>{
-
-                const value=
-                data.links[key].value||"";
-
-                html+=`
-
-                <div class="media-list-item">
-
-                    <strong>
-                        ${key.toUpperCase()}
-                    </strong>
-
-                    <div style="color:#888;font-size:.7rem;margin-top:4px;">
-                        ${escapeHtml(value)}
-                    </div>
-
-                </div>`;
-
-                if(key==="instagram"){
-                    document
-                    .getElementById("instagramValue")
-                    .value=value;
-                }
-
-                if(key==="whatsapp"){
-                    document
-                    .getElementById("whatsappValue")
-                    .value=value;
-                }
-
-                if(key==="sms"){
-                    document
-                    .getElementById("smsValue")
-                    .value=value;
-                }
-
-            });
-
-        }
-
-        if(data.photos){
-
-            Object.keys(data.photos)
-            .forEach(key=>{
-
-                const p=data.photos[key];
-
-                html+=`
-
-                <div class="media-list-item">
-
-                    <img src="${p.image||""}">
-
-                    <strong>
-                        ${escapeHtml(p.title||"Photo")}
-                    </strong>
-
-                    <button
-                    onclick="deleteMedia('photos','${key}')"
-                    style="width:auto;float:right;background:#ff3333;color:#fff;margin:0;padding:5px 8px;">
-                    DELETE
-                    </button>
-
-                </div>`;
-
-            });
-
-        }
-
-        if(data.videos){
-
-            Object.keys(data.videos)
-            .forEach(key=>{
-
-                const v=data.videos[key];
-
-                html+=`
-
-                <div class="media-list-item">
-
-                    <video
-                    src="${v.video||""}"
-                    controls>
-                    </video>
-
-                    <strong>
-                        ${escapeHtml(v.title||"Video")}
-                    </strong>
-
-                    <button
-                    onclick="deleteMedia('videos','${key}')"
-                    style="width:auto;float:right;background:#ff3333;color:#fff;margin:0;padding:5px 8px;">
-                    DELETE
-                    </button>
-
-                </div>`;
-
-            });
-
-        }
-
-        if(!html){
-
-            html=
-            "<p style='color:#666;text-align:center;'>No media saved.</p>";
-
-        }
-
-        list.innerHTML=html;
-
-    });
-
-}
-
-
-function deleteMedia(type,key){
-
-    if(
-        confirm(
-            "Delete this media?"
-        )
-    ){
-
-        mediaRef
-        .child(type)
-        .child(key)
-        .remove();
-
-        showToast(
-            "🗑️ Media deleted!",
-            "info"
-        );
-
-        loadHeroBanner();
-
-    }
-
-}
-
+});
 
 /* =====================================================
    ORDERS
