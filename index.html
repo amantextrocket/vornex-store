@@ -28,6 +28,27 @@ body{
     padding-bottom:105px;
 }
 
+.home-cart-bar{
+    position:fixed;
+    left:12px;right:12px;bottom:12px;z-index:80;
+    display:none;align-items:center;gap:8px;
+    padding:8px;background:rgba(10,10,10,.96);
+    border:1px solid rgba(255,255,255,.12);border-radius:16px;
+    box-shadow:0 12px 35px rgba(0,0,0,.35);
+}
+.home-cart-summary{
+    flex:1;border:0;background:transparent;color:#fff;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px;font-size:11px;
+}
+.home-buy-now{
+    border:0;background:#fff;color:#000;border-radius:11px;
+    padding:12px 16px;font-weight:900;font-size:10px;letter-spacing:.8px;
+}
+.theme-light-active .home-cart-bar{background:#fff;border-color:#d1d5db;}
+.theme-light-active .home-cart-summary{color:#111;}
+.theme-light-active .home-buy-now{background:#111;color:#fff;}
+
 button,input,textarea,select{
     font-family:inherit;
 }
@@ -41,32 +62,6 @@ a{
     text-decoration:none;
 }
 
-
-/* ================= DRAWER THEME TOGGLE ================= */
-.drawer-theme-toggle{
-    width:36px;height:36px;border:1px solid rgba(127,127,127,.28);
-    border-radius:11px;background:rgba(127,127,127,.10);font-size:16px;
-    display:flex;align-items:center;justify-content:center;cursor:pointer;
-}
-
-/* ================= STICKY CART / BUY NOW ================= */
-.home-sticky-cart-bar{
-    position:fixed;left:12px;right:12px;bottom:12px;z-index:80;
-    display:flex;gap:8px;padding:8px;border-radius:17px;
-    background:rgba(12,12,12,.96);border:1px solid rgba(255,255,255,.12);
-    box-shadow:0 12px 35px rgba(0,0,0,.35);
-}
-.sticky-cart-items,.sticky-buy-now{border:0;border-radius:12px;min-height:48px;font-weight:900;cursor:pointer;}
-.sticky-cart-items{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;background:#1b1b1b;color:#fff;}
-.sticky-cart-items span{display:flex;flex-direction:column;text-align:left;line-height:1.1;}
-.sticky-cart-items small{font-size:10px;color:#aaa;margin-top:3px;}
-.sticky-buy-now{flex:.85;background:#fff;color:#000;padding:0 16px;font-size:12px;}
-body.theme-light-active .home-sticky-cart-bar{background:#fff;border-color:#d1d5db;box-shadow:0 12px 35px rgba(0,0,0,.15);}
-body.theme-light-active .sticky-cart-items{background:#f1f3f5;color:#111;}
-body.theme-light-active .sticky-cart-items small{color:#4b5563;}
-body.theme-light-active .sticky-buy-now{background:#111;color:#fff;}
-body{padding-bottom:82px;}
-
 /* ================= ANNOUNCEMENT ================= */
 
 .announcement-bar{
@@ -77,7 +72,6 @@ body{padding-bottom:82px;}
     font-weight:900;
     letter-spacing:1px;
     padding:9px 8px;
-    transition:.2s ease;
 }
 
 /* ================= HEADER ================= */
@@ -100,6 +94,31 @@ body{padding-bottom:82px;}
     font-size:23px;
     font-weight:900;
     letter-spacing:5px;
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.header-theme-btn{
+    width:38px;
+    height:38px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.07);
+    color:#fff;
+    border-radius:12px;
+    font-size:17px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.theme-light-active .header-theme-btn{
+    background:#fff !important;
+    color:#111 !important;
+    border-color:#d1d5db !important;
 }
 
 .hamburger-btn{
@@ -1232,6 +1251,20 @@ body{padding-bottom:82px;}
     margin-bottom:10px;
     color:#333;
 }
+
+.theme-light-active .product-card .p-title,
+.theme-light-active .product-card .p-category,
+.theme-light-active .product-card .p-price,
+.theme-light-active .product-card .tag,
+.theme-light-active .product-card .add-btn,
+.theme-light-active .search-wrapper input,
+.theme-light-active .announcement-bar{
+    opacity:1 !important;
+}
+.theme-light-active .product-card .p-title{color:#111 !important;}
+.theme-light-active .product-card .p-category{color:#4b5563 !important;}
+.theme-light-active .product-card .p-price{color:#111 !important;}
+.theme-light-active .announcement-bar{background:#fff !important;color:#111 !important;}
 </style>
 
 <style id="vornex-dark-light-final">
@@ -1419,39 +1452,23 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 }
 </style>
 
-
-<style id="vornex-light-readability-fix">
-body.theme-light-active{background:#f5f6f8 !important;color:#111 !important;}
-body.theme-light-active .announcement-bar{background:#111 !important;color:#fff !important;}
-body.theme-light-active .vornex-header{background:#fff !important;border-bottom-color:#d9dde3 !important;backdrop-filter:none !important;}
-body.theme-light-active .hamburger-btn{background:#f1f3f5 !important;color:#111 !important;border-color:#d1d5db !important;}
-body.theme-light-active .ios-drawer,body.theme-light-active .cart-drawer,body.theme-light-active .modal-card,body.theme-light-active .product-detail-card{background:#fff !important;color:#111 !important;border-color:#d1d5db !important;backdrop-filter:none !important;}
-body.theme-light-active .menu-item-btn,body.theme-light-active .acc-btn,body.theme-light-active .bar-title,body.theme-light-active .p-title,body.theme-light-active .p-price,body.theme-light-active .cart-item-name,body.theme-light-active .modal-header h3{color:#111 !important;}
-body.theme-light-active .p-category,body.theme-light-active .coupon-desc,body.theme-light-active .account-sub,body.theme-light-active .bar-sub{color:#4b5563 !important;}
-body.theme-light-active .search-wrapper input,body.theme-light-active input,body.theme-light-active textarea,body.theme-light-active select{background:#fff !important;color:#111 !important;border-color:#c7cdd5 !important;}
-body.theme-light-active .product-card,body.theme-light-active .accordion-card,body.theme-light-active .filter-bar,body.theme-light-active .site-footer{background:#fff !important;color:#111 !important;border-color:#d1d5db !important;box-shadow:0 5px 20px rgba(0,0,0,.06) !important;}
-body.theme-light-active .cat-btn,body.theme-light-active .size-btn{background:#fff !important;color:#111 !important;border-color:#c7cdd5 !important;}
-body.theme-light-active .cat-btn.active,body.theme-light-active .size-btn.selected{background:#111 !important;color:#fff !important;border-color:#111 !important;}
-body.theme-light-active .hero-section{background:#e9eaed !important;}
-body.theme-light-active .hero-overlay{background:linear-gradient(to top,rgba(255,255,255,.88),rgba(255,255,255,.08)) !important;}
-body.theme-light-active .hero-title,body.theme-light-active .hero-tag{color:#111 !important;text-shadow:none !important;}
-body.theme-light-active .hero-subtitle{color:#374151 !important;}
-</style>
-
 </head>
 
 <body>
 
-<div class="announcement-bar">
-⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 30% FLAT OFF ON COUPON ⚡
+<div class="announcement-bar" id="announcementBar">
+⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 &nbsp; | &nbsp; UPTO 20% OFF ON COUPONS ⚡
 </div>
 
 <header class="vornex-header">
     <div class="logo">VORNEX</div>
 
-    <button class="hamburger-btn" onclick="toggleMenuDrawer(true)">
+    <div class="header-actions">
+        <button class="header-theme-btn" id="headerThemeBtn" type="button" onclick="toggleTheme()" aria-label="Toggle dark/light mode">☀️</button>
+        <button class="hamburger-btn" onclick="toggleMenuDrawer(true)">
         <i class="fa-solid fa-bars-staggered"></i>
-    </button>
+        </button>
+    </div>
 </header>
 
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeAllDrawers()"></div>
@@ -1462,10 +1479,7 @@ body.theme-light-active .hero-subtitle{color:#374151 !important;}
 
     <div class="drawer-header">
         <span class="logo">VORNEX</span>
-        <div style="display:flex;align-items:center;gap:8px;">
-            <button class="drawer-theme-toggle" id="drawerThemeToggle" type="button" onclick="toggleVornexTheme()" aria-label="Toggle dark light mode">☀️</button>
-            <button class="close-drawer" onclick="toggleMenuDrawer(false)">×</button>
-        </div>
+        <button class="close-drawer" onclick="toggleMenuDrawer(false)">×</button>
     </div>
 
     <div class="drawer-content">
@@ -1618,14 +1632,12 @@ body.theme-light-active .hero-subtitle{color:#374151 !important;}
 
 </section>
 
-<div id="homeStickyCartBar" class="home-sticky-cart-bar">
-    <button type="button" class="sticky-cart-items" onclick="openCartFromMenu()">
-        <i class="fa-solid fa-bag-shopping"></i>
-        <span><strong id="stickyCartCount">0 ITEMS</strong><small id="stickyCartTotal">₹0</small></span>
+<div id="homeCartBar" class="home-cart-bar">
+    <button type="button" class="home-cart-summary" onclick="openCartFromMenu()">
+        <span><i class="fa-solid fa-bag-shopping"></i> <strong id="homeCheckoutCount">0 ITEMS</strong></span>
+        <strong id="homeCartTotal">₹0</strong>
     </button>
-    <button type="button" class="sticky-buy-now" onclick="buyCartNow()">
-        BUY NOW <i class="fa-solid fa-arrow-right"></i>
-    </button>
+    <button type="button" class="home-buy-now" onclick="openCheckoutModal()">BUY NOW</button>
 </div>
 
 <!-- ================= FOOTER ================= -->
@@ -2509,6 +2521,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     updateAuthUI();
 
     loadSavedTheme();
+updateThemeButton();
 
 });
 
@@ -4671,6 +4684,43 @@ function loadSavedTheme(){
 
 
 /* =========================================================
+   TOP ANNOUNCEMENT FROM ADMIN
+========================================================= */
+(function(){
+    function applyTopText(config){
+        const bar=document.getElementById("announcementBar");
+        if(!bar) return;
+        const text=String((config&&config.text)||"⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡");
+        bar.textContent=text;
+        bar.style.fontFamily=(config&&config.fontFamily)||"Montserrat, sans-serif";
+        bar.style.fontSize=((config&&config.fontSize)||10)+"px";
+    }
+    function loadTopText(){
+        if(typeof db==="undefined" || !db) return;
+        db.ref("media/topText").on("value",snap=>applyTopText(snap.val()||{}));
+    }
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",loadTopText);
+    else loadTopText();
+})();
+
+/* =========================================================
+   SIMPLE DARK / LIGHT TOGGLE
+========================================================= */
+window.toggleTheme=function(){
+    const current=document.body.classList.contains("theme-light-active")?"light":"dark";
+    setTheme(current==="dark"?"light":"dark");
+    updateThemeButton();
+};
+window.updateThemeButton=function(){
+    const b=document.getElementById("headerThemeBtn");
+    if(b) b.textContent=document.body.classList.contains("theme-light-active")?"🌙":"☀️";
+};
+const originalSetTheme=window.setTheme;
+if(typeof originalSetTheme==="function"){
+    window.setTheme=function(theme){ originalSetTheme(theme); updateThemeButton(); };
+}
+
+/* =========================================================
    POLICIES
 ========================================================= */
 
@@ -4863,7 +4913,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "beforeend",
             `
             <small class="vornex-edge-title">
-                OWN YOUR EDGE
+                OWN YOUR EDGE.
             </small>
             `
         );
@@ -6031,10 +6081,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 (function () {
 
-/* ---------- HOME STICKY CART COUNT ---------- */
-window.updateHomeCheckoutButton=function(){
-    if(typeof window.updateHomeStickyCart==='function') window.updateHomeStickyCart();
-};
+/* ---------- HOME CHECKOUT COUNT ---------- */
+    window.updateHomeCheckoutButton=function(){
+        const countEl=document.getElementById("homeCheckoutCount");
+        const btn=document.getElementById("homeCartBar");
+        if(!countEl || !btn) return;
+
+        const count=(cart||[]).reduce(
+            (sum,item)=>sum+Number(item.qty||1),0
+        );
+
+        countEl.textContent=count+" "+(count===1?"ITEM":"ITEMS");
+        const totalEl=document.getElementById("homeCartTotal");
+        if(totalEl) totalEl.textContent="₹"+(cart||[]).reduce((sum,item)=>sum+Number(item.price||0)*Number(item.qty||1),0).toLocaleString("en-IN");
+        btn.style.display=count>0?"flex":"none";
+    };
 
     const originalUpdateBadges=window.updateBadges;
     window.updateBadges=function(){
@@ -6160,13 +6221,131 @@ window.updateHomeCheckoutButton=function(){
         setVornexHeroVideo(HERO_VIDEO_URL);
     }
 
-    /* ---------- PRODUCT IMAGE ZOOM DISABLED ---------- */
-(function setupProductZoom(){
-    window.resetProductZoom=function(){
-        document.querySelectorAll('#detailSlider img').forEach(img=>{img.style.transform='scale(1)';});
-        document.getElementById('detailSlider')?.classList.remove('is-zoomed');
-    };
-})();
+    /* ---------- PRODUCT IMAGE: DOUBLE TAP / PINCH / HOLD ZOOM ---------- */
+    (function setupProductZoom(){
+        let state={
+            scale:1,
+            startDistance:0,
+            startScale:1,
+            lastTap:0,
+            holdTimer:null,
+            holding:false,
+            startX:0,
+            startY:0
+        };
+
+        function getImage(){
+            const slider=document.getElementById("detailSlider");
+            if(!slider) return null;
+            return slider.querySelector("img.active");
+        }
+
+        function applyZoom(scale){
+            const slider=document.getElementById("detailSlider");
+            const img=getImage();
+            if(!slider || !img) return;
+
+            state.scale=Math.max(1,Math.min(3,scale));
+            img.style.transform="scale("+state.scale+")";
+            slider.classList.toggle("is-zoomed",state.scale>1);
+        }
+
+        function distance(a,b){
+            const dx=a.clientX-b.clientX;
+            const dy=a.clientY-b.clientY;
+            return Math.sqrt(dx*dx+dy*dy);
+        }
+
+        document.addEventListener("touchstart",function(e){
+            const slider=document.getElementById("detailSlider");
+            const detail=document.getElementById("productDetailModal");
+
+            if(!slider || !detail ||
+               !detail.classList.contains("active") ||
+               !slider.contains(e.target)) return;
+
+            if(e.touches.length===2){
+                clearTimeout(state.holdTimer);
+                state.startDistance=distance(e.touches[0],e.touches[1]);
+                state.startScale=state.scale;
+                return;
+            }
+
+            if(e.touches.length===1){
+                state.startX=e.touches[0].clientX;
+                state.startY=e.touches[0].clientY;
+                state.holding=false;
+
+                clearTimeout(state.holdTimer);
+                state.holdTimer=setTimeout(()=>{
+                    state.holding=true;
+                    applyZoom(state.scale>1 ? 1 : 1.65);
+                },420);
+
+                const now=Date.now();
+                if(now-state.lastTap<280){
+                    clearTimeout(state.holdTimer);
+                    applyZoom(state.scale>1 ? 1 : 2);
+                }
+                state.lastTap=now;
+            }
+        },{passive:true});
+
+        document.addEventListener("touchmove",function(e){
+            const slider=document.getElementById("detailSlider");
+            const detail=document.getElementById("productDetailModal");
+
+            if(!slider || !detail ||
+               !detail.classList.contains("active") ||
+               !slider.contains(e.target)) return;
+
+            if(e.touches.length===2 && state.startDistance){
+                const ratio=distance(e.touches[0],e.touches[1])/state.startDistance;
+                applyZoom(state.startScale*ratio);
+                e.preventDefault();
+            }else if(e.touches.length===1){
+                const dx=Math.abs(e.touches[0].clientX-state.startX);
+                const dy=Math.abs(e.touches[0].clientY-state.startY);
+
+                if(dx>12 || dy>12){
+                    clearTimeout(state.holdTimer);
+                }
+            }
+        },{passive:false});
+
+        document.addEventListener("touchend",function(e){
+            const slider=document.getElementById("detailSlider");
+            const detail=document.getElementById("productDetailModal");
+
+            if(!slider || !detail ||
+               !detail.classList.contains("active") ||
+               !slider.contains(e.target)) return;
+
+            clearTimeout(state.holdTimer);
+
+            if(state.holding){
+                state.holding=false;
+            }
+
+            if(e.touches.length===0){
+                state.startDistance=0;
+            }
+        },{passive:true});
+
+        window.resetProductZoom=function(){
+            state.scale=1;
+            state.startDistance=0;
+            state.startScale=1;
+            state.holding=false;
+            clearTimeout(state.holdTimer);
+
+            document.querySelectorAll("#detailSlider img").forEach(img=>{
+                img.style.transform="scale(1)";
+            });
+
+            document.getElementById("detailSlider")?.classList.remove("is-zoomed");
+        };
+    })();
 
     const originalCloseProductDetail=window.closeProductDetail;
     window.closeProductDetail=function(){
@@ -6177,75 +6356,13 @@ window.updateHomeCheckoutButton=function(){
     };
 
     /* ---------- UPDATE HOME BUTTON AFTER CART CHANGES ---------- */
-    setTimeout(updateHomeCheckoutButton,300);
+    window.updateHomeCheckoutButton=window.updateHomeCheckoutButton || window.updateHomeCartBar;
+    setTimeout(()=>{ if(typeof updateHomeCheckoutButton==="function") updateHomeCheckoutButton(); },300);
 
 })();
 
 </script>
 
-
-
-/* =========================================================
-   TOP ANNOUNCEMENT + DRAWER THEME + STICKY CART
-========================================================= */
-(function(){
-    function applyTopText(config){
-        config=config||{};
-        const el=document.querySelector('.announcement-bar');
-        if(!el) return;
-        el.textContent=config.text || '⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡';
-        el.style.fontFamily=config.fontFamily || 'inherit';
-        if(config.fontSize) el.style.fontSize=config.fontSize+'px';
-    }
-    function loadTopText(){
-        if(typeof db==='undefined'||!db) return;
-        db.ref('media/topText').on('value',s=>applyTopText(s.val()||{}));
-    }
-    window.loadVornexTopText=loadTopText;
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadTopText); else loadTopText();
-
-    window.toggleVornexTheme=function(){
-        const current=document.body.classList.contains('theme-light-active')?'light':'dark';
-        const next=current==='light'?'dark':'light';
-        if(typeof window.setTheme==='function') window.setTheme(next);
-        const b=document.getElementById('drawerThemeToggle');
-        if(b) b.textContent=next==='light'?'🌙':'☀️';
-    };
-    function syncThemeIcon(){
-        const b=document.getElementById('drawerThemeToggle');
-        if(b) b.textContent=document.body.classList.contains('theme-light-active')?'🌙':'☀️';
-    }
-    const oldSet=window.setTheme;
-    if(oldSet){
-        window.setTheme=function(t){oldSet(t);setTimeout(syncThemeIcon,0);};
-    }
-    setTimeout(syncThemeIcon,300);
-
-    window.updateHomeStickyCart=function(){
-        const bar=document.getElementById('homeStickyCartBar');
-        const countEl=document.getElementById('stickyCartCount');
-        const totalEl=document.getElementById('stickyCartTotal');
-        if(!bar||!countEl||!totalEl) return;
-        const count=(window.cart||[]).reduce((s,i)=>s+Number(i.qty||1),0);
-        const total=(window.cart||[]).reduce((s,i)=>s+Number(i.price||0)*Number(i.qty||1),0);
-        countEl.textContent=count+' '+(count===1?'ITEM':'ITEMS');
-        totalEl.textContent='₹'+total.toLocaleString('en-IN');
-        bar.style.display=count?'flex':'none';
-    };
-    window.buyCartNow=function(){
-        if(!(window.cart||[]).length){
-            if(typeof toast==='function') toast('Your bag is empty.','error');
-            return;
-        }
-        if(typeof openCheckoutModal==='function') openCheckoutModal();
-    };
-    const oldBadges=window.updateBadges;
-    if(oldBadges){
-        window.updateBadges=function(){oldBadges();window.updateHomeStickyCart();};
-    }
-    setTimeout(window.updateHomeStickyCart,500);
-})();
-</script>
 
 <script id="vornex-final-controls">
 (function(){
@@ -6261,8 +6378,8 @@ window.updateHomeCheckoutButton=function(){
         );
         document.body.classList.add("theme-"+theme+"-active");
         localStorage.setItem("vornex_theme",theme);
-        const icon=document.getElementById('drawerThemeToggle');
-        if(icon) icon.textContent=theme==='light'?'🌙':'☀️';
+        const themeBtn=document.getElementById("headerThemeBtn");
+        if(themeBtn) themeBtn.textContent=theme==="light"?"🌙":"☀️";
     };
 
     window.loadSavedTheme=function(){
@@ -6304,5 +6421,14 @@ window.updateHomeCheckoutButton=function(){
 })();
 </script>
 
+<style id="vornex-light-clarity">
+body.theme-light-active .vornex-header{background:#fff !important;border-bottom:1px solid #e5e7eb !important;}
+body.theme-light-active .hamburger-btn{background:#f3f4f6 !important;color:#111 !important;border-color:#d1d5db !important;}
+body.theme-light-active .header-theme-btn{background:#f3f4f6 !important;color:#111 !important;border-color:#d1d5db !important;}
+body.theme-light-active .product-card{background:#fff !important;color:#111 !important;border-color:#d1d5db !important;}
+body.theme-light-active .product-card *{text-shadow:none !important;}
+body.theme-light-active .menu-item-btn,body.theme-light-active .acc-btn,body.theme-light-active .menu-sub-btn{color:#111 !important;}
+body.theme-light-active .site-footer{background:#fff !important;color:#111 !important;border-top:1px solid #e5e7eb !important;}
+</style>
 </body>
 </html>
