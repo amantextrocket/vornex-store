@@ -1392,6 +1392,21 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 }
 </style>
 
+<style id="vornex-requested-updates">
+.price-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+.current-price{font-size:15px;font-weight:900;}
+.mrp-price{text-decoration:line-through;color:#777;font-size:11px;font-weight:700;}
+.discount-off{font-size:9px;font-weight:900;color:#10b981;letter-spacing:.3px;}
+.product-badge-inline{position:static!important;display:inline-flex!important;align-items:center;margin:0 0 7px!important;}
+.more-cat-btn{background:#171717!important;color:#fff!important;border-color:#444!important;}
+.all-categories-card{max-width:560px;}
+.all-category-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;max-height:60vh;overflow-y:auto;}
+.all-category-grid .cat-btn{width:100%;text-align:left;border-radius:11px;padding:12px;font-size:9px;}
+.login-options{gap:14px!important;}
+.login-btn{width:100%;padding:11px 12px!important;min-height:42px;border-radius:12px!important;font-size:9px!important;box-shadow:0 8px 22px rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.08)!important;}
+.login-btn + .login-btn{margin-top:0!important;}
+@media(max-width:420px){.all-category-grid{grid-template-columns:1fr 1fr;gap:7px}.login-options{gap:12px!important;}}
+</style>
 </head>
 
 <body>
@@ -1550,6 +1565,10 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
                 SWEATSHIRTS
             </button>
 
+            <button class="cat-btn more-cat-btn" type="button" onclick="openAllCategories()">
+                MORE <i class="fa-solid fa-chevron-down"></i>
+            </button>
+
         </div>
 
         <div class="search-wrapper">
@@ -1577,6 +1596,17 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
     </div>
 
 </section>
+
+<!-- ================= ALL CATEGORIES ================= -->
+<div class="custom-modal" id="allCategoriesModal" onclick="closeModalOnBg(event,'allCategoriesModal')">
+    <div class="modal-card all-categories-card">
+        <div class="modal-header">
+            <h3>ALL CATEGORIES</h3>
+            <button class="close-drawer" onclick="closeModalStepBack('allCategoriesModal')">×</button>
+        </div>
+        <div class="all-category-grid" id="allCategoryGrid"></div>
+    </div>
+</div>
 
 <button
     id="homeCheckoutBtn"
@@ -2462,6 +2492,8 @@ function showToast(message,type="success"){
 
 document.addEventListener("DOMContentLoaded",()=>{
 
+    recordDailyView();
+
     fetchProducts();
 
     listenCoupons();
@@ -2478,6 +2510,18 @@ document.addEventListener("DOMContentLoaded",()=>{
 /* =========================================================
    PRODUCTS
 ========================================================= */
+
+function indiaDateKey(){
+    return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+}
+
+function recordDailyView(){
+    try{
+        db.ref(`analytics/daily_views/${indiaDateKey()}`).transaction(v=>(Number(v)||0)+1);
+    }catch(error){
+        console.error("Traffic tracking failed",error);
+    }
+}
 
 function fetchProducts(){
 
@@ -2597,8 +2641,9 @@ function renderProducts(products){
                     ${escapeHtml(p.category||"")}
                 </div>
 
-                <div class="p-price">
-                    ₹${Number(p.price||0).toLocaleString("en-IN")}
+                <div class="p-price price-line">
+                    <span class="current-price">₹${Number(p.price||0).toLocaleString("en-IN")}</span>
+                    ${Number(p.mrp||0)>Number(p.price||0)?`<span class="mrp-price">₹${Number(p.mrp).toLocaleString("en-IN")}</span><span class="discount-off">${Math.round(((Number(p.mrp)-Number(p.price))/Number(p.mrp))*100)}% OFF</span>`:""}
                 </div>
 
                 <button
@@ -2636,6 +2681,31 @@ function escapeHtml(value){
 
 }
 
+
+const STORE_CATEGORIES=[
+    "ALL","HOODIES","TEES","CARGOS","SWEATSHIRTS",
+    "T-SHIRTS","OVERSIZED T-SHIRTS","SHIRTS","OVERSIZED SHIRTS","POLO SHIRTS",
+    "JACKETS","DENIM JACKETS","BOMBER JACKETS","WINDCHEATERS","JEANS",
+    "CARGO PANTS","TROUSERS","TRACK PANTS","JOGGERS","SHORTS","CHINOS",
+    "KURTAS","CO-ORD SETS","BLAZERS","SUITS","SWEATERS","CARDIGANS",
+    "VESTS","TANK TOPS","INNERWEAR"
+];
+
+function openAllCategories(){
+    const grid=document.getElementById("allCategoryGrid");
+    if(!grid)return;
+    grid.innerHTML=STORE_CATEGORIES.map(cat=>`<button class="cat-btn ${currentCategory===cat?"active":""}" onclick="selectMoreCategory('${escapeHtml(cat)}')">${escapeHtml(cat)}</button>`).join("");
+    openModal("allCategoriesModal");
+}
+
+function selectMoreCategory(cat){
+    currentCategory=cat;
+    document.querySelectorAll(".cat-btn").forEach(x=>x.classList.remove("active"));
+    const visible=[...document.querySelectorAll(".categories-scroll .cat-btn")].find(x=>x.textContent.trim().startsWith(cat));
+    if(visible)visible.classList.add("active");
+    closeModalStepBack("allCategoriesModal");
+    applyFilters();
+}
 
 function filterCategory(cat,btn){
 
@@ -2725,8 +2795,10 @@ function openProductDetail(id){
     document.getElementById("detailTitle").textContent=
         p.name||"VORNEX PRODUCT";
 
-    document.getElementById("detailPrice").textContent=
-        "₹"+Number(p.price||0).toLocaleString("en-IN");
+    const detailPriceEl=document.getElementById("detailPrice");
+    if(detailPriceEl){
+        detailPriceEl.innerHTML=`<span class="current-price">₹${Number(p.price||0).toLocaleString("en-IN")}</span>${Number(p.mrp||0)>Number(p.price||0)?` <span class="mrp-price">₹${Number(p.mrp).toLocaleString("en-IN")}</span> <span class="discount-off">${Math.round(((Number(p.mrp)-Number(p.price))/Number(p.mrp))*100)}% OFF</span>`:""}`;
+    }
 
     document.getElementById("detailCategory").textContent=
         p.category||"-";
