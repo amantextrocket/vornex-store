@@ -12,12 +12,9 @@
     --font-main: 'Montserrat', sans-serif;
 }
 
-/* Theme Classes */
-body.theme-neon { --bg-black: #060b19; --card-bg: #0f172a; --accent-color: #38bdf8; }
-body.theme-gold { --bg-black: #12100e; --card-bg: #1c1917; --accent-color: #fbbf24; }
-body.theme-emerald { --bg-black: #021a12; --card-bg: #062c1e; --accent-color: #10b981; }
-body.theme-violet { --bg-black: #0f0a1c; --card-bg: #1e1333; --accent-color: #a855f7; }
-body.theme-amber { --bg-black: #1a0c02; --card-bg: #2e1405; --accent-color: #f97316; }
+/* Theme Classes: Dark / Light only */
+body.theme-dark { --bg-black:#070707; --card-bg:#111111; --accent-color:#ffffff; --text-white:#ffffff; --text-muted:#b7b7b7; }
+body.theme-light { --bg-black:#f5f5f5; --card-bg:#ffffff; --accent-color:#111111; --text-white:#111111; --text-muted:#4b5563; }
 
 * {
     margin: 0;
@@ -170,7 +167,7 @@ html, body {
     font-size: 0.75rem;
 }
 
-/* 6 Theme Grid Buttons */
+/* 2 Theme Grid Buttons */
 .theme-picker-section {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -190,11 +187,6 @@ html, body {
     text-align: center;
 }
 .theme-dark { background: #0a0a0c; color: #fff; }
-.theme-neon { background: #0f172a; color: #38bdf8; }
-.theme-gold { background: #1c1917; color: #fbbf24; }
-.theme-emerald { background: #062c1e; color: #10b981; }
-.theme-violet { background: #1e1333; color: #a855f7; }
-.theme-amber { background: #2e1405; color: #f97316; }
 
 /* Brand Specific Social Buttons */
 .about-card {
@@ -347,14 +339,4 @@ html, body {
 .bar-title { font-size: 0.8rem; font-weight: 800; display: block; }
 .bar-sub { font-size: 0.65rem; color: var(--text-muted); }
 .glass-buy-btn { background: #fff; color: #000; border: none; padding: 9px 18px; border-radius: 20px; font-weight: 900; font-size: 0.75rem; cursor: pointer; }
-
-/* VORNEX: product badges must not hide product images */
-.product-card .detail-tag,
-.product-card .badge,
-.product-card .product-tag,
-.product-card .product-badge {
-    display:inline-block;
-    position:relative;
-    z-index:2;
-    max-width:100%;
-}
+\n\n/* FINAL DARK / LIGHT READABILITY */\nbody.theme-dark{background:#070707 !important;color:#fff !important;}\nbody.theme-light{background:#f5f5f5 !important;color:#111 !important;}\nbody.theme-light .vornex-header,body.theme-light .ios-drawer,body.theme-light .cart-drawer,body.theme-light .modal-card,body.theme-light .glass-bottom-bar{background:#fff !important;color:#111 !important;border-color:#d1d5db !important;}\nbody.theme-light input,body.theme-light textarea,body.theme-light select{background:#fff !important;color:#111 !important;border-color:#cbd5e1 !important;}\nbody.theme-light .product-card,body.theme-light .accordion-card,body.theme-light .theme-picker-section{background:#fff !important;color:#111 !important;border-color:#d1d5db !important;}\nbody.theme-light .hero-title,body.theme-light .hero-subtitle,body.theme-light .hero-tag,body.theme-light .logo{color:#111 !important;}\nbody.theme-dark .vornex-header,body.theme-dark .ios-drawer,body.theme-dark .cart-drawer,body.theme-dark .modal-card,body.theme-dark .glass-bottom-bar{background:#0c0c0c !important;color:#fff !important;}\nbody.theme-dark input,body.theme-dark textarea,body.theme-dark select{background:#111 !important;color:#fff !important;border-color:#333 !important;}\nbody.theme-dark .hero-title,body.theme-dark .hero-subtitle,body.theme-dark .hero-tag,body.theme-dark .logo{color:#fff !important;}\n.hero-media-layer{position:absolute !important;inset:0 !important;z-index:0 !important;overflow:hidden !important;}\n.hero-media-layer img,.hero-media-layer video{width:100% !important;height:100% !important;object-fit:cover !important;display:block !important;}\n.hero-overlay{z-index:1 !important;}.hero-content{z-index:2 !important;}\n
