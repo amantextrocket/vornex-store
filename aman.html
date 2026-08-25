@@ -670,8 +670,6 @@ button:active{
     }
 }
 </style>
-<style>html{touch-action:manipulation;} input,select,textarea,button{font-size:16px;} </style>
-<script>(function(){document.addEventListener('wheel',function(e){if(e.ctrlKey)e.preventDefault();},{passive:false});document.addEventListener('keydown',function(e){if(e.ctrlKey&&(e.key==='+'||e.key==='-'||e.key==='='||e.key==='0'))e.preventDefault();});document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});})();</script>
 </head>
 
 <body>
@@ -1081,23 +1079,35 @@ Loading active coupons...
 <div id="customiseAdSection" class="admin-section">
 
 <div class="card">
-<h2>📢 CUSTOMISE AD</h2>
-<p style="font-size:.72rem;color:#777;margin-bottom:15px;">Top Text और Hero Banner दोनों को यहाँ से manage करें।</p>
-
-<h3 style="font-size:.8rem;margin:18px 0 10px;">TOP TEXT</h3>
+<h2>📢 TOP TEXT</h2>
+<p style="font-size:.72rem;color:#777;margin-bottom:15px;">Website ke sabse top announcement text aur font ko yahan se change karein.</p>
 <form id="topTextForm" onsubmit="saveTopText(event)">
-<div class="form-group"><label>Announcement Text</label><textarea id="topTextInput" rows="2" placeholder="⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡"></textarea></div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-<div class="form-group"><label>Font</label><select id="topTextFont"><option value="inherit">Default</option><option value="Arial, sans-serif">Arial</option><option value="Georgia, serif">Georgia</option><option value="Verdana, sans-serif">Verdana</option><option value="Trebuchet MS, sans-serif">Trebuchet MS</option><option value="Courier New, monospace">Courier New</option></select></div>
-<div class="form-group"><label>Font Size</label><input id="topTextSize" type="number" min="8" max="24" value="10"></div>
+<div class="form-group">
+<label>Text</label>
+<textarea id="topTextInput" rows="2" placeholder="FREE EXPRESS SHIPPING..."></textarea>
+</div>
+<div class="form-group">
+<label>Font</label>
+<select id="topTextFontInput">
+<option value="Montserrat, sans-serif">Montserrat</option>
+<option value="Arial, sans-serif">Arial</option>
+<option value="Georgia, serif">Georgia</option>
+<option value="monospace">Monospace</option>
+</select>
+</div>
+<div class="form-group">
+<label>Font Size</label>
+<input type="number" id="topTextSizeInput" min="8" max="24" value="10">
 </div>
 <button type="submit" style="background:#3b82f6;color:#fff;">SAVE TOP TEXT</button>
 </form>
-<div id="topTextStatus" style="margin-top:10px;color:#777;font-size:.7rem;">Loading current Top Text...</div>
 </div>
 
-<div id="heroSection" class="card" style="margin-top:16px;">
+<div class="card">
+<button type="button" onclick="toggleHeroControls()" style="background:#111;color:#fff;border:1px solid #333;">🖼️ HERO</button>
+</div>
 
+<div id="heroControlsCard" class="card" style="display:none;">
 <h2>🖼️ HERO / BANNER CONTROLS</h2>
 
 <p style="font-size:.72rem;color:#777;margin-bottom:15px;">
@@ -1149,6 +1159,7 @@ Loading current Hero settings...
 </div>
 
 </div>
+
 </div>
 
 <!-- =========================
@@ -1468,8 +1479,8 @@ function switchSection(sectionId,btn){
     }
 
     if(sectionId==="customiseAdSection"){
-        loadHeroSettings();
         loadTopText();
+        loadHeroSettings();
     }
 
 }
@@ -2550,6 +2561,39 @@ function deleteCoupon(code){
 
 
 /* =====================================================
+   CUSTOMISE AD / TOP TEXT
+===================================================== */
+let currentTopText={};
+function toggleHeroControls(){
+    const el=document.getElementById("heroControlsCard");
+    if(el) el.style.display=el.style.display==="none"?"block":"none";
+}
+function loadTopText(){
+    db.ref("media/topText").once("value",snapshot=>{
+        currentTopText=snapshot.val()||{};
+        const t=document.getElementById("topTextInput");
+        const f=document.getElementById("topTextFontInput");
+        const z=document.getElementById("topTextSizeInput");
+        if(t)t.value=currentTopText.text||"⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡";
+        if(f)f.value=currentTopText.fontFamily||"Montserrat, sans-serif";
+        if(z)z.value=currentTopText.fontSize||10;
+    });
+}
+function saveTopText(event){
+    if(event)event.preventDefault();
+    const data={
+        text:document.getElementById("topTextInput").value.trim()||"⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡",
+        fontFamily:document.getElementById("topTextFontInput").value,
+        fontSize:Number(document.getElementById("topTextSizeInput").value)||10,
+        updatedAt:new Date().toISOString()
+    };
+    db.ref("media/topText").set(data,err=>{
+        if(err) showToast("Error: "+err.message,"error");
+        else { currentTopText=data; showToast("✅ Top text updated!","success"); }
+    });
+}
+
+/* =====================================================
    HERO SETTINGS
 ===================================================== */
 
@@ -2649,41 +2693,11 @@ async function saveHeroSettings(event){
 
 heroRef.on("value",snapshot=>{
     currentHeroSettings=snapshot.val()||{};
-    const section=document.getElementById("heroSection");
+    const section=document.getElementById("customiseAdSection");
     if(section && section.classList.contains("active-section")){
         populateHeroForm(currentHeroSettings);
     }
 });
-
-
-/* =====================================================
-   TOP TEXT SETTINGS
-===================================================== */
-let currentTopText={};
-function loadTopText(){
-    db.ref('media/topText').on('value',snapshot=>{
-        currentTopText=snapshot.val()||{};
-        const t=document.getElementById('topTextInput');
-        const f=document.getElementById('topTextFont');
-        const s=document.getElementById('topTextSize');
-        const status=document.getElementById('topTextStatus');
-        if(t)t.value=currentTopText.text||'⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡';
-        if(f)f.value=currentTopText.fontFamily||'inherit';
-        if(s)s.value=currentTopText.fontSize||10;
-        if(status)status.textContent='Current Top Text settings loaded.';
-    });
-}
-async function saveTopText(event){
-    if(event)event.preventDefault();
-    const text=document.getElementById('topTextInput')?.value.trim();
-    const fontFamily=document.getElementById('topTextFont')?.value||'inherit';
-    const fontSize=Math.max(8,Math.min(24,Number(document.getElementById('topTextSize')?.value||10)));
-    const data={text:text||'⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡',fontFamily,fontSize,updatedAt:new Date().toISOString()};
-    db.ref('media/topText').set(data,err=>{
-        if(err){showToast('Error: '+err.message,'error');return;}
-        currentTopText=data;showToast('✅ Top Text updated successfully!','success');
-    });
-}
 
 /* =====================================================
    ORDERS
@@ -2969,5 +2983,19 @@ selectDiscountType("percentage");
 
 </script>
 
+
+<script id="admin-no-zoom">
+(function(){
+    document.addEventListener("wheel",function(e){
+        if(e.ctrlKey) e.preventDefault();
+    },{passive:false});
+    document.addEventListener("keydown",function(e){
+        if((e.ctrlKey||e.metaKey) && ["+","-","=","0"].includes(e.key)) e.preventDefault();
+    });
+    document.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});
+    document.addEventListener("gesturechange",e=>e.preventDefault(),{passive:false});
+    document.addEventListener("gestureend",e=>e.preventDefault(),{passive:false});
+})();
+</script>
 </body>
 </html>
