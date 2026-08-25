@@ -494,17 +494,17 @@ function handleBackNavigation() {
 
 function setTheme(themeName) {
 
+    if (!["dark","light"].includes(themeName)) {
+        themeName = "dark";
+    }
+
     document.body.classList.remove(
-        "theme-neon",
-        "theme-gold",
-        "theme-emerald",
-        "theme-violet",
-        "theme-amber"
+        "theme-dark", "theme-light",
+        "theme-neon", "theme-gold", "theme-emerald",
+        "theme-violet", "theme-amber"
     );
 
-    if (themeName !== "dark") {
-        document.body.classList.add(`theme-${themeName}`);
-    }
+    document.body.classList.add(`theme-${themeName}`);
 
     localStorage.setItem("vornex_theme", themeName);
 
@@ -2430,148 +2430,37 @@ function openOrderTracking() {
 
 function loadHeroMedia() {
 
-    db.ref("media/hero").on("value", snapshot => {
+    db.ref("media/heroConfig").on("value", snapshot => {
+        const config = snapshot.val() || {};
+        const tag = document.getElementById("heroTag");
+        const title = document.getElementById("heroTitle");
+        const subtitle = document.getElementById("heroSubtitle");
+        const button = document.getElementById("heroButton");
+        const layer = document.getElementById("heroMediaLayer");
 
-        const data = snapshot.val();
-        heroMedia = [];
-
-        if (Array.isArray(data)) {
-            heroMedia = data;
-        } else if (data) {
-            // New single hero is stored at media/hero/0.
-            if (data["0"] && typeof data["0"] === "object") {
-                heroMedia = [data["0"]];
-            } else if (data.url || data.image || data.src) {
-                heroMedia = [data];
-            } else {
-                Object.keys(data).forEach(key => {
-                    const item = data[key];
-                    if (typeof item === "string") {
-                        heroMedia.push({type:"image",url:item});
-                    } else if (item && typeof item === "object") {
-                        heroMedia.push(item);
-                    }
-                });
-            }
+        if (tag) tag.textContent = config.tag || "NEW DROP 2026";
+        if (title) {
+            const text = String(config.title || "OVERSIZED\nCOLLECTION");
+            title.textContent = "";
+            text.split(/\r?\n/).forEach((line,index)=>{
+                if(index) title.appendChild(document.createElement("br"));
+                title.appendChild(document.createTextNode(line));
+            });
         }
-
-        renderHeroMedia();
-    }, error => {
-        console.error("Hero Firebase sync error:", error);
-    });
-}
-
-function renderHeroMedia() {
-
-    const layer =
-        document.getElementById(
-            "heroMediaLayer"
-        );
-
-    const dots =
-        document.getElementById(
-            "heroDots"
-        );
-
-    if (!layer) return;
-
-    if (!heroMedia.length) {
-
-        layer.innerHTML = "";
-
-        if (dots)
-            dots.innerHTML = "";
-
-        return;
-    }
-
-    heroIndex = 0;
-
-    renderHeroSlide();
-
-    clearInterval(heroTimer);
-
-    if (heroMedia.length > 1) {
-
-        heroTimer =
-            setInterval(() => {
-
-                heroIndex++;
-
-                if (
-                    heroIndex >=
-                    heroMedia.length
-                ) {
-                    heroIndex = 0;
-                }
-
-                renderHeroSlide();
-
-            }, 5000);
-    }
-}
-
-function renderHeroSlide() {
-
-    const layer = document.getElementById("heroMediaLayer");
-    const dots = document.getElementById("heroDots");
-    const item = heroMedia[heroIndex];
-
-    if (!item) return;
-
-    const url =
-        typeof item === "string"
-        ? item
-        : item.url || item.image || item.src || "";
-
-    const type =
-        typeof item === "string"
-        ? "image"
-        : String(item.type || item.mediaType || "image").toLowerCase();
-
-    if (layer) {
-        if (type === "video" || /\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) {
-            layer.innerHTML = `
-                <video src="${escapeHtml(url)}" autoplay muted loop playsinline></video>
-            `;
-        } else if (url) {
-            layer.innerHTML = `
-                <img src="${escapeHtml(url)}" alt="VORNEX Hero">
-            `;
-        }
-    }
-
-    // Sync Hero text from Admin without changing the Hero layout.
-    const badge = document.querySelector(".hero-tag");
-    const title = document.querySelector(".hero-title");
-    const subtitle = document.querySelector(".hero-subtitle");
-    const button = document.querySelector(".hero-btn");
-
-    if (typeof item === "object") {
-        if (badge && (item.badge !== undefined || item.tag !== undefined)) {
-            badge.textContent = item.badge ?? item.tag ?? "";
-        }
-        if (title && (item.title !== undefined || item.heading !== undefined)) {
-            title.textContent = item.title ?? item.heading ?? "";
-        }
-        if (subtitle && item.subtitle !== undefined) {
-            subtitle.textContent = item.subtitle ?? "";
-        }
+        if (subtitle) subtitle.textContent = config.subtitle || "Premium Streetwear • 240 GSM French Terry Cotton";
         if (button) {
-            if (item.buttonText !== undefined || item.cta !== undefined) {
-                button.textContent = item.buttonText ?? item.cta ?? "";
-            }
-            if (item.buttonLink !== undefined || item.link !== undefined) {
-                button.href = item.buttonLink ?? item.link ?? "#storeGrid";
-            }
+            button.textContent = config.buttonText || "EXPLORE NOW";
+            button.href = config.buttonLink || "#storeGrid";
         }
-    }
+        if (layer && config.backgroundImage) {
+            layer.innerHTML = "";
+            const img = document.createElement("img");
+            img.src = config.backgroundImage;
+            img.alt = "VORNEX Hero";
+            layer.appendChild(img);
+        }
+    });
 
-    if (dots) {
-        dots.innerHTML = heroMedia.map((_,index) =>
-            `<span class="${index === heroIndex ? "active" : ""}"></span>`
-        ).join("");
-    }
 }
 
 // ============================================================
