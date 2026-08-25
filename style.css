@@ -340,3 +340,14 @@ html, body {
 .bar-sub { font-size: 0.65rem; color: var(--text-muted); }
 .glass-buy-btn { background: #fff; color: #000; border: none; padding: 9px 18px; border-radius: 20px; font-weight: 900; font-size: 0.75rem; cursor: pointer; }
 \n\n/* FINAL DARK / LIGHT READABILITY */\nbody.theme-dark{background:#070707 !important;color:#fff !important;}\nbody.theme-light{background:#f5f5f5 !important;color:#111 !important;}\nbody.theme-light .vornex-header,body.theme-light .ios-drawer,body.theme-light .cart-drawer,body.theme-light .modal-card,body.theme-light .glass-bottom-bar{background:#fff !important;color:#111 !important;border-color:#d1d5db !important;}\nbody.theme-light input,body.theme-light textarea,body.theme-light select{background:#fff !important;color:#111 !important;border-color:#cbd5e1 !important;}\nbody.theme-light .product-card,body.theme-light .accordion-card,body.theme-light .theme-picker-section{background:#fff !important;color:#111 !important;border-color:#d1d5db !important;}\nbody.theme-light .hero-title,body.theme-light .hero-subtitle,body.theme-light .hero-tag,body.theme-light .logo{color:#111 !important;}\nbody.theme-dark .vornex-header,body.theme-dark .ios-drawer,body.theme-dark .cart-drawer,body.theme-dark .modal-card,body.theme-dark .glass-bottom-bar{background:#0c0c0c !important;color:#fff !important;}\nbody.theme-dark input,body.theme-dark textarea,body.theme-dark select{background:#111 !important;color:#fff !important;border-color:#333 !important;}\nbody.theme-dark .hero-title,body.theme-dark .hero-subtitle,body.theme-dark .hero-tag,body.theme-dark .logo{color:#fff !important;}\n.hero-media-layer{position:absolute !important;inset:0 !important;z-index:0 !important;overflow:hidden !important;}\n.hero-media-layer img,.hero-media-layer video{width:100% !important;height:100% !important;object-fit:cover !important;display:block !important;}\n.hero-overlay{z-index:1 !important;}.hero-content{z-index:2 !important;}\n
+/* VORNEX LIGHT MODE CLARITY */
+body.theme-light-active .vornex-header{background:#fff!important;color:#111!important;}
+body.theme-light-active .hamburger-btn{color:#111!important;background:#f3f4f6!important;}
+body.theme-light-active .product-card{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
+body.theme-light-active .p-title,body.theme-light-active .p-price{color:#111!important;}
+body.theme-light-active .p-category{color:#4b5563!important;}
+body.theme-light-active #storeSearch{background:#fff!important;color:#111!important;border-color:#cbd5e1!important;}
+body.theme-light-active .cat-btn{background:#fff!important;color:#374151!important;border-color:#cbd5e1!important;}
+body.theme-light-active .cat-btn.active{background:#111!important;color:#fff!important;}
+body.theme-light-active .site-footer{background:#fff!important;color:#111!important;}
+body.theme-light-active .footer-column a{color:#4b5563!important;}
