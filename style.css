@@ -347,3 +347,14 @@ html, body {
 .bar-title { font-size: 0.8rem; font-weight: 800; display: block; }
 .bar-sub { font-size: 0.65rem; color: var(--text-muted); }
 .glass-buy-btn { background: #fff; color: #000; border: none; padding: 9px 18px; border-radius: 20px; font-weight: 900; font-size: 0.75rem; cursor: pointer; }
+
+/* VORNEX: product badges must not hide product images */
+.product-card .detail-tag,
+.product-card .badge,
+.product-card .product-tag,
+.product-card .product-badge {
+    display:inline-block;
+    position:relative;
+    z-index:2;
+    max-width:100%;
+}
