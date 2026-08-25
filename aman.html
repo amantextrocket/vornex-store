@@ -670,6 +670,8 @@ button:active{
     }
 }
 </style>
+<style>html{touch-action:manipulation;} input,select,textarea,button{font-size:16px;} </style>
+<script>(function(){document.addEventListener('wheel',function(e){if(e.ctrlKey)e.preventDefault();},{passive:false});document.addEventListener('keydown',function(e){if(e.ctrlKey&&(e.key==='+'||e.key==='-'||e.key==='='||e.key==='0'))e.preventDefault();});document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});})();</script>
 </head>
 
 <body>
@@ -762,8 +764,8 @@ button:active{
     </div>
 
     <div class="nav-tab"
-         onclick="switchSection('heroSection',this)">
-        🖼️ HERO
+         onclick="switchSection('customiseAdSection',this)">
+        📢 CUSTOMISE AD
     </div>
 
     <div class="nav-tab"
@@ -820,54 +822,19 @@ placeholder="e.g. VORNEX HEAVYWEIGHT TEE" required>
 <label>Category</label>
 
 <select id="pCategory">
-<option value="Oversized Tees">Oversized Tees</option>
-<option value="T-shirts">T-shirts</option>
-<option value="Shirts">Shirts</option>
-<option value="Hoodies">Hoodies</option>
-<option value="Sweatshirts">Sweatshirts</option>
-<option value="Jeans">Jeans</option>
-<option value="Men's Clothing">Men's Clothing</option>
-<option value="T-Shirts">T-Shirts</option>
-<option value="Oversized T-Shirts">Oversized T-Shirts</option>
-<option value="Shirts">Shirts</option>
-<option value="Oversized Shirts">Oversized Shirts</option>
-<option value="Polo Shirts">Polo Shirts</option>
-<option value="Hoodies">Hoodies</option>
-<option value="Sweatshirts">Sweatshirts</option>
-<option value="Jackets">Jackets</option>
-<option value="Denim Jackets">Denim Jackets</option>
-<option value="Bomber Jackets">Bomber Jackets</option>
-<option value="Windcheaters">Windcheaters</option>
-<option value="Jeans">Jeans</option>
-<option value="Cargo Pants">Cargo Pants</option>
-<option value="Trousers">Trousers</option>
-<option value="Track Pants">Track Pants</option>
-<option value="Joggers">Joggers</option>
-<option value="Shorts">Shorts</option>
-<option value="Chinos">Chinos</option>
-<option value="Cargos">Cargos</option>
-<option value="Kurtas">Kurtas</option>
-<option value="Co-ord Sets">Co-ord Sets</option>
-<option value="Blazers">Blazers</option>
-<option value="Suits">Suits</option>
-<option value="Sweaters">Sweaters</option>
-<option value="Cardigans">Cardigans</option>
-<option value="Vests">Vests</option>
-<option value="Tank Tops">Tank Tops</option>
-<option value="Innerwear">Innerwear</option>
+<option>Oversized Tees</option>
+<option>T-shirts</option>
+<option>Shirts</option>
+<option>Hoodies</option>
+<option>Sweatshirts</option>
+<option>Jeans</option>
 </select>
 
 </div>
 
-<div class="price-mrp-row">
 <div class="form-group">
 <label>Price (₹)</label>
 <input type="number" id="pPrice" placeholder="799" required min="1">
-</div>
-<div class="form-group">
-<label>MRP (₹)</label>
-<input type="number" id="pMrp" placeholder="1299" min="0">
-</div>
 </div>
 
 <div class="form-group">
@@ -1111,9 +1078,25 @@ Loading active coupons...
      HERO
 ========================= -->
 
-<div id="heroSection" class="admin-section">
+<div id="customiseAdSection" class="admin-section">
 
 <div class="card">
+<h2>📢 CUSTOMISE AD</h2>
+<p style="font-size:.72rem;color:#777;margin-bottom:15px;">Top Text और Hero Banner दोनों को यहाँ से manage करें।</p>
+
+<h3 style="font-size:.8rem;margin:18px 0 10px;">TOP TEXT</h3>
+<form id="topTextForm" onsubmit="saveTopText(event)">
+<div class="form-group"><label>Announcement Text</label><textarea id="topTextInput" rows="2" placeholder="⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡"></textarea></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+<div class="form-group"><label>Font</label><select id="topTextFont"><option value="inherit">Default</option><option value="Arial, sans-serif">Arial</option><option value="Georgia, serif">Georgia</option><option value="Verdana, sans-serif">Verdana</option><option value="Trebuchet MS, sans-serif">Trebuchet MS</option><option value="Courier New, monospace">Courier New</option></select></div>
+<div class="form-group"><label>Font Size</label><input id="topTextSize" type="number" min="8" max="24" value="10"></div>
+</div>
+<button type="submit" style="background:#3b82f6;color:#fff;">SAVE TOP TEXT</button>
+</form>
+<div id="topTextStatus" style="margin-top:10px;color:#777;font-size:.7rem;">Loading current Top Text...</div>
+</div>
+
+<div id="heroSection" class="card" style="margin-top:16px;">
 
 <h2>🖼️ HERO / BANNER CONTROLS</h2>
 
@@ -1166,7 +1149,6 @@ Loading current Hero settings...
 </div>
 
 </div>
-
 </div>
 
 <!-- =========================
@@ -1242,54 +1224,19 @@ onclick="closeEditModal()">
 <label>Category</label>
 
 <select id="editCategory">
-<option value="Oversized Tees">Oversized Tees</option>
-<option value="T-shirts">T-shirts</option>
-<option value="Shirts">Shirts</option>
-<option value="Hoodies">Hoodies</option>
-<option value="Sweatshirts">Sweatshirts</option>
-<option value="Jeans">Jeans</option>
-<option value="Men's Clothing">Men's Clothing</option>
-<option value="T-Shirts">T-Shirts</option>
-<option value="Oversized T-Shirts">Oversized T-Shirts</option>
-<option value="Shirts">Shirts</option>
-<option value="Oversized Shirts">Oversized Shirts</option>
-<option value="Polo Shirts">Polo Shirts</option>
-<option value="Hoodies">Hoodies</option>
-<option value="Sweatshirts">Sweatshirts</option>
-<option value="Jackets">Jackets</option>
-<option value="Denim Jackets">Denim Jackets</option>
-<option value="Bomber Jackets">Bomber Jackets</option>
-<option value="Windcheaters">Windcheaters</option>
-<option value="Jeans">Jeans</option>
-<option value="Cargo Pants">Cargo Pants</option>
-<option value="Trousers">Trousers</option>
-<option value="Track Pants">Track Pants</option>
-<option value="Joggers">Joggers</option>
-<option value="Shorts">Shorts</option>
-<option value="Chinos">Chinos</option>
-<option value="Cargos">Cargos</option>
-<option value="Kurtas">Kurtas</option>
-<option value="Co-ord Sets">Co-ord Sets</option>
-<option value="Blazers">Blazers</option>
-<option value="Suits">Suits</option>
-<option value="Sweaters">Sweaters</option>
-<option value="Cardigans">Cardigans</option>
-<option value="Vests">Vests</option>
-<option value="Tank Tops">Tank Tops</option>
-<option value="Innerwear">Innerwear</option>
+<option>Oversized Tees</option>
+<option>T-shirts</option>
+<option>Shirts</option>
+<option>Hoodies</option>
+<option>Sweatshirts</option>
+<option>Jeans</option>
 </select>
 
 </div>
 
-<div class="price-mrp-row">
 <div class="form-group">
 <label>Price</label>
 <input type="number" id="editPrice" required min="1">
-</div>
-<div class="form-group">
-<label>MRP (₹)</label>
-<input type="number" id="editMrp" min="0">
-</div>
 </div>
 
 <div class="form-group">
@@ -1520,8 +1467,9 @@ function switchSection(sectionId,btn){
         loadOrders();
     }
 
-    if(sectionId==="heroSection"){
+    if(sectionId==="customiseAdSection"){
         loadHeroSettings();
+        loadTopText();
     }
 
 }
@@ -1541,36 +1489,114 @@ analyticsRef.on("value",snapshot=>{
 
 });
 
-function getIndiaDateKey(){
-    return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-}
-
 function renderTrafficAnalytics(data){
-    data=data&&typeof data==="object"?data:{};
-    const sortedDates=Object.keys(data).sort();
-    const labels=sortedDates.slice(-30);
-    const chartValues=labels.map(date=>Number(data[date]||0));
-    const listEl=document.getElementById("dailyViewsList");
-    const todayEl=document.getElementById("statTodayViews");
-    if(!listEl||!todayEl)return;
-    const todayStr=getIndiaDateKey();
-    todayEl.innerText=Number(data[todayStr]||0);
-    if(!sortedDates.length){
-        listEl.innerHTML="<p style='color:#666;text-align:center;padding:15px;'>No traffic data yet.</p>";
-    }else{
-        let html="";
-        for(let i=sortedDates.length-1;i>=0;i--){
-            const date=sortedDates[i];
-            const count=Number(data[date]||0);
-            html+=`<div class="views-log-item"><span>📅 ${escapeHtml(date)}</span><strong style="color:#40c057;">${count} view${count===1?"":"s"}</strong></div>`;
-        }
-        listEl.innerHTML=html;
+
+    const sortedDates=
+    Object.keys(data).sort();
+
+    const labels=[];
+    const chartValues=[];
+
+    const listEl=
+    document.getElementById("dailyViewsList");
+
+    if(sortedDates.length===0){
+
+        listEl.innerHTML=
+        "<p style='color:#666;text-align:center;'>No traffic data yet.</p>";
+
+        document.getElementById("statTodayViews").innerText="0";
+
+        return;
     }
-    const canvas=document.getElementById("viewsChart");
-    if(!canvas||typeof Chart!=="function")return;
-    const ctx=canvas.getContext("2d");
-    if(viewsChartInstance)viewsChartInstance.destroy();
-    viewsChartInstance=new Chart(ctx,{type:"line",data:{labels:labels,datasets:[{label:"Daily Visitors",data:chartValues,borderColor:"#3b82f6",backgroundColor:"rgba(59,130,246,.15)",borderWidth:3,fill:true,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:"#888"},grid:{color:"#1a1a1a"}},y:{ticks:{color:"#888"},grid:{color:"#1a1a1a"},beginAtZero:true}},plugins:{legend:{labels:{color:"#fff"}}}}});
+
+    const now=new Date();
+
+    const todayStr=
+    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+
+    document.getElementById("statTodayViews").innerText=
+    data[todayStr]||0;
+
+    let html="";
+
+    for(let i=sortedDates.length-1;i>=0;i--){
+
+        const date=sortedDates[i];
+        const count=data[date];
+
+        html+=`
+        <div class="views-log-item">
+            <span>📅 ${date}</span>
+            <strong style="color:#40c057;">
+                ${count} view${count>1?"s":""}
+            </strong>
+        </div>`;
+
+    }
+
+    listEl.innerHTML=html;
+
+    sortedDates.forEach(date=>{
+        labels.push(date);
+        chartValues.push(data[date]);
+    });
+
+    const ctx=
+    document.getElementById("viewsChart").getContext("2d");
+
+    if(viewsChartInstance){
+        viewsChartInstance.destroy();
+    }
+
+    viewsChartInstance=new Chart(ctx,{
+
+        type:"line",
+
+        data:{
+            labels:labels,
+
+            datasets:[{
+                label:"Daily Visitors",
+                data:chartValues,
+                borderColor:"#3b82f6",
+                backgroundColor:
+                "rgba(59,130,246,.15)",
+                borderWidth:3,
+                fill:true,
+                tension:.3
+            }]
+        },
+
+        options:{
+            responsive:true,
+            maintainAspectRatio:false,
+
+            scales:{
+                x:{
+                    ticks:{color:"#888"},
+                    grid:{color:"#1a1a1a"}
+                },
+
+                y:{
+                    ticks:{color:"#888"},
+                    grid:{color:"#1a1a1a"},
+                    beginAtZero:true
+                }
+            },
+
+            plugins:{
+                legend:{
+                    labels:{
+                        color:"#fff"
+                    }
+                }
+            }
+
+        }
+
+    });
+
 }
 
 
@@ -1669,11 +1695,6 @@ document
             parseInt(
                 document.getElementById("pPrice").value
             ),
-
-            mrp:
-            parseInt(
-                document.getElementById("pMrp").value
-            ) || 0,
 
             sizeStocks:sizeStocks,
 
@@ -1839,7 +1860,7 @@ function renderAdminProducts(data){
                     <br>
 
                     <small style="color:#aaa;">
-                        ₹${p.price}${Number(p.mrp||0)>Number(p.price||0)?` | MRP ₹${p.mrp}`:""} | ${escapeHtml(p.category)}
+                        ₹${p.price} | ${escapeHtml(p.category)}
                     </small>
 
                     <br>
@@ -1965,8 +1986,6 @@ function openEditModal(key){
 
     document.getElementById("editPrice").value=
     p.price||0;
-    document.getElementById("editMrp").value=
-    p.mrp||0;
 
     document.getElementById("editTag").value=
     p.tag||"";
@@ -2044,11 +2063,6 @@ document
         parseInt(
             document.getElementById("editPrice").value
         ),
-
-        mrp:
-        parseInt(
-            document.getElementById("editMrp").value
-        ) || 0,
 
         sizeStocks:{
 
@@ -2640,6 +2654,36 @@ heroRef.on("value",snapshot=>{
         populateHeroForm(currentHeroSettings);
     }
 });
+
+
+/* =====================================================
+   TOP TEXT SETTINGS
+===================================================== */
+let currentTopText={};
+function loadTopText(){
+    db.ref('media/topText').on('value',snapshot=>{
+        currentTopText=snapshot.val()||{};
+        const t=document.getElementById('topTextInput');
+        const f=document.getElementById('topTextFont');
+        const s=document.getElementById('topTextSize');
+        const status=document.getElementById('topTextStatus');
+        if(t)t.value=currentTopText.text||'⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡';
+        if(f)f.value=currentTopText.fontFamily||'inherit';
+        if(s)s.value=currentTopText.fontSize||10;
+        if(status)status.textContent='Current Top Text settings loaded.';
+    });
+}
+async function saveTopText(event){
+    if(event)event.preventDefault();
+    const text=document.getElementById('topTextInput')?.value.trim();
+    const fontFamily=document.getElementById('topTextFont')?.value||'inherit';
+    const fontSize=Math.max(8,Math.min(24,Number(document.getElementById('topTextSize')?.value||10)));
+    const data={text:text||'⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡',fontFamily,fontSize,updatedAt:new Date().toISOString()};
+    db.ref('media/topText').set(data,err=>{
+        if(err){showToast('Error: '+err.message,'error');return;}
+        currentTopText=data;showToast('✅ Top Text updated successfully!','success');
+    });
+}
 
 /* =====================================================
    ORDERS
