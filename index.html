@@ -41,6 +41,32 @@ a{
     text-decoration:none;
 }
 
+
+/* ================= DRAWER THEME TOGGLE ================= */
+.drawer-theme-toggle{
+    width:36px;height:36px;border:1px solid rgba(127,127,127,.28);
+    border-radius:11px;background:rgba(127,127,127,.10);font-size:16px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+
+/* ================= STICKY CART / BUY NOW ================= */
+.home-sticky-cart-bar{
+    position:fixed;left:12px;right:12px;bottom:12px;z-index:80;
+    display:flex;gap:8px;padding:8px;border-radius:17px;
+    background:rgba(12,12,12,.96);border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 12px 35px rgba(0,0,0,.35);
+}
+.sticky-cart-items,.sticky-buy-now{border:0;border-radius:12px;min-height:48px;font-weight:900;cursor:pointer;}
+.sticky-cart-items{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;background:#1b1b1b;color:#fff;}
+.sticky-cart-items span{display:flex;flex-direction:column;text-align:left;line-height:1.1;}
+.sticky-cart-items small{font-size:10px;color:#aaa;margin-top:3px;}
+.sticky-buy-now{flex:.85;background:#fff;color:#000;padding:0 16px;font-size:12px;}
+body.theme-light-active .home-sticky-cart-bar{background:#fff;border-color:#d1d5db;box-shadow:0 12px 35px rgba(0,0,0,.15);}
+body.theme-light-active .sticky-cart-items{background:#f1f3f5;color:#111;}
+body.theme-light-active .sticky-cart-items small{color:#4b5563;}
+body.theme-light-active .sticky-buy-now{background:#111;color:#fff;}
+body{padding-bottom:82px;}
+
 /* ================= ANNOUNCEMENT ================= */
 
 .announcement-bar{
@@ -51,6 +77,7 @@ a{
     font-weight:900;
     letter-spacing:1px;
     padding:9px 8px;
+    transition:.2s ease;
 }
 
 /* ================= HEADER ================= */
@@ -1392,21 +1419,25 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 }
 </style>
 
-<style id="vornex-requested-updates">
-.price-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
-.current-price{font-size:15px;font-weight:900;}
-.mrp-price{text-decoration:line-through;color:#777;font-size:11px;font-weight:700;}
-.discount-off{font-size:9px;font-weight:900;color:#10b981;letter-spacing:.3px;}
-.product-badge-inline{position:static!important;display:inline-flex!important;align-items:center;margin:0 0 7px!important;}
-.more-cat-btn{background:#171717!important;color:#fff!important;border-color:#444!important;}
-.all-categories-card{max-width:560px;}
-.all-category-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;max-height:60vh;overflow-y:auto;}
-.all-category-grid .cat-btn{width:100%;text-align:left;border-radius:11px;padding:12px;font-size:9px;}
-.login-options{gap:14px!important;}
-.login-btn{width:100%;padding:11px 12px!important;min-height:42px;border-radius:12px!important;font-size:9px!important;box-shadow:0 8px 22px rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.08)!important;}
-.login-btn + .login-btn{margin-top:0!important;}
-@media(max-width:420px){.all-category-grid{grid-template-columns:1fr 1fr;gap:7px}.login-options{gap:12px!important;}}
+
+<style id="vornex-light-readability-fix">
+body.theme-light-active{background:#f5f6f8 !important;color:#111 !important;}
+body.theme-light-active .announcement-bar{background:#111 !important;color:#fff !important;}
+body.theme-light-active .vornex-header{background:#fff !important;border-bottom-color:#d9dde3 !important;backdrop-filter:none !important;}
+body.theme-light-active .hamburger-btn{background:#f1f3f5 !important;color:#111 !important;border-color:#d1d5db !important;}
+body.theme-light-active .ios-drawer,body.theme-light-active .cart-drawer,body.theme-light-active .modal-card,body.theme-light-active .product-detail-card{background:#fff !important;color:#111 !important;border-color:#d1d5db !important;backdrop-filter:none !important;}
+body.theme-light-active .menu-item-btn,body.theme-light-active .acc-btn,body.theme-light-active .bar-title,body.theme-light-active .p-title,body.theme-light-active .p-price,body.theme-light-active .cart-item-name,body.theme-light-active .modal-header h3{color:#111 !important;}
+body.theme-light-active .p-category,body.theme-light-active .coupon-desc,body.theme-light-active .account-sub,body.theme-light-active .bar-sub{color:#4b5563 !important;}
+body.theme-light-active .search-wrapper input,body.theme-light-active input,body.theme-light-active textarea,body.theme-light-active select{background:#fff !important;color:#111 !important;border-color:#c7cdd5 !important;}
+body.theme-light-active .product-card,body.theme-light-active .accordion-card,body.theme-light-active .filter-bar,body.theme-light-active .site-footer{background:#fff !important;color:#111 !important;border-color:#d1d5db !important;box-shadow:0 5px 20px rgba(0,0,0,.06) !important;}
+body.theme-light-active .cat-btn,body.theme-light-active .size-btn{background:#fff !important;color:#111 !important;border-color:#c7cdd5 !important;}
+body.theme-light-active .cat-btn.active,body.theme-light-active .size-btn.selected{background:#111 !important;color:#fff !important;border-color:#111 !important;}
+body.theme-light-active .hero-section{background:#e9eaed !important;}
+body.theme-light-active .hero-overlay{background:linear-gradient(to top,rgba(255,255,255,.88),rgba(255,255,255,.08)) !important;}
+body.theme-light-active .hero-title,body.theme-light-active .hero-tag{color:#111 !important;text-shadow:none !important;}
+body.theme-light-active .hero-subtitle{color:#374151 !important;}
 </style>
+
 </head>
 
 <body>
@@ -1431,7 +1462,10 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 
     <div class="drawer-header">
         <span class="logo">VORNEX</span>
-        <button class="close-drawer" onclick="toggleMenuDrawer(false)">×</button>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="drawer-theme-toggle" id="drawerThemeToggle" type="button" onclick="toggleVornexTheme()" aria-label="Toggle dark light mode">☀️</button>
+            <button class="close-drawer" onclick="toggleMenuDrawer(false)">×</button>
+        </div>
     </div>
 
     <div class="drawer-content">
@@ -1475,15 +1509,6 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
             </span>
             <i class="fa-solid fa-chevron-right"></i>
         </button>
-
-        <div class="theme-picker-section">
-            <h4>THEME PREFERENCES</h4>
-
-            <div class="theme-grid">
-                <div class="theme-chip theme-dark" onclick="setTheme('dark')">DARK</div>
-                <div class="theme-chip theme-light" onclick="setTheme('light')">LIGHT</div>
-            </div>
-        </div>
 
         <div class="about-card">
             <h4>VORNEX OFFICIAL</h4>
@@ -1565,10 +1590,6 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
                 SWEATSHIRTS
             </button>
 
-            <button class="cat-btn more-cat-btn" type="button" onclick="openAllCategories()">
-                MORE <i class="fa-solid fa-chevron-down"></i>
-            </button>
-
         </div>
 
         <div class="search-wrapper">
@@ -1597,28 +1618,15 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 
 </section>
 
-<!-- ================= ALL CATEGORIES ================= -->
-<div class="custom-modal" id="allCategoriesModal" onclick="closeModalOnBg(event,'allCategoriesModal')">
-    <div class="modal-card all-categories-card">
-        <div class="modal-header">
-            <h3>ALL CATEGORIES</h3>
-            <button class="close-drawer" onclick="closeModalStepBack('allCategoriesModal')">×</button>
-        </div>
-        <div class="all-category-grid" id="allCategoryGrid"></div>
-    </div>
-</div>
-
-<button
-    id="homeCheckoutBtn"
-    class="home-checkout-glass"
-    type="button"
-    onclick="openCheckoutModal()">
-    <span>
+<div id="homeStickyCartBar" class="home-sticky-cart-bar">
+    <button type="button" class="sticky-cart-items" onclick="openCartFromMenu()">
         <i class="fa-solid fa-bag-shopping"></i>
-        CHECKOUT
-    </span>
-    <strong id="homeCheckoutCount">0 ITEMS</strong>
-</button>
+        <span><strong id="stickyCartCount">0 ITEMS</strong><small id="stickyCartTotal">₹0</small></span>
+    </button>
+    <button type="button" class="sticky-buy-now" onclick="buyCartNow()">
+        BUY NOW <i class="fa-solid fa-arrow-right"></i>
+    </button>
+</div>
 
 <!-- ================= FOOTER ================= -->
 
@@ -2492,8 +2500,6 @@ function showToast(message,type="success"){
 
 document.addEventListener("DOMContentLoaded",()=>{
 
-    recordDailyView();
-
     fetchProducts();
 
     listenCoupons();
@@ -2510,18 +2516,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 /* =========================================================
    PRODUCTS
 ========================================================= */
-
-function indiaDateKey(){
-    return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-}
-
-function recordDailyView(){
-    try{
-        db.ref(`analytics/daily_views/${indiaDateKey()}`).transaction(v=>(Number(v)||0)+1);
-    }catch(error){
-        console.error("Traffic tracking failed",error);
-    }
-}
 
 function fetchProducts(){
 
@@ -2641,9 +2635,8 @@ function renderProducts(products){
                     ${escapeHtml(p.category||"")}
                 </div>
 
-                <div class="p-price price-line">
-                    <span class="current-price">₹${Number(p.price||0).toLocaleString("en-IN")}</span>
-                    ${Number(p.mrp||0)>Number(p.price||0)?`<span class="mrp-price">₹${Number(p.mrp).toLocaleString("en-IN")}</span><span class="discount-off">${Math.round(((Number(p.mrp)-Number(p.price))/Number(p.mrp))*100)}% OFF</span>`:""}
+                <div class="p-price">
+                    ₹${Number(p.price||0).toLocaleString("en-IN")}
                 </div>
 
                 <button
@@ -2681,31 +2674,6 @@ function escapeHtml(value){
 
 }
 
-
-const STORE_CATEGORIES=[
-    "ALL","HOODIES","TEES","CARGOS","SWEATSHIRTS",
-    "T-SHIRTS","OVERSIZED T-SHIRTS","SHIRTS","OVERSIZED SHIRTS","POLO SHIRTS",
-    "JACKETS","DENIM JACKETS","BOMBER JACKETS","WINDCHEATERS","JEANS",
-    "CARGO PANTS","TROUSERS","TRACK PANTS","JOGGERS","SHORTS","CHINOS",
-    "KURTAS","CO-ORD SETS","BLAZERS","SUITS","SWEATERS","CARDIGANS",
-    "VESTS","TANK TOPS","INNERWEAR"
-];
-
-function openAllCategories(){
-    const grid=document.getElementById("allCategoryGrid");
-    if(!grid)return;
-    grid.innerHTML=STORE_CATEGORIES.map(cat=>`<button class="cat-btn ${currentCategory===cat?"active":""}" onclick="selectMoreCategory('${escapeHtml(cat)}')">${escapeHtml(cat)}</button>`).join("");
-    openModal("allCategoriesModal");
-}
-
-function selectMoreCategory(cat){
-    currentCategory=cat;
-    document.querySelectorAll(".cat-btn").forEach(x=>x.classList.remove("active"));
-    const visible=[...document.querySelectorAll(".categories-scroll .cat-btn")].find(x=>x.textContent.trim().startsWith(cat));
-    if(visible)visible.classList.add("active");
-    closeModalStepBack("allCategoriesModal");
-    applyFilters();
-}
 
 function filterCategory(cat,btn){
 
@@ -2795,10 +2763,8 @@ function openProductDetail(id){
     document.getElementById("detailTitle").textContent=
         p.name||"VORNEX PRODUCT";
 
-    const detailPriceEl=document.getElementById("detailPrice");
-    if(detailPriceEl){
-        detailPriceEl.innerHTML=`<span class="current-price">₹${Number(p.price||0).toLocaleString("en-IN")}</span>${Number(p.mrp||0)>Number(p.price||0)?` <span class="mrp-price">₹${Number(p.mrp).toLocaleString("en-IN")}</span> <span class="discount-off">${Math.round(((Number(p.mrp)-Number(p.price))/Number(p.mrp))*100)}% OFF</span>`:""}`;
-    }
+    document.getElementById("detailPrice").textContent=
+        "₹"+Number(p.price||0).toLocaleString("en-IN");
 
     document.getElementById("detailCategory").textContent=
         p.category||"-";
@@ -4890,16 +4856,6 @@ renderCart();
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const announcement = document.querySelector(".announcement-bar");
-
-    if (announcement) {
-        announcement.innerHTML = `
-            ⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999
-            &nbsp; | &nbsp;
-            <strong>UPTO 20% OFF ON COUPONS</strong> ⚡
-        `;
-    }
-
     const logo = document.querySelector(".logo");
 
     if (logo && !logo.querySelector(".vornex-edge-title")) {
@@ -6075,19 +6031,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 (function () {
 
-/* ---------- HOME CHECKOUT COUNT ---------- */
-    window.updateHomeCheckoutButton=function(){
-        const countEl=document.getElementById("homeCheckoutCount");
-        const btn=document.getElementById("homeCheckoutBtn");
-        if(!countEl || !btn) return;
-
-        const count=(cart||[]).reduce(
-            (sum,item)=>sum+Number(item.qty||1),0
-        );
-
-        countEl.textContent=count+" "+(count===1?"ITEM":"ITEMS");
-        btn.style.display="flex";
-    };
+/* ---------- HOME STICKY CART COUNT ---------- */
+window.updateHomeCheckoutButton=function(){
+    if(typeof window.updateHomeStickyCart==='function') window.updateHomeStickyCart();
+};
 
     const originalUpdateBadges=window.updateBadges;
     window.updateBadges=function(){
@@ -6213,131 +6160,13 @@ document.addEventListener("DOMContentLoaded", function () {
         setVornexHeroVideo(HERO_VIDEO_URL);
     }
 
-    /* ---------- PRODUCT IMAGE: DOUBLE TAP / PINCH / HOLD ZOOM ---------- */
-    (function setupProductZoom(){
-        let state={
-            scale:1,
-            startDistance:0,
-            startScale:1,
-            lastTap:0,
-            holdTimer:null,
-            holding:false,
-            startX:0,
-            startY:0
-        };
-
-        function getImage(){
-            const slider=document.getElementById("detailSlider");
-            if(!slider) return null;
-            return slider.querySelector("img.active");
-        }
-
-        function applyZoom(scale){
-            const slider=document.getElementById("detailSlider");
-            const img=getImage();
-            if(!slider || !img) return;
-
-            state.scale=Math.max(1,Math.min(3,scale));
-            img.style.transform="scale("+state.scale+")";
-            slider.classList.toggle("is-zoomed",state.scale>1);
-        }
-
-        function distance(a,b){
-            const dx=a.clientX-b.clientX;
-            const dy=a.clientY-b.clientY;
-            return Math.sqrt(dx*dx+dy*dy);
-        }
-
-        document.addEventListener("touchstart",function(e){
-            const slider=document.getElementById("detailSlider");
-            const detail=document.getElementById("productDetailModal");
-
-            if(!slider || !detail ||
-               !detail.classList.contains("active") ||
-               !slider.contains(e.target)) return;
-
-            if(e.touches.length===2){
-                clearTimeout(state.holdTimer);
-                state.startDistance=distance(e.touches[0],e.touches[1]);
-                state.startScale=state.scale;
-                return;
-            }
-
-            if(e.touches.length===1){
-                state.startX=e.touches[0].clientX;
-                state.startY=e.touches[0].clientY;
-                state.holding=false;
-
-                clearTimeout(state.holdTimer);
-                state.holdTimer=setTimeout(()=>{
-                    state.holding=true;
-                    applyZoom(state.scale>1 ? 1 : 1.65);
-                },420);
-
-                const now=Date.now();
-                if(now-state.lastTap<280){
-                    clearTimeout(state.holdTimer);
-                    applyZoom(state.scale>1 ? 1 : 2);
-                }
-                state.lastTap=now;
-            }
-        },{passive:true});
-
-        document.addEventListener("touchmove",function(e){
-            const slider=document.getElementById("detailSlider");
-            const detail=document.getElementById("productDetailModal");
-
-            if(!slider || !detail ||
-               !detail.classList.contains("active") ||
-               !slider.contains(e.target)) return;
-
-            if(e.touches.length===2 && state.startDistance){
-                const ratio=distance(e.touches[0],e.touches[1])/state.startDistance;
-                applyZoom(state.startScale*ratio);
-                e.preventDefault();
-            }else if(e.touches.length===1){
-                const dx=Math.abs(e.touches[0].clientX-state.startX);
-                const dy=Math.abs(e.touches[0].clientY-state.startY);
-
-                if(dx>12 || dy>12){
-                    clearTimeout(state.holdTimer);
-                }
-            }
-        },{passive:false});
-
-        document.addEventListener("touchend",function(e){
-            const slider=document.getElementById("detailSlider");
-            const detail=document.getElementById("productDetailModal");
-
-            if(!slider || !detail ||
-               !detail.classList.contains("active") ||
-               !slider.contains(e.target)) return;
-
-            clearTimeout(state.holdTimer);
-
-            if(state.holding){
-                state.holding=false;
-            }
-
-            if(e.touches.length===0){
-                state.startDistance=0;
-            }
-        },{passive:true});
-
-        window.resetProductZoom=function(){
-            state.scale=1;
-            state.startDistance=0;
-            state.startScale=1;
-            state.holding=false;
-            clearTimeout(state.holdTimer);
-
-            document.querySelectorAll("#detailSlider img").forEach(img=>{
-                img.style.transform="scale(1)";
-            });
-
-            document.getElementById("detailSlider")?.classList.remove("is-zoomed");
-        };
-    })();
+    /* ---------- PRODUCT IMAGE ZOOM DISABLED ---------- */
+(function setupProductZoom(){
+    window.resetProductZoom=function(){
+        document.querySelectorAll('#detailSlider img').forEach(img=>{img.style.transform='scale(1)';});
+        document.getElementById('detailSlider')?.classList.remove('is-zoomed');
+    };
+})();
 
     const originalCloseProductDetail=window.closeProductDetail;
     window.closeProductDetail=function(){
@@ -6355,6 +6184,69 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 
+
+/* =========================================================
+   TOP ANNOUNCEMENT + DRAWER THEME + STICKY CART
+========================================================= */
+(function(){
+    function applyTopText(config){
+        config=config||{};
+        const el=document.querySelector('.announcement-bar');
+        if(!el) return;
+        el.textContent=config.text || '⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡';
+        el.style.fontFamily=config.fontFamily || 'inherit';
+        if(config.fontSize) el.style.fontSize=config.fontSize+'px';
+    }
+    function loadTopText(){
+        if(typeof db==='undefined'||!db) return;
+        db.ref('media/topText').on('value',s=>applyTopText(s.val()||{}));
+    }
+    window.loadVornexTopText=loadTopText;
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadTopText); else loadTopText();
+
+    window.toggleVornexTheme=function(){
+        const current=document.body.classList.contains('theme-light-active')?'light':'dark';
+        const next=current==='light'?'dark':'light';
+        if(typeof window.setTheme==='function') window.setTheme(next);
+        const b=document.getElementById('drawerThemeToggle');
+        if(b) b.textContent=next==='light'?'🌙':'☀️';
+    };
+    function syncThemeIcon(){
+        const b=document.getElementById('drawerThemeToggle');
+        if(b) b.textContent=document.body.classList.contains('theme-light-active')?'🌙':'☀️';
+    }
+    const oldSet=window.setTheme;
+    if(oldSet){
+        window.setTheme=function(t){oldSet(t);setTimeout(syncThemeIcon,0);};
+    }
+    setTimeout(syncThemeIcon,300);
+
+    window.updateHomeStickyCart=function(){
+        const bar=document.getElementById('homeStickyCartBar');
+        const countEl=document.getElementById('stickyCartCount');
+        const totalEl=document.getElementById('stickyCartTotal');
+        if(!bar||!countEl||!totalEl) return;
+        const count=(window.cart||[]).reduce((s,i)=>s+Number(i.qty||1),0);
+        const total=(window.cart||[]).reduce((s,i)=>s+Number(i.price||0)*Number(i.qty||1),0);
+        countEl.textContent=count+' '+(count===1?'ITEM':'ITEMS');
+        totalEl.textContent='₹'+total.toLocaleString('en-IN');
+        bar.style.display=count?'flex':'none';
+    };
+    window.buyCartNow=function(){
+        if(!(window.cart||[]).length){
+            if(typeof toast==='function') toast('Your bag is empty.','error');
+            return;
+        }
+        if(typeof openCheckoutModal==='function') openCheckoutModal();
+    };
+    const oldBadges=window.updateBadges;
+    if(oldBadges){
+        window.updateBadges=function(){oldBadges();window.updateHomeStickyCart();};
+    }
+    setTimeout(window.updateHomeStickyCart,500);
+})();
+</script>
+
 <script id="vornex-final-controls">
 (function(){
     const allowed=["dark","light"];
@@ -6369,6 +6261,8 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         document.body.classList.add("theme-"+theme+"-active");
         localStorage.setItem("vornex_theme",theme);
+        const icon=document.getElementById('drawerThemeToggle');
+        if(icon) icon.textContent=theme==='light'?'🌙':'☀️';
     };
 
     window.loadSavedTheme=function(){
