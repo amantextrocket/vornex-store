@@ -670,6 +670,12 @@ button:active{
     }
 }
 </style>
+
+<style id="vornex-requested-admin-fixes">
+.vornex-hero-note{font-size:.7rem;color:#888;}
+#heroSection .form-group{margin-bottom:10px;}
+#heroSection input{width:100%;}
+</style>
 </head>
 
 <body>
@@ -823,9 +829,27 @@ placeholder="e.g. VORNEX HEAVYWEIGHT TEE" required>
 <option>Oversized Tees</option>
 <option>T-shirts</option>
 <option>Shirts</option>
+<option>Polos</option>
 <option>Hoodies</option>
 <option>Sweatshirts</option>
+<option>Sweaters</option>
+<option>Jackets</option>
+<option>Coats</option>
+<option>Blazers</option>
 <option>Jeans</option>
+<option>Trousers</option>
+<option>Cargos</option>
+<option>Track Pants</option>
+<option>Shorts</option>
+<option>Joggers</option>
+<option>Kurta</option>
+<option>Shirts &amp; Casual Shirts</option>
+<option>Vests</option>
+<option>Innerwear</option>
+<option>Thermals</option>
+<option>Activewear</option>
+<option>Ethnic Wear</option>
+<option>Accessories</option>
 </select>
 
 </div>
@@ -833,6 +857,11 @@ placeholder="e.g. VORNEX HEAVYWEIGHT TEE" required>
 <div class="form-group">
 <label>Price (₹)</label>
 <input type="number" id="pPrice" placeholder="799" required min="1">
+</div>
+
+<div class="form-group">
+<label>MRP (₹)</label>
+<input type="number" id="pMRP" placeholder="999" min="0">
 </div>
 
 <div class="form-group">
@@ -1073,65 +1102,22 @@ Loading active coupons...
 </div>
 
 <!-- =========================
-     HERO
+     MEDIA
 ========================= -->
 
 <div id="heroSection" class="admin-section">
-
 <div class="card">
-
-<h2>🖼️ HERO / BANNER CONTROLS</h2>
-
-<p style="font-size:.72rem;color:#777;margin-bottom:15px;">
-यहाँ से website के Hero banner का background और सभी visible text बदला जा सकता है।
-</p>
-
-<form id="heroForm" onsubmit="saveHeroSettings(event)">
-
-<div class="form-group">
-<label>Hero Background Image</label>
-<input type="file" id="heroBackgroundFile" accept="image/*" onchange="previewHeroBackground(this)">
-<img id="heroBackgroundPreview" class="media-preview" alt="Hero Preview">
+<h2>🖼️ HERO</h2>
+<p style="color:#888;font-size:.7rem;margin-bottom:12px;">Hero banner settings. Main website ke hero banner ka layout/image position yahan se change nahi hota.</p>
+<div class="form-group"><label>Hero Background Image</label><input type="file" id="heroImageFile" accept="image/*"></div>
+<div class="form-group"><label>Hero Tag / Badge</label><input id="heroBadge" type="text" placeholder="NEW DROP 2026"></div>
+<div class="form-group"><label>Hero Heading</label><input id="heroHeading" type="text" placeholder="OVERSIZED COLLECTION"></div>
+<div class="form-group"><label>Hero Subtitle</label><input id="heroSubtitle" type="text" placeholder="Premium Streetwear"></div>
+<div class="form-group"><label>Hero Button Text</label><input id="heroButtonText" type="text" placeholder="EXPLORE NOW"></div>
+<div class="form-group"><label>Hero Button Link</label><input id="heroButtonLink" type="text" placeholder="#storeGrid"></div>
+<img id="heroPreview" style="display:none;width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:8px 0;">
+<button type="button" onclick="saveHeroSettings()" style="background:#10b981;color:#fff;">SAVE HERO</button>
 </div>
-
-<div class="form-group">
-<label>Small Tag</label>
-<input type="text" id="heroTagInput" placeholder="NEW DROP 2026">
-</div>
-
-<div class="form-group">
-<label>Main Heading</label>
-<textarea id="heroTitleInput" rows="3" placeholder="OVERSIZED
-COLLECTION"></textarea>
-</div>
-
-<div class="form-group">
-<label>Subtitle</label>
-<input type="text" id="heroSubtitleInput" placeholder="Premium Streetwear • 240 GSM French Terry Cotton">
-</div>
-
-<div class="form-group">
-<label>Button Text</label>
-<input type="text" id="heroButtonTextInput" placeholder="EXPLORE NOW">
-</div>
-
-<div class="form-group">
-<label>Button Link</label>
-<input type="text" id="heroButtonLinkInput" placeholder="#storeGrid">
-</div>
-
-<button type="submit" style="background:#3b82f6;color:#fff;">
-SAVE HERO
-</button>
-
-</form>
-
-<div id="heroCurrentStatus" style="margin-top:15px;color:#777;font-size:.7rem;">
-Loading current Hero settings...
-</div>
-
-</div>
-
 </div>
 
 <!-- =========================
@@ -1210,9 +1196,27 @@ onclick="closeEditModal()">
 <option>Oversized Tees</option>
 <option>T-shirts</option>
 <option>Shirts</option>
+<option>Polos</option>
 <option>Hoodies</option>
 <option>Sweatshirts</option>
+<option>Sweaters</option>
+<option>Jackets</option>
+<option>Coats</option>
+<option>Blazers</option>
 <option>Jeans</option>
+<option>Trousers</option>
+<option>Cargos</option>
+<option>Track Pants</option>
+<option>Shorts</option>
+<option>Joggers</option>
+<option>Kurta</option>
+<option>Shirts &amp; Casual Shirts</option>
+<option>Vests</option>
+<option>Innerwear</option>
+<option>Thermals</option>
+<option>Activewear</option>
+<option>Ethnic Wear</option>
+<option>Accessories</option>
 </select>
 
 </div>
@@ -1220,6 +1224,8 @@ onclick="closeEditModal()">
 <div class="form-group">
 <label>Price</label>
 <input type="number" id="editPrice" required min="1">
+<label>MRP (₹)</label>
+<input type="number" id="editMRP" min="0">
 </div>
 
 <div class="form-group">
@@ -1347,7 +1353,6 @@ const analyticsRef=db.ref("analytics/daily_views");
 const adminAuthRef=db.ref("admin_settings/password");
 const couponsRef=db.ref("coupons");
 const mediaRef=db.ref("media");
-const heroRef=db.ref("media/heroConfig");
 const ordersRef=db.ref("orders");
 
 
@@ -1450,9 +1455,6 @@ function switchSection(sectionId,btn){
         loadOrders();
     }
 
-    if(sectionId==="heroSection"){
-        loadHeroSettings();
-    }
 
 }
 
@@ -1464,11 +1466,13 @@ function switchSection(sectionId,btn){
 let viewsChartInstance=null;
 
 analyticsRef.on("value",snapshot=>{
-
-    renderTrafficAnalytics(
-        snapshot.val()||{}
-    );
-
+    renderTrafficAnalytics(snapshot.val()||{});
+},error=>{
+    const list=document.getElementById("dailyViewsList");
+    if(list) list.innerHTML='<p style="color:#ef4444;text-align:center;">Traffic data could not be loaded.</p>';
+    const stat=document.getElementById("statTodayViews");
+    if(stat) stat.innerText="0";
+    console.error("Traffic Firebase error",error);
 });
 
 function renderTrafficAnalytics(data){
@@ -1521,11 +1525,12 @@ function renderTrafficAnalytics(data){
 
     sortedDates.forEach(date=>{
         labels.push(date);
-        chartValues.push(data[date]);
+        chartValues.push(Number(data[date]||0));
     });
 
-    const ctx=
-    document.getElementById("viewsChart").getContext("2d");
+    const canvas=document.getElementById("viewsChart");
+    if(!canvas || typeof Chart!=="function") return;
+    const ctx=canvas.getContext("2d");
 
     if(viewsChartInstance){
         viewsChartInstance.destroy();
@@ -1677,6 +1682,11 @@ document
             parseInt(
                 document.getElementById("pPrice").value
             ),
+
+            mrp:
+            parseInt(
+                document.getElementById("pMRP").value
+            ) || 0,
 
             sizeStocks:sizeStocks,
 
@@ -1969,6 +1979,9 @@ function openEditModal(key){
     document.getElementById("editPrice").value=
     p.price||0;
 
+    if(document.getElementById("editMRP")) document.getElementById("editMRP").value=
+    p.mrp||0;
+
     document.getElementById("editTag").value=
     p.tag||"";
 
@@ -2045,6 +2058,11 @@ document
         parseInt(
             document.getElementById("editPrice").value
         ),
+
+        mrp:
+        parseInt(
+            document.getElementById("editMRP").value
+        ) || 0,
 
         sizeStocks:{
 
@@ -2532,110 +2550,412 @@ function deleteCoupon(code){
 
 
 /* =====================================================
-   HERO SETTINGS
+   MEDIA - IMAGE GALLERY
 ===================================================== */
 
-let currentHeroSettings={};
+function previewMediaImage(input,id){
 
-function previewHeroBackground(input){
-    const file=input && input.files ? input.files[0] : null;
+    const file=input.files[0];
+
     if(!file)return;
 
-    const img=document.getElementById("heroBackgroundPreview");
-    if(!img)return;
+    const img=
+    document.getElementById(id);
 
-    img.src=URL.createObjectURL(file);
+    img.src=
+    URL.createObjectURL(file);
+
     img.style.display="block";
+
 }
 
-function loadHeroSettings(){
-    heroRef.once("value",snapshot=>{
-        currentHeroSettings=snapshot.val()||{};
-        populateHeroForm(currentHeroSettings);
-    });
+
+function previewMediaVideo(input){
+
+    const file=input.files[0];
+
+    if(!file)return;
+
+    const video=
+    document.getElementById("videoPreview");
+
+    video.src=
+    URL.createObjectURL(file);
+
+    video.style.display="block";
+
 }
 
-function populateHeroForm(data){
-    data=data||{};
 
-    const tag=document.getElementById("heroTagInput");
-    const title=document.getElementById("heroTitleInput");
-    const subtitle=document.getElementById("heroSubtitleInput");
-    const buttonText=document.getElementById("heroButtonTextInput");
-    const buttonLink=document.getElementById("heroButtonLinkInput");
-    const preview=document.getElementById("heroBackgroundPreview");
-    const status=document.getElementById("heroCurrentStatus");
+async function addMediaPhoto(){
 
-    if(tag)tag.value=data.tag||"NEW DROP 2026";
-    if(title)title.value=data.title||"OVERSIZED\nCOLLECTION";
-    if(subtitle)subtitle.value=data.subtitle||"Premium Streetwear • 240 GSM French Terry Cotton";
-    if(buttonText)buttonText.value=data.buttonText||"EXPLORE NOW";
-    if(buttonLink)buttonLink.value=data.buttonLink||"#storeGrid";
+    const file=
+    document
+    .getElementById("mediaPhotoFile")
+    .files[0];
 
-    if(preview && data.backgroundImage){
-        preview.src=data.backgroundImage;
-        preview.style.display="block";
+    const title=
+    document
+    .getElementById("mediaPhotoTitle")
+    .value
+    .trim();
+
+    if(!file){
+
+        showToast(
+            "📷 पहले Gallery से image select करें!",
+            "error"
+        );
+
+        return;
     }
 
-    if(status){
-        status.textContent=data.backgroundImage
-            ?"Current Hero settings loaded. Save changes to update the website."
-            :"No custom Hero background saved yet. Website default background will remain active.";
-    }
-}
+    const image=
+    await fileToBase64(file);
 
-async function saveHeroSettings(event){
-    if(event)event.preventDefault();
+    mediaRef
+    .child("photos")
+    .push({
 
-    const tag=document.getElementById("heroTagInput").value.trim();
-    const title=document.getElementById("heroTitleInput").value.trim();
-    const subtitle=document.getElementById("heroSubtitleInput").value.trim();
-    const buttonText=document.getElementById("heroButtonTextInput").value.trim();
-    const buttonLink=document.getElementById("heroButtonLinkInput").value.trim();
-    const file=document.getElementById("heroBackgroundFile").files[0];
+        title:title||"Photo",
 
-    const data={
-        tag:tag||"NEW DROP 2026",
-        title:title||"OVERSIZED\nCOLLECTION",
-        subtitle:subtitle||"Premium Streetwear • 240 GSM French Terry Cotton",
-        buttonText:buttonText||"EXPLORE NOW",
-        buttonLink:buttonLink||"#storeGrid",
-        updatedAt:new Date().toISOString()
-    };
+        image:image,
 
-    try{
-        showToast("⏳ Saving Hero...","info");
+        createdAt:
+        new Date().toISOString()
 
-        if(file){
-            data.backgroundImage=await fileToBase64(file);
-        }else if(currentHeroSettings.backgroundImage){
-            data.backgroundImage=currentHeroSettings.backgroundImage;
+    },err=>{
+
+        if(!err){
+
+            showToast(
+                "🖼️ Photo added!",
+                "success"
+            );
+
+            document
+            .getElementById("mediaPhotoFile")
+            .value="";
+
+            document
+            .getElementById("mediaPhotoTitle")
+            .value="";
+
+            document
+            .getElementById("photoPreview")
+            .style.display="none";
+
         }
 
-        heroRef.set(data,err=>{
-            if(err){
-                showToast("Error: "+err.message,"error");
-                return;
-            }
+    });
 
-            currentHeroSettings=data;
-            document.getElementById("heroBackgroundFile").value="";
-            showToast("✅ Hero updated successfully!","success");
-            loadHeroSettings();
-        });
-
-    }catch(error){
-        showToast("Hero image processing failed!","error");
-    }
 }
 
-heroRef.on("value",snapshot=>{
-    currentHeroSettings=snapshot.val()||{};
-    const section=document.getElementById("heroSection");
-    if(section && section.classList.contains("active-section")){
-        populateHeroForm(currentHeroSettings);
+
+async function addMediaVideo(){
+
+    const file=
+    document
+    .getElementById("mediaVideoFile")
+    .files[0];
+
+    const title=
+    document
+    .getElementById("mediaVideoTitle")
+    .value
+    .trim();
+
+    if(!file){
+
+        showToast(
+            "🎥 पहले Gallery से video select करें!",
+            "error"
+        );
+
+        return;
     }
-});
+
+    const video=
+    await fileToBase64(file);
+
+    mediaRef
+    .child("videos")
+    .push({
+
+        title:title||"Video",
+
+        video:video,
+
+        createdAt:
+        new Date().toISOString()
+
+    },err=>{
+
+        if(!err){
+
+            showToast(
+                "🎥 Video added!",
+                "success"
+            );
+
+            document
+            .getElementById("mediaVideoFile")
+            .value="";
+
+            document
+            .getElementById("mediaVideoTitle")
+            .value="";
+
+            document
+            .getElementById("videoPreview")
+            .style.display="none";
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   MEDIA TEXT CONTROLS
+===================================================== */
+
+function saveMediaText(type){
+
+    let value="";
+
+    if(type==="instagram"){
+
+        value=
+        document
+        .getElementById("instagramValue")
+        .value
+        .trim();
+
+    }
+
+    if(type==="whatsapp"){
+
+        value=
+        document
+        .getElementById("whatsappValue")
+        .value
+        .trim();
+
+    }
+
+    if(type==="sms"){
+
+        value=
+        document
+        .getElementById("smsValue")
+        .value
+        .trim();
+
+    }
+
+    if(!value){
+
+        showToast(
+            "⚠️ Value खाली है!",
+            "error"
+        );
+
+        return;
+    }
+
+    mediaRef
+    .child("links")
+    .child(type)
+    .set({
+
+        value:value,
+
+        updatedAt:
+        new Date().toISOString()
+
+    },err=>{
+
+        if(!err){
+
+            showToast(
+                "✅ "+type.toUpperCase()+" saved!",
+                "success"
+            );
+
+        }else{
+
+            showToast(
+                "Error: "+err.message,
+                "error"
+            );
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   LOAD MEDIA
+===================================================== */
+
+function loadMedia(){
+
+    mediaRef.once("value",snapshot=>{
+
+        const data=snapshot.val()||{};
+
+        const list=
+        document.getElementById("mediaList");
+
+        let html="";
+
+        if(data.links){
+
+            Object.keys(data.links)
+            .forEach(key=>{
+
+                const value=
+                data.links[key].value||"";
+
+                html+=`
+
+                <div class="media-list-item">
+
+                    <strong>
+                        ${key.toUpperCase()}
+                    </strong>
+
+                    <div style="color:#888;font-size:.7rem;margin-top:4px;">
+                        ${escapeHtml(value)}
+                    </div>
+
+                </div>`;
+
+                if(key==="instagram"){
+                    document
+                    .getElementById("instagramValue")
+                    .value=value;
+                }
+
+                if(key==="whatsapp"){
+                    document
+                    .getElementById("whatsappValue")
+                    .value=value;
+                }
+
+                if(key==="sms"){
+                    document
+                    .getElementById("smsValue")
+                    .value=value;
+                }
+
+            });
+
+        }
+
+        if(data.photos){
+
+            Object.keys(data.photos)
+            .forEach(key=>{
+
+                const p=data.photos[key];
+
+                html+=`
+
+                <div class="media-list-item">
+
+                    <img src="${p.image||""}">
+
+                    <strong>
+                        ${escapeHtml(p.title||"Photo")}
+                    </strong>
+
+                    <button
+                    onclick="deleteMedia('photos','${key}')"
+                    style="width:auto;float:right;background:#ff3333;color:#fff;margin:0;padding:5px 8px;">
+                    DELETE
+                    </button>
+
+                </div>`;
+
+            });
+
+        }
+
+        if(data.videos){
+
+            Object.keys(data.videos)
+            .forEach(key=>{
+
+                const v=data.videos[key];
+
+                html+=`
+
+                <div class="media-list-item">
+
+                    <video
+                    src="${v.video||""}"
+                    controls>
+                    </video>
+
+                    <strong>
+                        ${escapeHtml(v.title||"Video")}
+                    </strong>
+
+                    <button
+                    onclick="deleteMedia('videos','${key}')"
+                    style="width:auto;float:right;background:#ff3333;color:#fff;margin:0;padding:5px 8px;">
+                    DELETE
+                    </button>
+
+                </div>`;
+
+            });
+
+        }
+
+        if(!html){
+
+            html=
+            "<p style='color:#666;text-align:center;'>No media saved.</p>";
+
+        }
+
+        list.innerHTML=html;
+
+    });
+
+}
+
+
+function deleteMedia(type,key){
+
+    if(
+        confirm(
+            "Delete this media?"
+        )
+    ){
+
+        mediaRef
+        .child(type)
+        .child(key)
+        .remove();
+
+        showToast(
+            "🗑️ Media deleted!",
+            "info"
+        );
+
+        loadMedia();
+
+    }
+
+}
+
 
 /* =====================================================
    ORDERS
@@ -2912,6 +3232,56 @@ function filterOrders(){
 
 }
 
+
+
+/* =====================================================
+   VORNEX HERO CONTROLS
+===================================================== */
+async function vornexFileToBase64(file){
+    return new Promise((resolve,reject)=>{
+        if(!file){resolve("");return;}
+        const r=new FileReader();
+        r.onload=()=>resolve(r.result);
+        r.onerror=reject;
+        r.readAsDataURL(file);
+    });
+}
+async function saveHeroSettings(){
+    try{
+        const ref=db.ref("media/hero");
+        const old=(await ref.once("value")).val()||{};
+        const image=await vornexFileToBase64(document.getElementById("heroImageFile")?.files?.[0]);
+        const data={
+            ...old,
+            badge:document.getElementById("heroBadge").value.trim(),
+            heading:document.getElementById("heroHeading").value.trim(),
+            subtitle:document.getElementById("heroSubtitle").value.trim(),
+            buttonText:document.getElementById("heroButtonText").value.trim(),
+            buttonLink:document.getElementById("heroButtonLink").value.trim()
+        };
+        if(image) data.image=image;
+        await ref.set(data);
+        showToast("🖼️ HERO updated successfully!","success");
+    }catch(e){showToast("Hero save error: "+e.message,"error");}
+}
+function loadHeroSettings(){
+    db.ref("media/hero").once("value",snap=>{
+        const d=snap.val()||{};
+        const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||"";};
+        set("heroBadge",d.badge||d.tag);
+        set("heroHeading",d.heading||d.title);
+        set("heroSubtitle",d.subtitle);
+        set("heroButtonText",d.buttonText||d.cta);
+        set("heroButtonLink",d.buttonLink||d.link||"#storeGrid");
+        const p=document.getElementById("heroPreview");
+        if(p&&d.image){p.src=d.image;p.style.display="block";}
+    });
+}
+const _origSwitchSection=window.switchSection;
+window.switchSection=function(sectionId,btn){
+    if(typeof _origSwitchSection==="function") _origSwitchSection(sectionId,btn);
+    if(sectionId==="heroSection") setTimeout(loadHeroSettings,50);
+};
 
 /* =====================================================
    INITIAL
