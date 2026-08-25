@@ -669,12 +669,14 @@ button:active{
         grid-template-columns:1fr;
     }
 }
-</style>
 
-<style id="vornex-requested-admin-fixes">
-.vornex-hero-note{font-size:.7rem;color:#888;}
-#heroSection .form-group{margin-bottom:10px;}
-#heroSection input{width:100%;}
+/* VORNEX HERO ADMIN */
+#heroSection .media-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#heroSection .media-control{background:#0a0a0a;border:1px solid #222;border-radius:10px;padding:15px}
+#heroSection .media-control h3{font-size:.78rem;margin-bottom:8px}
+#heroSection .media-preview{max-height:230px}
+@media(max-width:700px){#heroSection .media-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 
@@ -829,27 +831,9 @@ placeholder="e.g. VORNEX HEAVYWEIGHT TEE" required>
 <option>Oversized Tees</option>
 <option>T-shirts</option>
 <option>Shirts</option>
-<option>Polos</option>
 <option>Hoodies</option>
 <option>Sweatshirts</option>
-<option>Sweaters</option>
-<option>Jackets</option>
-<option>Coats</option>
-<option>Blazers</option>
 <option>Jeans</option>
-<option>Trousers</option>
-<option>Cargos</option>
-<option>Track Pants</option>
-<option>Shorts</option>
-<option>Joggers</option>
-<option>Kurta</option>
-<option>Shirts &amp; Casual Shirts</option>
-<option>Vests</option>
-<option>Innerwear</option>
-<option>Thermals</option>
-<option>Activewear</option>
-<option>Ethnic Wear</option>
-<option>Accessories</option>
 </select>
 
 </div>
@@ -857,11 +841,6 @@ placeholder="e.g. VORNEX HEAVYWEIGHT TEE" required>
 <div class="form-group">
 <label>Price (₹)</label>
 <input type="number" id="pPrice" placeholder="799" required min="1">
-</div>
-
-<div class="form-group">
-<label>MRP (₹)</label>
-<input type="number" id="pMRP" placeholder="999" min="0">
 </div>
 
 <div class="form-group">
@@ -1102,22 +1081,97 @@ Loading active coupons...
 </div>
 
 <!-- =========================
-     MEDIA
+     HERO
 ========================= -->
 
 <div id="heroSection" class="admin-section">
+
 <div class="card">
-<h2>🖼️ HERO</h2>
-<p style="color:#888;font-size:.7rem;margin-bottom:12px;">Hero banner settings. Main website ke hero banner ka layout/image position yahan se change nahi hota.</p>
-<div class="form-group"><label>Hero Background Image</label><input type="file" id="heroImageFile" accept="image/*"></div>
-<div class="form-group"><label>Hero Tag / Badge</label><input id="heroBadge" type="text" placeholder="NEW DROP 2026"></div>
-<div class="form-group"><label>Hero Heading</label><input id="heroHeading" type="text" placeholder="OVERSIZED COLLECTION"></div>
-<div class="form-group"><label>Hero Subtitle</label><input id="heroSubtitle" type="text" placeholder="Premium Streetwear"></div>
-<div class="form-group"><label>Hero Button Text</label><input id="heroButtonText" type="text" placeholder="EXPLORE NOW"></div>
-<div class="form-group"><label>Hero Button Link</label><input id="heroButtonLink" type="text" placeholder="#storeGrid"></div>
-<img id="heroPreview" style="display:none;width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:8px 0;">
-<button type="button" onclick="saveHeroSettings()" style="background:#10b981;color:#fff;">SAVE HERO</button>
+
+<h2>🖼️ HERO BANNER CONTROL</h2>
+
+<p style="font-size:.72rem;color:#777;margin-bottom:15px;">
+यहाँ से Main Website के Hero Banner की image और सभी text Firebase में sync होंगे।
+</p>
+
+<div class="media-grid">
+
+<div class="media-control">
+
+<h3>🖼️ Hero Background</h3>
+
+<input
+type="file"
+id="heroImageFile"
+accept="image/*"
+onchange="previewMediaImage(this,'heroImagePreview')">
+
+<img
+id="heroImagePreview"
+class="media-preview">
+
 </div>
+
+<div class="media-control">
+
+<h3>🏷️ Badge / Tag</h3>
+
+<input
+type="text"
+id="heroBadge"
+placeholder="NEW DROP 2026">
+
+<h3 style="margin-top:12px;">Main Heading</h3>
+
+<input
+type="text"
+id="heroTitle"
+placeholder="OVERSIZED COLLECTION">
+
+<h3 style="margin-top:12px;">Subtitle</h3>
+
+<input
+type="text"
+id="heroSubtitle"
+placeholder="Premium Streetwear">
+
+<h3 style="margin-top:12px;">Button Text</h3>
+
+<input
+type="text"
+id="heroButtonText"
+placeholder="EXPLORE NOW">
+
+<h3 style="margin-top:12px;">Button Link</h3>
+
+<input
+type="text"
+id="heroButtonLink"
+placeholder="#storeGrid">
+
+</div>
+
+</div>
+
+<button
+onclick="saveHeroBanner()"
+style="background:#fff;color:#000;">
+SAVE HERO
+</button>
+
+<button
+onclick="resetHeroBanner()"
+style="background:#222;color:#fff;border:1px solid #444;">
+RESET HERO
+</button>
+
+<div id="heroSyncStatus"
+style="font-size:.72rem;color:#777;margin-top:10px;text-align:center;">
+Firebase: checking…
+</div>
+
+</div>
+
 </div>
 
 <!-- =========================
@@ -1196,27 +1250,9 @@ onclick="closeEditModal()">
 <option>Oversized Tees</option>
 <option>T-shirts</option>
 <option>Shirts</option>
-<option>Polos</option>
 <option>Hoodies</option>
 <option>Sweatshirts</option>
-<option>Sweaters</option>
-<option>Jackets</option>
-<option>Coats</option>
-<option>Blazers</option>
 <option>Jeans</option>
-<option>Trousers</option>
-<option>Cargos</option>
-<option>Track Pants</option>
-<option>Shorts</option>
-<option>Joggers</option>
-<option>Kurta</option>
-<option>Shirts &amp; Casual Shirts</option>
-<option>Vests</option>
-<option>Innerwear</option>
-<option>Thermals</option>
-<option>Activewear</option>
-<option>Ethnic Wear</option>
-<option>Accessories</option>
 </select>
 
 </div>
@@ -1224,8 +1260,6 @@ onclick="closeEditModal()">
 <div class="form-group">
 <label>Price</label>
 <input type="number" id="editPrice" required min="1">
-<label>MRP (₹)</label>
-<input type="number" id="editMRP" min="0">
 </div>
 
 <div class="form-group">
@@ -1455,6 +1489,9 @@ function switchSection(sectionId,btn){
         loadOrders();
     }
 
+    if(sectionId==="mediaSection"){
+        loadHeroBanner();
+    }
 
 }
 
@@ -1466,13 +1503,11 @@ function switchSection(sectionId,btn){
 let viewsChartInstance=null;
 
 analyticsRef.on("value",snapshot=>{
-    renderTrafficAnalytics(snapshot.val()||{});
-},error=>{
-    const list=document.getElementById("dailyViewsList");
-    if(list) list.innerHTML='<p style="color:#ef4444;text-align:center;">Traffic data could not be loaded.</p>';
-    const stat=document.getElementById("statTodayViews");
-    if(stat) stat.innerText="0";
-    console.error("Traffic Firebase error",error);
+
+    renderTrafficAnalytics(
+        snapshot.val()||{}
+    );
+
 });
 
 function renderTrafficAnalytics(data){
@@ -1525,12 +1560,11 @@ function renderTrafficAnalytics(data){
 
     sortedDates.forEach(date=>{
         labels.push(date);
-        chartValues.push(Number(data[date]||0));
+        chartValues.push(data[date]);
     });
 
-    const canvas=document.getElementById("viewsChart");
-    if(!canvas || typeof Chart!=="function") return;
-    const ctx=canvas.getContext("2d");
+    const ctx=
+    document.getElementById("viewsChart").getContext("2d");
 
     if(viewsChartInstance){
         viewsChartInstance.destroy();
@@ -1682,11 +1716,6 @@ document
             parseInt(
                 document.getElementById("pPrice").value
             ),
-
-            mrp:
-            parseInt(
-                document.getElementById("pMRP").value
-            ) || 0,
 
             sizeStocks:sizeStocks,
 
@@ -1979,9 +2008,6 @@ function openEditModal(key){
     document.getElementById("editPrice").value=
     p.price||0;
 
-    if(document.getElementById("editMRP")) document.getElementById("editMRP").value=
-    p.mrp||0;
-
     document.getElementById("editTag").value=
     p.tag||"";
 
@@ -2058,11 +2084,6 @@ document
         parseInt(
             document.getElementById("editPrice").value
         ),
-
-        mrp:
-        parseInt(
-            document.getElementById("editMRP").value
-        ) || 0,
 
         sizeStocks:{
 
@@ -2549,6 +2570,130 @@ function deleteCoupon(code){
 }
 
 
+
+/* =====================================================
+   VORNEX HERO - FIREBASE SYNC
+   Uses the SAME media/hero structure expected by the
+   current main website: media/hero/0
+===================================================== */
+
+function previewHeroImage(input){
+    previewMediaImage(input,"heroImagePreview");
+}
+
+function loadHeroBanner(){
+    const ref = db.ref("media/hero/0");
+
+    ref.once("value").then(snapshot=>{
+        const data = snapshot.val() || {};
+
+        const badge = data.badge ?? data.tag ?? "NEW DROP 2026";
+        const title = data.title ?? data.heading ?? "OVERSIZED COLLECTION";
+        const subtitle = data.subtitle ?? "Premium Streetwear • 240 GSM French Terry Cotton";
+        const buttonText = data.buttonText ?? data.cta ?? "EXPLORE NOW";
+        const buttonLink = data.buttonLink ?? data.link ?? "#storeGrid";
+
+        const el = id => document.getElementById(id);
+
+        if(el("heroBadge")) el("heroBadge").value = badge;
+        if(el("heroTitle")) el("heroTitle").value = title;
+        if(el("heroSubtitle")) el("heroSubtitle").value = subtitle;
+        if(el("heroButtonText")) el("heroButtonText").value = buttonText;
+        if(el("heroButtonLink")) el("heroButtonLink").value = buttonLink;
+
+        if(el("heroImagePreview") && (data.url || data.image)){
+            el("heroImagePreview").src = data.url || data.image;
+            el("heroImagePreview").style.display = "block";
+        }
+
+        if(el("heroSyncStatus")){
+            el("heroSyncStatus").textContent = "Firebase: Hero loaded ✓";
+            el("heroSyncStatus").style.color = "#40c057";
+        }
+    }).catch(err=>{
+        if(document.getElementById("heroSyncStatus")){
+            document.getElementById("heroSyncStatus").textContent = "Firebase: " + err.message;
+            document.getElementById("heroSyncStatus").style.color = "#ff6b6b";
+        }
+    });
+}
+
+async function saveHeroBanner(){
+    try{
+        const fileInput = document.getElementById("heroImageFile");
+        const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+
+        const ref = db.ref("media/hero/0");
+        const oldSnap = await ref.once("value");
+        const old = oldSnap.val() || {};
+
+        let imageUrl = old.url || old.image || "";
+
+        if(file){
+            imageUrl = await fileToBase64(file);
+        }
+
+        if(!imageUrl){
+            showToast("⚠️ पहले Hero image select करें या existing image रहने दें!","error");
+            return;
+        }
+
+        const data = {
+            type: "image",
+            url: imageUrl,
+            image: imageUrl,
+            badge: document.getElementById("heroBadge")?.value.trim() || "",
+            tag: document.getElementById("heroBadge")?.value.trim() || "",
+            title: document.getElementById("heroTitle")?.value.trim() || "",
+            heading: document.getElementById("heroTitle")?.value.trim() || "",
+            subtitle: document.getElementById("heroSubtitle")?.value.trim() || "",
+            buttonText: document.getElementById("heroButtonText")?.value.trim() || "",
+            buttonLink: document.getElementById("heroButtonLink")?.value.trim() || "#storeGrid",
+            updatedAt: new Date().toISOString()
+        };
+
+        await ref.set(data);
+
+        document.getElementById("heroImageFile").value = "";
+
+        if(document.getElementById("heroSyncStatus")){
+            document.getElementById("heroSyncStatus").textContent = "Firebase: Hero saved & synced ✓";
+            document.getElementById("heroSyncStatus").style.color = "#40c057";
+        }
+
+        showToast("🖼️ HERO saved successfully!","success");
+    }catch(err){
+        console.error("Hero save error:",err);
+        showToast("Hero save failed: " + err.message,"error");
+    }
+}
+
+async function resetHeroBanner(){
+    if(!confirm("Reset Hero Banner to default?")) return;
+
+    try{
+        await db.ref("media/hero/0").set({
+            type:"image",
+            url:"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1000",
+            image:"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1000",
+            badge:"NEW DROP 2026",
+            tag:"NEW DROP 2026",
+            title:"OVERSIZED COLLECTION",
+            heading:"OVERSIZED COLLECTION",
+            subtitle:"Premium Streetwear • 240 GSM French Terry Cotton",
+            buttonText:"EXPLORE NOW",
+            buttonLink:"#storeGrid",
+            updatedAt:new Date().toISOString()
+        });
+
+        showToast("Hero reset successfully!","success");
+        loadHeroBanner();
+    }catch(err){
+        showToast("Reset failed: " + err.message,"error");
+    }
+}
+
+
 /* =====================================================
    MEDIA - IMAGE GALLERY
 ===================================================== */
@@ -2950,7 +3095,7 @@ function deleteMedia(type,key){
             "info"
         );
 
-        loadMedia();
+        loadHeroBanner();
 
     }
 
@@ -3232,82 +3377,6 @@ function filterOrders(){
 
 }
 
-
-
-/* =====================================================
-   VORNEX HERO CONTROLS
-===================================================== */
-async function vornexFileToBase64(file){
-    return new Promise((resolve,reject)=>{
-        if(!file){resolve("");return;}
-        const r=new FileReader();
-        r.onload=()=>resolve(r.result);
-        r.onerror=reject;
-        r.readAsDataURL(file);
-    });
-}
-async function saveHeroSettings(){
-    try{
-        if(typeof db === "undefined") throw new Error("Firebase database not ready");
-        const ref=db.ref("media/hero");
-        const existing=(await ref.once("value")).val();
-        const old=(existing && !Array.isArray(existing) && typeof existing === "object") ? existing : {};
-        const image=await vornexFileToBase64(document.getElementById("heroImageFile")?.files?.[0]);
-        const value=id => (document.getElementById(id)?.value || "").trim();
-        const data={
-            ...old,
-            type:"image",
-            badge:value("heroBadge"),
-            heading:value("heroHeading"),
-            subtitle:value("heroSubtitle"),
-            buttonText:value("heroButtonText"),
-            buttonLink:value("heroButtonLink") || "#storeGrid",
-            updatedAt:new Date().toISOString()
-        };
-        if(image) data.image=image;
-        else if(!data.image && old.image) data.image=old.image;
-        await ref.set(data);
-        loadHeroSettings();
-        showToast("🖼️ HERO updated successfully!","success");
-    }catch(e){showToast("Hero save error: "+e.message,"error");}
-}
-function loadHeroSettings(){
-    if(typeof db === "undefined") return;
-    db.ref("media/hero").once("value",snap=>{
-        const d=snap.val();
-        if(!d || Array.isArray(d)) return;
-        const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=(v ?? "");};
-        set("heroBadge",d.badge ?? d.tag ?? "");
-        set("heroHeading",d.heading ?? d.title ?? "");
-        set("heroSubtitle",d.subtitle ?? "");
-        set("heroButtonText",d.buttonText ?? d.cta ?? "");
-        set("heroButtonLink",d.buttonLink ?? d.link ?? "#storeGrid");
-        const p=document.getElementById("heroPreview");
-        if(p && (d.image || d.url)){
-            p.src=d.image || d.url;
-            p.style.display="block";
-        }
-    });
-}
-const heroImageInput=document.getElementById("heroImageFile");
-if(heroImageInput){
-    heroImageInput.addEventListener("change",function(){
-        const file=this.files&&this.files[0];
-        const p=document.getElementById("heroPreview");
-        if(file&&p){p.src=URL.createObjectURL(file);p.style.display="block";}
-    });
-}
-if(typeof db!=="undefined"){
-    db.ref("media/hero").on("value",function(){
-        if(document.getElementById("heroSection")) loadHeroSettings();
-    });
-}
-
-const _origSwitchSection=window.switchSection;
-window.switchSection=function(sectionId,btn){
-    if(typeof _origSwitchSection==="function") _origSwitchSection(sectionId,btn);
-    if(sectionId==="heroSection") setTimeout(loadHeroSettings,50);
-};
 
 /* =====================================================
    INITIAL
