@@ -1206,25 +1206,6 @@ a{
     color:#333;
 }
 </style>
-
-<style id="vornex-requested-fixes">
-/* Product badge stays below image, never over image */
-.product-badge-inline{position:static!important;display:inline-flex!important;margin:0 0 7px!important;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:auto!important;}
-.vornex-mrp{text-decoration:line-through;opacity:.58;font-size:.72em;margin-left:5px;font-weight:700;}
-.vornex-off{font-size:.66em;margin-left:5px;font-weight:900;letter-spacing:.2px;}
-.more-categories-menu{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:8px 0 0;padding:8px;border:1px solid #222;border-radius:12px;background:#0b0b0b;}
-.more-categories-menu.open{display:grid;}
-.more-categories-menu button{border:1px solid #222;background:#151515;color:#fff;border-radius:9px;padding:9px 7px;font-size:8px;font-weight:800;}
-.login-options{gap:8px!important;}
-.login-btn{padding:10px 11px!important;border-radius:9px!important;font-size:9px!important;min-height:38px!important;}
-.login-btn i{margin-right:6px;}
-.theme-light-active .more-categories-menu{background:#fff;border-color:#ddd;}
-.theme-light-active .more-categories-menu button{background:#f4f4f4;color:#111;border-color:#ddd;}
-.theme-light-active .vornex-mrp{color:#555;}
-@media(max-width:600px){.more-categories-menu{grid-template-columns:repeat(2,1fr);}.login-btn{min-height:36px!important;padding:9px!important;font-size:8.5px!important;}}
-/* Only two themes */
-.theme-neon-active,.theme-gold-active,.theme-emerald-active,.theme-violet-active,.theme-amber-active{background:var(--bg,#050505)!important;}
-</style>
 </head>
 
 <body>
@@ -1299,6 +1280,10 @@ a{
 
             <div class="theme-grid">
                 <div class="theme-chip theme-dark" onclick="setTheme('dark')">DARK</div>
+                <div class="theme-chip theme-neon" onclick="setTheme('neon')">NEON</div>
+                <div class="theme-chip theme-gold" onclick="setTheme('gold')">GOLD</div>
+                <div class="theme-chip theme-emerald" onclick="setTheme('emerald')">EMERALD</div>
+                <div class="theme-chip theme-violet" onclick="setTheme('violet')">VIOLET</div>
                 <div class="theme-chip theme-light" onclick="setTheme('light')">LIGHT</div>
             </div>
         </div>
@@ -1383,22 +1368,6 @@ a{
                 SWEATSHIRTS
             </button>
 
-            <button class="cat-btn category-more-btn" id="categoryMoreBtn" onclick="toggleMoreCategories(event)">
-                MORE
-            </button>
-
-        </div>
-
-        <div id="moreCategoriesMenu" class="more-categories-menu" aria-hidden="true">
-            <button onclick="filterCategory('SHIRTS',this);closeMoreCategories()">SHIRTS</button>
-            <button onclick="filterCategory('JEANS',this);closeMoreCategories()">JEANS</button>
-            <button onclick="filterCategory('JACKETS',this);closeMoreCategories()">JACKETS</button>
-            <button onclick="filterCategory('CARGOS',this);closeMoreCategories()">CARGOS</button>
-            <button onclick="filterCategory('TROUSERS',this);closeMoreCategories()">TROUSERS</button>
-            <button onclick="filterCategory('SHORTS',this);closeMoreCategories()">SHORTS</button>
-            <button onclick="filterCategory('POLOS',this);closeMoreCategories()">POLOS</button>
-            <button onclick="filterCategory('TRACK PANTS',this);closeMoreCategories()">TRACK PANTS</button>
-            <button onclick="filterCategory('INNERWEAR',this);closeMoreCategories()">INNERWEAR</button>
         </div>
 
         <div class="search-wrapper">
@@ -2447,8 +2416,7 @@ function renderProducts(products){
                 </div>
 
                 <div class="p-price">
-                    <span class="vornex-current-price">₹${Number(p.price||0).toLocaleString("en-IN")}</span>
-                    ${Number(p.mrp||0)>Number(p.price||0)?`<span class="vornex-mrp">₹${Number(p.mrp).toLocaleString("en-IN")}</span><span class="vornex-off">${Math.round(((Number(p.mrp)-Number(p.price))/Number(p.mrp))*100)}% OFF</span>`:""}
+                    ₹${Number(p.price||0).toLocaleString("en-IN")}
                 </div>
 
                 <button
@@ -2575,11 +2543,8 @@ function openProductDetail(id){
     document.getElementById("detailTitle").textContent=
         p.name||"VORNEX PRODUCT";
 
-    const detailPrice=document.getElementById("detailPrice");
-    if(detailPrice){
-        const price=Number(p.price||0), mrp=Number(p.mrp||0);
-        detailPrice.innerHTML='₹'+price.toLocaleString("en-IN")+(mrp>price?' <span class="vornex-mrp">₹'+mrp.toLocaleString("en-IN")+'</span> <span class="vornex-off">'+Math.round(((mrp-price)/mrp)*100)+'% OFF</span>':'');
-    }
+    document.getElementById("detailPrice").textContent=
+        "₹"+Number(p.price||0).toLocaleString("en-IN");
 
     document.getElementById("detailCategory").textContent=
         p.category||"-";
@@ -4451,11 +4416,28 @@ function toggleAccordion(id){
 ========================================================= */
 
 function setTheme(theme){
-    const themes=["dark","light"];
-    if(!themes.includes(theme)) theme="dark";
-    document.body.classList.remove("theme-dark-active","theme-light-active","theme-neon-active","theme-gold-active","theme-emerald-active","theme-violet-active","theme-amber-active","theme-neon","theme-gold","theme-emerald","theme-violet","theme-amber");
+
+    const themes=["dark","neon","gold","emerald","violet","light"];
+
+    if(!themes.includes(theme)){
+        theme="dark";
+    }
+
+    document.body.classList.remove(
+        "theme-dark-active",
+        "theme-neon-active",
+        "theme-gold-active",
+        "theme-emerald-active",
+        "theme-violet-active",
+        "theme-light-active"
+    );
+
     document.body.classList.add("theme-"+theme+"-active");
+
     localStorage.setItem("vornex_theme",theme);
+
+    showToast("Theme: "+theme.toUpperCase(),"info");
+
 }
 
 function loadSavedTheme(){
@@ -5599,142 +5581,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 /* =========================================================
-   8. HERO MEDIA — FIREBASE COMPATIBILITY
-   ========================================================= */
-
-(function () {
-
-    const originalHero =
-        window.renderHeroMedia;
-
-    window.renderHeroMedia =
-        function (data) {
-
-            if (
-                typeof originalHero ===
-                "function"
-            ) {
-
-                originalHero(data);
-
-                return;
-
-            }
-
-            const layer =
-                document.getElementById(
-                    "heroMediaLayer"
-                );
-
-            if (!layer || !data)
-                return;
-
-            const type =
-                String(
-                    data.type ||
-                    "image"
-                ).toLowerCase();
-
-            if (
-                type === "video"
-            ) {
-
-                const url =
-                    data.url ||
-                    data.videoUrl ||
-                    data.src ||
-                    "";
-
-                if (!url)
-                    return;
-
-                layer.innerHTML = `
-                    <video
-                        autoplay
-                        muted
-                        loop
-                        playsinline
-                        preload="metadata">
-                        <source
-                            src="${escapeHtml(url)}">
-                    </video>
-                `;
-
-                return;
-
-            }
-
-            let images = [];
-
-            if (
-                type === "slideshow" ||
-                type === "slider"
-            ) {
-
-                images =
-                    normalizeMediaImages(
-                        data.images ||
-                        data.media ||
-                        data.slides
-                    );
-
-            }
-
-            if (!images.length) {
-
-                const single =
-                    data.url ||
-                    data.image ||
-                    data.imageUrl ||
-                    "";
-
-                if (single)
-                    images = [single];
-
-            }
-
-            if (!images.length)
-                return;
-
-            heroImages = images;
-            heroIndex = 0;
-
-            layer.innerHTML = `
-                <img
-                    src="${escapeHtml(images[0])}"
-                    alt="VORNEX HERO">
-            `;
-
-            clearInterval(heroTimer);
-
-            if (images.length > 1) {
-
-                heroTimer =
-                    setInterval(() => {
-
-                        heroIndex =
-                            (
-                                heroIndex + 1
-                            ) % images.length;
-
-                        layer.innerHTML = `
-                            <img
-                                src="${escapeHtml(
-                                    images[heroIndex]
-                                )}"
-                                alt="VORNEX HERO">
-                        `;
-
-                    },4000);
-
-            }
-
-        };
-
-})();
-
-
-/* =========================================================
    9. THEME — FORCE WORKING
    ========================================================= */
 
@@ -5745,7 +5591,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.setTheme = function (theme) {
 
-        const validThemes = ["dark","light"];
+        const validThemes = [
+            "dark",
+            "neon",
+            "gold",
+            "emerald",
+            "violet",
+            "amber"
+        ];
 
         if (
             !validThemes.includes(theme)
@@ -5763,7 +5616,13 @@ document.addEventListener("DOMContentLoaded", function () {
             "theme-amber"
         );
 
-        document.body.classList.add("theme-" + theme + "-active");
+        if (theme !== "dark") {
+
+            document.body.classList.add(
+                "theme-" + theme
+            );
+
+        }
 
         localStorage.setItem(
             "vornex_theme",
@@ -6998,21 +6857,5 @@ setTimeout(
 
 </script>
 
-
-<script>
-function toggleMoreCategories(e){
-    if(e) e.preventDefault();
-    const m=document.getElementById("moreCategoriesMenu");
-    if(m){m.classList.toggle("open");m.setAttribute("aria-hidden",m.classList.contains("open")?"false":"true");}
-}
-function closeMoreCategories(){
-    const m=document.getElementById("moreCategoriesMenu");
-    if(m){m.classList.remove("open");m.setAttribute("aria-hidden","true");}
-}
-document.addEventListener("click",function(e){
-    const m=document.getElementById("moreCategoriesMenu"), b=document.getElementById("categoryMoreBtn");
-    if(m && b && !m.contains(e.target) && !b.contains(e.target)) closeMoreCategories();
-});
-</script>
 </body>
 </html>
