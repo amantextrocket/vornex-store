@@ -3248,35 +3248,61 @@ async function vornexFileToBase64(file){
 }
 async function saveHeroSettings(){
     try{
+        if(typeof db === "undefined") throw new Error("Firebase database not ready");
         const ref=db.ref("media/hero");
-        const old=(await ref.once("value")).val()||{};
+        const existing=(await ref.once("value")).val();
+        const old=(existing && !Array.isArray(existing) && typeof existing === "object") ? existing : {};
         const image=await vornexFileToBase64(document.getElementById("heroImageFile")?.files?.[0]);
+        const value=id => (document.getElementById(id)?.value || "").trim();
         const data={
             ...old,
-            badge:document.getElementById("heroBadge").value.trim(),
-            heading:document.getElementById("heroHeading").value.trim(),
-            subtitle:document.getElementById("heroSubtitle").value.trim(),
-            buttonText:document.getElementById("heroButtonText").value.trim(),
-            buttonLink:document.getElementById("heroButtonLink").value.trim()
+            type:"image",
+            badge:value("heroBadge"),
+            heading:value("heroHeading"),
+            subtitle:value("heroSubtitle"),
+            buttonText:value("heroButtonText"),
+            buttonLink:value("heroButtonLink") || "#storeGrid",
+            updatedAt:new Date().toISOString()
         };
         if(image) data.image=image;
+        else if(!data.image && old.image) data.image=old.image;
         await ref.set(data);
+        loadHeroSettings();
         showToast("🖼️ HERO updated successfully!","success");
     }catch(e){showToast("Hero save error: "+e.message,"error");}
 }
 function loadHeroSettings(){
+    if(typeof db === "undefined") return;
     db.ref("media/hero").once("value",snap=>{
-        const d=snap.val()||{};
-        const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||"";};
-        set("heroBadge",d.badge||d.tag);
-        set("heroHeading",d.heading||d.title);
-        set("heroSubtitle",d.subtitle);
-        set("heroButtonText",d.buttonText||d.cta);
-        set("heroButtonLink",d.buttonLink||d.link||"#storeGrid");
+        const d=snap.val();
+        if(!d || Array.isArray(d)) return;
+        const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=(v ?? "");};
+        set("heroBadge",d.badge ?? d.tag ?? "");
+        set("heroHeading",d.heading ?? d.title ?? "");
+        set("heroSubtitle",d.subtitle ?? "");
+        set("heroButtonText",d.buttonText ?? d.cta ?? "");
+        set("heroButtonLink",d.buttonLink ?? d.link ?? "#storeGrid");
         const p=document.getElementById("heroPreview");
-        if(p&&d.image){p.src=d.image;p.style.display="block";}
+        if(p && (d.image || d.url)){
+            p.src=d.image || d.url;
+            p.style.display="block";
+        }
     });
 }
+const heroImageInput=document.getElementById("heroImageFile");
+if(heroImageInput){
+    heroImageInput.addEventListener("change",function(){
+        const file=this.files&&this.files[0];
+        const p=document.getElementById("heroPreview");
+        if(file&&p){p.src=URL.createObjectURL(file);p.style.display="block";}
+    });
+}
+if(typeof db!=="undefined"){
+    db.ref("media/hero").on("value",function(){
+        if(document.getElementById("heroSection")) loadHeroSettings();
+    });
+}
+
 const _origSwitchSection=window.switchSection;
 window.switchSection=function(sectionId,btn){
     if(typeof _origSwitchSection==="function") _origSwitchSection(sectionId,btn);
