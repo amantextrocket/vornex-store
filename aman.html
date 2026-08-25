@@ -820,19 +820,54 @@ placeholder="e.g. VORNEX HEAVYWEIGHT TEE" required>
 <label>Category</label>
 
 <select id="pCategory">
-<option>Oversized Tees</option>
-<option>T-shirts</option>
-<option>Shirts</option>
-<option>Hoodies</option>
-<option>Sweatshirts</option>
-<option>Jeans</option>
+<option value="Oversized Tees">Oversized Tees</option>
+<option value="T-shirts">T-shirts</option>
+<option value="Shirts">Shirts</option>
+<option value="Hoodies">Hoodies</option>
+<option value="Sweatshirts">Sweatshirts</option>
+<option value="Jeans">Jeans</option>
+<option value="Men's Clothing">Men's Clothing</option>
+<option value="T-Shirts">T-Shirts</option>
+<option value="Oversized T-Shirts">Oversized T-Shirts</option>
+<option value="Shirts">Shirts</option>
+<option value="Oversized Shirts">Oversized Shirts</option>
+<option value="Polo Shirts">Polo Shirts</option>
+<option value="Hoodies">Hoodies</option>
+<option value="Sweatshirts">Sweatshirts</option>
+<option value="Jackets">Jackets</option>
+<option value="Denim Jackets">Denim Jackets</option>
+<option value="Bomber Jackets">Bomber Jackets</option>
+<option value="Windcheaters">Windcheaters</option>
+<option value="Jeans">Jeans</option>
+<option value="Cargo Pants">Cargo Pants</option>
+<option value="Trousers">Trousers</option>
+<option value="Track Pants">Track Pants</option>
+<option value="Joggers">Joggers</option>
+<option value="Shorts">Shorts</option>
+<option value="Chinos">Chinos</option>
+<option value="Cargos">Cargos</option>
+<option value="Kurtas">Kurtas</option>
+<option value="Co-ord Sets">Co-ord Sets</option>
+<option value="Blazers">Blazers</option>
+<option value="Suits">Suits</option>
+<option value="Sweaters">Sweaters</option>
+<option value="Cardigans">Cardigans</option>
+<option value="Vests">Vests</option>
+<option value="Tank Tops">Tank Tops</option>
+<option value="Innerwear">Innerwear</option>
 </select>
 
 </div>
 
+<div class="price-mrp-row">
 <div class="form-group">
 <label>Price (₹)</label>
 <input type="number" id="pPrice" placeholder="799" required min="1">
+</div>
+<div class="form-group">
+<label>MRP (₹)</label>
+<input type="number" id="pMrp" placeholder="1299" min="0">
+</div>
 </div>
 
 <div class="form-group">
@@ -1207,19 +1242,54 @@ onclick="closeEditModal()">
 <label>Category</label>
 
 <select id="editCategory">
-<option>Oversized Tees</option>
-<option>T-shirts</option>
-<option>Shirts</option>
-<option>Hoodies</option>
-<option>Sweatshirts</option>
-<option>Jeans</option>
+<option value="Oversized Tees">Oversized Tees</option>
+<option value="T-shirts">T-shirts</option>
+<option value="Shirts">Shirts</option>
+<option value="Hoodies">Hoodies</option>
+<option value="Sweatshirts">Sweatshirts</option>
+<option value="Jeans">Jeans</option>
+<option value="Men's Clothing">Men's Clothing</option>
+<option value="T-Shirts">T-Shirts</option>
+<option value="Oversized T-Shirts">Oversized T-Shirts</option>
+<option value="Shirts">Shirts</option>
+<option value="Oversized Shirts">Oversized Shirts</option>
+<option value="Polo Shirts">Polo Shirts</option>
+<option value="Hoodies">Hoodies</option>
+<option value="Sweatshirts">Sweatshirts</option>
+<option value="Jackets">Jackets</option>
+<option value="Denim Jackets">Denim Jackets</option>
+<option value="Bomber Jackets">Bomber Jackets</option>
+<option value="Windcheaters">Windcheaters</option>
+<option value="Jeans">Jeans</option>
+<option value="Cargo Pants">Cargo Pants</option>
+<option value="Trousers">Trousers</option>
+<option value="Track Pants">Track Pants</option>
+<option value="Joggers">Joggers</option>
+<option value="Shorts">Shorts</option>
+<option value="Chinos">Chinos</option>
+<option value="Cargos">Cargos</option>
+<option value="Kurtas">Kurtas</option>
+<option value="Co-ord Sets">Co-ord Sets</option>
+<option value="Blazers">Blazers</option>
+<option value="Suits">Suits</option>
+<option value="Sweaters">Sweaters</option>
+<option value="Cardigans">Cardigans</option>
+<option value="Vests">Vests</option>
+<option value="Tank Tops">Tank Tops</option>
+<option value="Innerwear">Innerwear</option>
 </select>
 
 </div>
 
+<div class="price-mrp-row">
 <div class="form-group">
 <label>Price</label>
 <input type="number" id="editPrice" required min="1">
+</div>
+<div class="form-group">
+<label>MRP (₹)</label>
+<input type="number" id="editMrp" min="0">
+</div>
 </div>
 
 <div class="form-group">
@@ -1471,114 +1541,36 @@ analyticsRef.on("value",snapshot=>{
 
 });
 
+function getIndiaDateKey(){
+    return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+}
+
 function renderTrafficAnalytics(data){
-
-    const sortedDates=
-    Object.keys(data).sort();
-
-    const labels=[];
-    const chartValues=[];
-
-    const listEl=
-    document.getElementById("dailyViewsList");
-
-    if(sortedDates.length===0){
-
-        listEl.innerHTML=
-        "<p style='color:#666;text-align:center;'>No traffic data yet.</p>";
-
-        document.getElementById("statTodayViews").innerText="0";
-
-        return;
-    }
-
-    const now=new Date();
-
-    const todayStr=
-    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
-
-    document.getElementById("statTodayViews").innerText=
-    data[todayStr]||0;
-
-    let html="";
-
-    for(let i=sortedDates.length-1;i>=0;i--){
-
-        const date=sortedDates[i];
-        const count=data[date];
-
-        html+=`
-        <div class="views-log-item">
-            <span>📅 ${date}</span>
-            <strong style="color:#40c057;">
-                ${count} view${count>1?"s":""}
-            </strong>
-        </div>`;
-
-    }
-
-    listEl.innerHTML=html;
-
-    sortedDates.forEach(date=>{
-        labels.push(date);
-        chartValues.push(data[date]);
-    });
-
-    const ctx=
-    document.getElementById("viewsChart").getContext("2d");
-
-    if(viewsChartInstance){
-        viewsChartInstance.destroy();
-    }
-
-    viewsChartInstance=new Chart(ctx,{
-
-        type:"line",
-
-        data:{
-            labels:labels,
-
-            datasets:[{
-                label:"Daily Visitors",
-                data:chartValues,
-                borderColor:"#3b82f6",
-                backgroundColor:
-                "rgba(59,130,246,.15)",
-                borderWidth:3,
-                fill:true,
-                tension:.3
-            }]
-        },
-
-        options:{
-            responsive:true,
-            maintainAspectRatio:false,
-
-            scales:{
-                x:{
-                    ticks:{color:"#888"},
-                    grid:{color:"#1a1a1a"}
-                },
-
-                y:{
-                    ticks:{color:"#888"},
-                    grid:{color:"#1a1a1a"},
-                    beginAtZero:true
-                }
-            },
-
-            plugins:{
-                legend:{
-                    labels:{
-                        color:"#fff"
-                    }
-                }
-            }
-
+    data=data&&typeof data==="object"?data:{};
+    const sortedDates=Object.keys(data).sort();
+    const labels=sortedDates.slice(-30);
+    const chartValues=labels.map(date=>Number(data[date]||0));
+    const listEl=document.getElementById("dailyViewsList");
+    const todayEl=document.getElementById("statTodayViews");
+    if(!listEl||!todayEl)return;
+    const todayStr=getIndiaDateKey();
+    todayEl.innerText=Number(data[todayStr]||0);
+    if(!sortedDates.length){
+        listEl.innerHTML="<p style='color:#666;text-align:center;padding:15px;'>No traffic data yet.</p>";
+    }else{
+        let html="";
+        for(let i=sortedDates.length-1;i>=0;i--){
+            const date=sortedDates[i];
+            const count=Number(data[date]||0);
+            html+=`<div class="views-log-item"><span>📅 ${escapeHtml(date)}</span><strong style="color:#40c057;">${count} view${count===1?"":"s"}</strong></div>`;
         }
-
-    });
-
+        listEl.innerHTML=html;
+    }
+    const canvas=document.getElementById("viewsChart");
+    if(!canvas||typeof Chart!=="function")return;
+    const ctx=canvas.getContext("2d");
+    if(viewsChartInstance)viewsChartInstance.destroy();
+    viewsChartInstance=new Chart(ctx,{type:"line",data:{labels:labels,datasets:[{label:"Daily Visitors",data:chartValues,borderColor:"#3b82f6",backgroundColor:"rgba(59,130,246,.15)",borderWidth:3,fill:true,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:"#888"},grid:{color:"#1a1a1a"}},y:{ticks:{color:"#888"},grid:{color:"#1a1a1a"},beginAtZero:true}},plugins:{legend:{labels:{color:"#fff"}}}}});
 }
 
 
@@ -1677,6 +1669,11 @@ document
             parseInt(
                 document.getElementById("pPrice").value
             ),
+
+            mrp:
+            parseInt(
+                document.getElementById("pMrp").value
+            ) || 0,
 
             sizeStocks:sizeStocks,
 
@@ -1842,7 +1839,7 @@ function renderAdminProducts(data){
                     <br>
 
                     <small style="color:#aaa;">
-                        ₹${p.price} | ${escapeHtml(p.category)}
+                        ₹${p.price}${Number(p.mrp||0)>Number(p.price||0)?` | MRP ₹${p.mrp}`:""} | ${escapeHtml(p.category)}
                     </small>
 
                     <br>
@@ -1968,6 +1965,8 @@ function openEditModal(key){
 
     document.getElementById("editPrice").value=
     p.price||0;
+    document.getElementById("editMrp").value=
+    p.mrp||0;
 
     document.getElementById("editTag").value=
     p.tag||"";
@@ -2045,6 +2044,11 @@ document
         parseInt(
             document.getElementById("editPrice").value
         ),
+
+        mrp:
+        parseInt(
+            document.getElementById("editMrp").value
+        ) || 0,
 
         sizeStocks:{
 
