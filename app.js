@@ -2426,162 +2426,113 @@ function openOrderTracking() {
 }
 
 // ============================================================
-// HERO MEDIA
+// HERO MEDIA + HERO CONTENT (Firebase compatible)
 // ============================================================
-
 function loadHeroMedia() {
+    db.ref("media/hero").on("value", snapshot => {
+        const data = snapshot.val();
+        heroMedia = [];
 
-    db.ref("media/hero").on(
-        "value",
-        snapshot => {
-
-            const data =
-                snapshot.val();
-
-            heroMedia = [];
-
-            if (Array.isArray(data)) {
-
-                heroMedia = data;
-
-            } else if (data) {
-
+        if (Array.isArray(data)) {
+            // Legacy multi-image hero format
+            heroMedia = data;
+        } else if (data && typeof data === "object") {
+            // New Hero control format: one object containing image + text
+            if (data.image || data.url || data.src || data.type || data.badge || data.tag || data.heading || data.title || data.subtitle || data.buttonText || data.buttonLink) {
+                heroMedia = [data];
+            } else {
+                // Legacy keyed media format
                 Object.keys(data).forEach(key => {
-
                     const item = data[key];
-
                     if (typeof item === "string") {
-
-                        heroMedia.push({
-                            type: "image",
-                            url: item
-                        });
-
-                    } else {
-
+                        heroMedia.push({type:"image", url:item});
+                    } else if (item && typeof item === "object") {
                         heroMedia.push(item);
                     }
                 });
             }
-
-            renderHeroMedia();
+        } else if (typeof data === "string" && data) {
+            heroMedia = [{type:"image", url:data}];
         }
-    );
+
+        renderHeroMedia();
+    });
 }
 
 function renderHeroMedia() {
-
-    const layer =
-        document.getElementById(
-            "heroMediaLayer"
-        );
-
-    const dots =
-        document.getElementById(
-            "heroDots"
-        );
-
+    const layer = document.getElementById("heroMediaLayer");
+    const dots = document.getElementById("heroDots");
     if (!layer) return;
 
     if (!heroMedia.length) {
-
         layer.innerHTML = "";
-
-        if (dots)
-            dots.innerHTML = "";
-
+        if (dots) dots.innerHTML = "";
+        applyHeroContent({});
         return;
     }
 
     heroIndex = 0;
-
     renderHeroSlide();
-
     clearInterval(heroTimer);
 
     if (heroMedia.length > 1) {
+        heroTimer = setInterval(() => {
+            heroIndex++;
+            if (heroIndex >= heroMedia.length) heroIndex = 0;
+            renderHeroSlide();
+        }, 5000);
+    }
+}
 
-        heroTimer =
-            setInterval(() => {
+function applyHeroContent(item) {
+    const tag = document.querySelector(".hero-tag");
+    const title = document.querySelector(".hero-title");
+    const subtitle = document.querySelector(".hero-subtitle");
+    const button = document.querySelector(".hero-btn");
 
-                heroIndex++;
-
-                if (
-                    heroIndex >=
-                    heroMedia.length
-                ) {
-                    heroIndex = 0;
-                }
-
-                renderHeroSlide();
-
-            }, 5000);
+    if (tag && (item.badge !== undefined || item.tag !== undefined)) {
+        tag.textContent = item.badge ?? item.tag ?? "";
+    }
+    if (title && (item.heading !== undefined || item.title !== undefined)) {
+        const value = String(item.heading ?? item.title ?? "");
+        title.innerHTML = escapeHtml(value).replace(/\n|<br\s*\/?>/gi, "<br>");
+    }
+    if (subtitle && item.subtitle !== undefined) {
+        subtitle.textContent = item.subtitle || "";
+    }
+    if (button && (item.buttonText !== undefined || item.cta !== undefined)) {
+        button.textContent = item.buttonText ?? item.cta ?? "";
+    }
+    if (button && (item.buttonLink !== undefined || item.link !== undefined)) {
+        button.href = item.buttonLink ?? item.link ?? "#storeGrid";
     }
 }
 
 function renderHeroSlide() {
-
-    const layer =
-        document.getElementById(
-            "heroMediaLayer"
-        );
-
-    const dots =
-        document.getElementById(
-            "heroDots"
-        );
-
-    const item =
-        heroMedia[heroIndex];
-
+    const layer = document.getElementById("heroMediaLayer");
+    const dots = document.getElementById("heroDots");
+    const item = heroMedia[heroIndex];
     if (!item) return;
 
-    const url =
-        typeof item === "string"
-        ? item
-        : item.url ||
-          item.image ||
-          item.src ||
-          "";
+    const url = typeof item === "string" ? item : (item.url || item.image || item.src || "");
+    const type = typeof item === "string" ? "image" : String(item.type || item.mediaType || "image").toLowerCase();
 
-    const type =
-        typeof item === "string"
-        ? "image"
-        : String(
-            item.type ||
-            item.mediaType ||
-            "image"
-          ).toLowerCase();
-
-    if (type === "video" ||
-        /\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) {
-
-        layer.innerHTML = `
-            <video
-                src="${escapeHtml(url)}"
-                autoplay
-                muted
-                loop
-                playsinline
-            ></video>
-        `;
-
+    if (type === "video" || /\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) {
+        layer.innerHTML = `<video src="${escapeHtml(url)}" autoplay muted loop playsinline></video>`;
+    } else if (url) {
+        layer.innerHTML = `<img src="${escapeHtml(url)}" alt="VORNEX Hero">`;
     } else {
-
-        layer.innerHTML = `
-            <img
-                src="${escapeHtml(url)}"
-                alt="VORNEX Hero"
-            >
-        `;
+        layer.innerHTML = "";
     }
 
-    if (dots) {
+    // Only apply text controls when the Firebase item actually contains them.
+    // Legacy image-only hero keeps the existing HTML text unchanged.
+    if (typeof item === "object") applyHeroContent(item);
 
-        dots.innerHTML =
-            heroMedia.map((_,index) =>
-                `<span class="${index === heroIndex ? "active" : ""}"></span>`
-            ).join("");
+    if (dots) {
+        dots.innerHTML = heroMedia.length > 1
+            ? heroMedia.map((_, index) => `<span class="${index === heroIndex ? "active" : ""}"></span>`).join("")
+            : "";
     }
 }
 
