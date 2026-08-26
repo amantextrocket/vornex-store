@@ -2023,6 +2023,13 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 
         </div>
 
+        <div class="checkout-available-coupons" id="checkoutAvailableCoupons">
+            <div class="checkout-coupon-heading">AVAILABLE COUPONS</div>
+            <div class="checkout-coupon-list" id="checkoutCouponList">
+                Loading available coupons...
+            </div>
+        </div>
+
         <div class="input-group">
 
             <label>COUPON CODE</label>
@@ -2204,23 +2211,6 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
                 id="detailPrice">
             </div>
 
-            <div class="detail-actions">
-
-                <button
-                    class="detail-cart-btn"
-                    onclick="addCurrentProductToCart()">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                    ADD TO CART
-                </button>
-
-                <button
-                    class="detail-buy-btn"
-                    onclick="buyCurrentProduct()">
-                    BUY NOW
-                </button>
-
-            </div>
-
             <div
                 class="detail-description"
                 id="detailDescription">
@@ -2286,6 +2276,15 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
                     XXL
                 </button>
 
+            </div>
+
+            <div class="detail-actions detail-actions-after-size">
+                <button type="button" class="detail-cart-btn" onclick="addCurrentProductToCart()">
+                    <i class="fa-solid fa-bag-shopping"></i> ADD TO CART
+                </button>
+                <button type="button" class="detail-buy-btn" onclick="buyCurrentProduct()">
+                    BUY NOW
+                </button>
             </div>
 
 
@@ -3365,6 +3364,36 @@ function renderWishlist(){
    COUPONS
 ========================================================= */
 
+function renderCheckoutCoupons(){
+    const list=document.getElementById("checkoutCouponList");
+    if(!list) return;
+    const keys=Object.keys(allCoupons||{}).filter(k=>{
+        const c=allCoupons[k]||{};
+        return c.active!==false && c.enabled!==false;
+    });
+    if(!keys.length){
+        list.innerHTML='<div style="font-size:8px;color:#777;padding:8px 0;">No active coupons available.</div>';
+        return;
+    }
+    list.innerHTML=keys.map(code=>{
+        const c=allCoupons[code]||{};
+        const d=getCouponValue(c);
+        const label=d.type==="flat"?`₹${d.value} OFF`:`${d.value}% OFF`;
+        const safe=escapeHtml(c.code||code);
+        return `<div class="checkout-coupon-card" onclick="applyAvailableCoupon('${safe}')">
+            <div class="checkout-coupon-code">${safe}</div>
+            <div class="checkout-coupon-off">${label}</div>
+            <div class="checkout-coupon-apply">TAP TO APPLY →</div>
+        </div>`;
+    }).join("");
+}
+
+function applyAvailableCoupon(code){
+    const input=document.getElementById("checkoutCoupon");
+    if(input) input.value=code;
+    applyCoupon();
+}
+
 function listenCoupons(){
 
     couponsRef.on("value",snapshot=>{
@@ -3372,7 +3401,7 @@ function listenCoupons(){
         allCoupons=snapshot.val()||{};
 
         renderCoupons();
-
+        renderCheckoutCoupons();
         updateCartTotals();
 
     });
@@ -4918,7 +4947,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "beforeend",
             `
             <small class="vornex-edge-title">
-                OWN YOUR EDGE
+                OWN YOUR EDGE.
             </small>
             `
         );
@@ -6515,6 +6544,22 @@ body.theme-light-active .home-buy-now{background:#111!important;color:#fff!impor
 .home-cart-info strong{font-size:9px;opacity:.7;}
 .home-buy-now{width:auto!important;margin:0!important;padding:12px 18px!important;border-radius:11px!important;background:#fff;color:#000;border:0;font-weight:900;font-size:10px;}
 </style>
+
+<style id="vornex-v4-fixes">
+.detail-actions-after-size{position:static!important;bottom:auto!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-top:0!important;margin-top:16px!important;padding:0!important;}
+.checkout-available-coupons{margin:12px 0 14px;}
+.checkout-coupon-heading{font-size:9px;font-weight:900;letter-spacing:1px;margin-bottom:8px;}
+.checkout-coupon-list{display:flex;gap:8px;overflow-x:auto;padding:2px 1px 6px;scroll-snap-type:x proximity;}
+.checkout-coupon-card{min-width:145px;flex:0 0 145px;border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:10px;background:rgba(255,255,255,.045);cursor:pointer;scroll-snap-align:start;transition:transform .22s ease,background .22s ease,border-color .22s ease,box-shadow .22s ease;}
+.checkout-coupon-card:active{transform:scale(.96);}
+.checkout-coupon-card:hover{border-color:#ffd400;box-shadow:0 8px 22px rgba(255,212,0,.12);}
+.checkout-coupon-code{font-size:11px;font-weight:900;letter-spacing:.8px;}
+.checkout-coupon-off{font-size:8px;color:#aaa;margin-top:4px;}
+.checkout-coupon-apply{font-size:7px;font-weight:900;color:#ffd400;margin-top:7px;}
+body.theme-light-active .checkout-coupon-card{background:#fff;border-color:#d1d5db;color:#111;box-shadow:0 6px 18px rgba(0,0,0,.08);}
+body.theme-light-active .checkout-coupon-off{color:#6b7280;}
+</style>
+
 </body>
 </html>
 
