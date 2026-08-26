@@ -2837,6 +2837,9 @@ function openProductDetail(id){
         .forEach(b=>b.classList.remove("selected"));
 
     modal.classList.add("active");
+    document.body.classList.add("product-detail-open");
+    const homeSticky=document.getElementById("homeCheckoutBtn");
+    if(homeSticky) homeSticky.style.display="none";
 
 }
 
@@ -2847,6 +2850,8 @@ function closeProductDetail(){
 
     document.getElementById("productDetailModal")
         .classList.remove("active");
+    document.body.classList.remove("product-detail-open");
+    if(typeof updateHomeCheckoutButton==="function") updateHomeCheckoutButton();
 
     currentProduct=null;
 
@@ -6089,8 +6094,26 @@ document.addEventListener("DOMContentLoaded", function () {
             button.setAttribute("href", config.buttonLink || "#storeGrid");
         }
 
-        if (layer && config.backgroundImage) {
-            layer.innerHTML = `<img src="${typeof escapeHtml === "function" ? escapeHtml(config.backgroundImage) : config.backgroundImage}" alt="VORNEX Hero">`;
+        if (layer) {
+            layer.innerHTML = "";
+            if (config.backgroundVideo) {
+                const video=document.createElement("video");
+                video.src=config.backgroundVideo;
+                video.autoplay=true;
+                video.muted=true;
+                video.loop=true;
+                video.playsInline=true;
+                video.setAttribute("playsinline","");
+                video.setAttribute("webkit-playsinline","");
+                video.preload="auto";
+                layer.appendChild(video);
+                video.play().catch(()=>{});
+            } else if (config.backgroundImage) {
+                const img=document.createElement("img");
+                img.src=config.backgroundImage;
+                img.alt="VORNEX Hero";
+                layer.appendChild(img);
+            }
         }
     }
 
@@ -6126,7 +6149,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         countEl.textContent=count+" "+(count===1?"ITEM":"ITEMS");
-        btn.style.display="flex";
+        btn.style.display=document.body.classList.contains("product-detail-open")?"none":"flex";
     };
 
     const originalUpdateBadges=window.updateBadges;
@@ -6563,3 +6586,8 @@ body.theme-light-active .checkout-coupon-off{color:#6b7280;}
 </body>
 </html>
 
+
+<style id="vornex-hide-home-sticky-on-detail">
+body.product-detail-open #homeCheckoutBtn{display:none!important;}
+#homeCheckoutBtn{transition:opacity .2s ease,transform .2s ease;}
+</style>
