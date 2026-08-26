@@ -17,6 +17,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
 <style>
 *{
@@ -1178,7 +1179,7 @@ Loading active coupons...
 
 <div class="form-group">
 <label>Hero Photo / Video</label>
-<input type="file" id="heroBackgroundFile" accept="image/*,video/mp4,video/webm,video/quicktime" onchange="previewHeroBackground(this)">
+<input type="file" id="heroBackgroundFile" accept="image/*,video/mp4,video/webm,video/quicktime" onchange="openHeroCropper(this)">
 <p style="font-size:.65rem;color:#777;margin:6px 0 0;">Photo aur video dono supported. Video autoplay + muted + loop chalega.</p>
 <img id="heroBackgroundPreview" class="media-preview" alt="Hero Preview"><video id="heroVideoPreview" class="media-preview" controls muted playsinline></video>
 </div>
@@ -2597,17 +2598,93 @@ function deleteCoupon(code){
 
 let currentHeroSettings={};
 
-function previewHeroBackground(input){
+let heroCropState={file:null,objectUrl:"",type:"",zoom:1,x:50,y:50};
+
+function openHeroCropper(input){
     const file=input && input.files ? input.files[0] : null;
-    if(!file)return;
-    const img=document.getElementById("heroBackgroundPreview");
-    const video=document.getElementById("heroVideoPreview");
-    const url=URL.createObjectURL(file);
-    if(video) video.style.display="none";
-    if(img) img.style.display="none";
+    if(!file) return;
+    heroCropState={file,objectUrl:URL.createObjectURL(file),type:file.type||"",zoom:1,x:50,y:50};
+    const modal=document.getElementById("heroCropModal");
+    const image=document.getElementById("heroCropImage");
+    const video=document.getElementById("heroCropVideo");
+    if(!modal) return;
     if(file.type.startsWith("video/")){
-        if(video){ video.src=url; video.style.display="block"; video.load(); }
-    }else if(img){ img.src=url; img.style.display="block"; }
+        image.style.display="none";
+        video.style.display="block";
+        video.src=heroCropState.objectUrl;
+        video.load();
+    }else{
+        video.style.display="none";
+        image.style.display="block";
+        image.src=heroCropState.objectUrl;
+    }
+    updateHeroCropPreview();
+    modal.classList.add("active");
+}
+
+function updateHeroCropPreview(){
+    const image=document.getElementById("heroCropImage");
+    const video=document.getElementById("heroCropVideo");
+    [image,video].forEach(el=>{
+        if(!el) return;
+        el.style.objectFit="cover";
+        el.style.transform=`scale(${heroCropState.zoom})`;
+        el.style.objectPosition=`${heroCropState.x}% ${heroCropState.y}%`;
+    });
+    const z=document.getElementById("heroCropZoom");
+    if(z) z.value=heroCropState.zoom;
+}
+function setHeroCropZoom(v){heroCropState.zoom=Number(v)||1;updateHeroCropPreview();}
+function setHeroCropPosition(x,y){heroCropState.x=x;heroCropState.y=y;updateHeroCropPreview();}
+function closeHeroCropper(){
+    const modal=document.getElementById("heroCropModal");
+    if(modal) modal.classList.remove("active");
+}
+function resetHeroCrop(){heroCropState.zoom=1;heroCropState.x=50;heroCropState.y=50;updateHeroCropPreview();}
+
+function fileToBase64(file){
+    return new Promise((resolve,reject)=>{
+        if(!file){resolve("");return;}
+        const reader=new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload=()=>resolve(reader.result);
+        reader.onerror=reject;
+    });
+}
+
+function cropHeroImageToBlob(file){
+    return new Promise((resolve,reject)=>{
+        const img=new Image();
+        img.onload=()=>{
+            const canvas=document.createElement("canvas");
+            const targetW=1600,targetH=900;
+            canvas.width=targetW;canvas.height=targetH;
+            const ctx=canvas.getContext("2d");
+            const scale=Math.max(targetW/img.naturalWidth,targetH/img.naturalHeight)*heroCropState.zoom;
+            const w=img.naturalWidth*scale,h=img.naturalHeight*scale;
+            const x=(targetW-w)*(heroCropState.x/100);
+            const y=(targetH-h)*(heroCropState.y/100);
+            ctx.drawImage(img,x,y,w,h);
+            canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Crop failed")),"image/jpeg",0.88);
+        };
+        img.onerror=reject;
+        img.src=URL.createObjectURL(file);
+    });
+}
+
+async function uploadHeroMedia(file){
+    if(!file) return null;
+    if(typeof firebase.storage!="function") throw new Error("Firebase Storage is not available.");
+    let uploadFile=file;
+    let contentType=file.type;
+    if(file.type.startsWith("image/")){
+        uploadFile=await cropHeroImageToBlob(file);
+        contentType="image/jpeg";
+    }
+    const ext=contentType.startsWith("video/") ? (file.name.split(".").pop()||"mp4") : "jpg";
+    const ref=firebase.storage().ref().child(`hero/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`);
+    const snap=await ref.put(uploadFile,{contentType});
+    return await snap.ref.getDownloadURL();
 }
 
 function loadHeroSettings(){
@@ -2619,93 +2696,43 @@ function loadHeroSettings(){
 
 function populateHeroForm(data){
     data=data||{};
-
-    const tag=document.getElementById("heroTagInput");
-    const title=document.getElementById("heroTitleInput");
-    const subtitle=document.getElementById("heroSubtitleInput");
-    const buttonText=document.getElementById("heroButtonTextInput");
-    const buttonLink=document.getElementById("heroButtonLinkInput");
-    const preview=document.getElementById("heroBackgroundPreview");
-    const status=document.getElementById("heroCurrentStatus");
-
+    const tag=document.getElementById("heroTagInput"),title=document.getElementById("heroTitleInput"),subtitle=document.getElementById("heroSubtitleInput"),buttonText=document.getElementById("heroButtonTextInput"),buttonLink=document.getElementById("heroButtonLinkInput"),preview=document.getElementById("heroBackgroundPreview"),videoPreview=document.getElementById("heroVideoPreview"),status=document.getElementById("heroCurrentStatus");
     if(tag)tag.value=data.tag||"NEW DROP 2026";
     if(title)title.value=data.title||"OVERSIZED\nCOLLECTION";
     if(subtitle)subtitle.value=data.subtitle||"Premium Streetwear • 240 GSM French Terry Cotton";
     if(buttonText)buttonText.value=data.buttonText||"EXPLORE NOW";
     if(buttonLink)buttonLink.value=data.buttonLink||"#storeGrid";
-
-    const videoPreview=document.getElementById("heroVideoPreview");
-    if(preview) preview.style.display="none";
-    if(videoPreview) videoPreview.style.display="none";
-    if(data.backgroundVideo && videoPreview){
-        videoPreview.src=data.backgroundVideo;
-        videoPreview.style.display="block";
-    }else if(preview && data.backgroundImage){
-        preview.src=data.backgroundImage;
-        preview.style.display="block";
-    }
-
-    if(status){
-        status.textContent=(data.backgroundVideo||data.backgroundImage)
-            ?"Current Hero settings loaded. Save changes to update the website."
-            :"No custom Hero media saved yet. Website default background will remain active.";
-    }
+    if(preview)preview.style.display="none";
+    if(videoPreview)videoPreview.style.display="none";
+    if(data.backgroundVideo&&videoPreview){videoPreview.src=data.backgroundVideo;videoPreview.style.display="block";}
+    else if(data.backgroundImage&&preview){preview.src=data.backgroundImage;preview.style.display="block";}
+    if(status)status.textContent=(data.backgroundVideo||data.backgroundImage)?"Current Hero settings loaded. Save changes to update the website.":"No custom Hero background saved yet. Website default background will remain active.";
 }
 
 async function saveHeroSettings(event){
     if(event)event.preventDefault();
-
-    const tag=document.getElementById("heroTagInput").value.trim();
-    const title=document.getElementById("heroTitleInput").value.trim();
-    const subtitle=document.getElementById("heroSubtitleInput").value.trim();
-    const buttonText=document.getElementById("heroButtonTextInput").value.trim();
-    const buttonLink=document.getElementById("heroButtonLinkInput").value.trim();
-    const file=document.getElementById("heroBackgroundFile").files[0];
-
-    const data={
-        tag:tag||"NEW DROP 2026",
-        title:title||"OVERSIZED\nCOLLECTION",
-        subtitle:subtitle||"Premium Streetwear • 240 GSM French Terry Cotton",
-        buttonText:buttonText||"EXPLORE NOW",
-        buttonLink:buttonLink||"#storeGrid",
-        updatedAt:new Date().toISOString()
-    };
-
+    const tag=document.getElementById("heroTagInput").value.trim(),title=document.getElementById("heroTitleInput").value.trim(),subtitle=document.getElementById("heroSubtitleInput").value.trim(),buttonText=document.getElementById("heroButtonTextInput").value.trim(),buttonLink=document.getElementById("heroButtonLinkInput").value.trim(),file=document.getElementById("heroBackgroundFile").files[0];
+    const data={tag:tag||"NEW DROP 2026",title:title||"OVERSIZED\nCOLLECTION",subtitle:subtitle||"Premium Streetwear • 240 GSM French Terry Cotton",buttonText:buttonText||"EXPLORE NOW",buttonLink:buttonLink||"#storeGrid",updatedAt:new Date().toISOString()};
     try{
         showToast("⏳ Saving Hero...","info");
-
         if(file){
-            const encoded=await fileToBase64(file);
-            if(file.type.startsWith("video/")){
-                data.mediaType="video";
-                data.backgroundVideo=encoded;
-                if(currentHeroSettings.backgroundImage) data.backgroundImage=currentHeroSettings.backgroundImage;
-            }else{
-                data.mediaType="image";
-                data.backgroundImage=encoded;
-                if(currentHeroSettings.backgroundVideo) delete data.backgroundVideo;
-            }
+            const url=await uploadHeroMedia(file);
+            if(file.type.startsWith("video/")){data.mediaType="video";data.backgroundVideo=url;if(currentHeroSettings.backgroundImage)data.backgroundImage=currentHeroSettings.backgroundImage;}
+            else{data.mediaType="image";data.backgroundImage=url;if(currentHeroSettings.backgroundVideo)delete data.backgroundVideo;}
         }else{
-            data.mediaType=currentHeroSettings.mediaType || (currentHeroSettings.backgroundVideo ? "video" : "image");
-            if(currentHeroSettings.backgroundImage) data.backgroundImage=currentHeroSettings.backgroundImage;
-            if(currentHeroSettings.backgroundVideo) data.backgroundVideo=currentHeroSettings.backgroundVideo;
+            data.mediaType=currentHeroSettings.mediaType||(currentHeroSettings.backgroundVideo?"video":"image");
+            if(currentHeroSettings.backgroundImage)data.backgroundImage=currentHeroSettings.backgroundImage;
+            if(currentHeroSettings.backgroundVideo)data.backgroundVideo=currentHeroSettings.backgroundVideo;
         }
-
         heroRef.set(data,err=>{
-            if(err){
-                showToast("Error: "+err.message,"error");
-                return;
-            }
-
+            if(err){showToast("Error: "+err.message,"error");return;}
             currentHeroSettings=data;
             document.getElementById("heroBackgroundFile").value="";
+            closeHeroCropper();
             showToast("✅ Hero updated successfully!","success");
             loadHeroSettings();
         });
-
-    }catch(error){
-        showToast("Hero image processing failed!","error");
-    }
+    }catch(error){console.error(error);showToast("Hero upload failed: "+error.message,"error");}
 }
 
 const topTextRef=db.ref("media/topTextConfig");
@@ -3047,6 +3074,23 @@ selectDiscountType("percentage");
 
 </script>
 
+
+<style id="hero-crop-styles">
+.hero-crop-modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;display:none;align-items:center;justify-content:center;padding:14px}.hero-crop-modal.active{display:flex}.hero-crop-card{width:min(620px,100%);background:#111;border:1px solid #333;border-radius:18px;padding:16px;color:#fff}.hero-crop-stage{width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:14px;background:#050505;position:relative}.hero-crop-stage img,.hero-crop-stage video{width:100%;height:100%;object-fit:cover;display:block;transform-origin:center}.hero-crop-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.hero-crop-controls button{margin:0}.hero-crop-range{grid-column:1/-1}.hero-crop-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.hero-crop-actions button{margin:0}.hero-crop-note{font-size:.65rem;color:#999;margin-top:8px;line-height:1.5}
+</style>
+<div class="hero-crop-modal" id="heroCropModal">
+ <div class="hero-crop-card">
+  <h3 style="font-size:.9rem;margin-bottom:10px">CROP / POSITION HERO MEDIA</h3>
+  <div class="hero-crop-stage"><img id="heroCropImage" alt="Crop preview"><video id="heroCropVideo" muted playsinline controls></video></div>
+  <div class="hero-crop-controls">
+   <button type="button" onclick="setHeroCropPosition(50,0)">TOP</button><button type="button" onclick="setHeroCropPosition(50,50)">CENTER</button>
+   <button type="button" onclick="setHeroCropPosition(50,100)">BOTTOM</button><button type="button" onclick="resetHeroCrop()">RESET</button>
+   <label class="hero-crop-range">ZOOM <input id="heroCropZoom" type="range" min="1" max="2.5" step=".05" value="1" oninput="setHeroCropZoom(this.value)"></label>
+  </div>
+  <div class="hero-crop-note">Photo crop is applied before upload. Video is uploaded to Firebase Storage and its hero frame uses the selected crop/position safely without the Realtime Database size limit.</div>
+  <div class="hero-crop-actions"><button type="button" onclick="closeHeroCropper()">CANCEL</button><button type="button" style="background:#3b82f6;color:#fff" onclick="closeHeroCropper()">USE THIS CROP</button></div>
+ </div>
+</div>
 </body>
 </html>
 
