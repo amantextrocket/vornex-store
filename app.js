@@ -2449,28 +2449,12 @@ function loadHeroMedia() {
             button.textContent = config.buttonText || "EXPLORE NOW";
             button.href = config.buttonLink || "#storeGrid";
         }
-        if (layer) {
-            const videoUrl = config.backgroundVideo || (config.mediaType === "video" ? config.backgroundImage : "");
-            const imageUrl = config.backgroundImage && config.mediaType !== "video" ? config.backgroundImage : "";
+        if (layer && config.backgroundImage) {
             layer.innerHTML = "";
-            if (videoUrl) {
-                const video = document.createElement("video");
-                video.autoplay = true;
-                video.muted = true;
-                video.loop = true;
-                video.playsInline = true;
-                video.preload = "metadata";
-                const source = document.createElement("source");
-                source.src = videoUrl;
-                video.appendChild(source);
-                if (imageUrl) video.poster = imageUrl;
-                layer.appendChild(video);
-            } else if (imageUrl) {
-                const img = document.createElement("img");
-                img.src = imageUrl;
-                img.alt = "VORNEX Hero";
-                layer.appendChild(img);
-            }
+            const img = document.createElement("img");
+            img.src = config.backgroundImage;
+            img.alt = "VORNEX Hero";
+            layer.appendChild(img);
         }
     });
 
