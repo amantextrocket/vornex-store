@@ -2422,21 +2422,6 @@ function openOrderTracking() {
 }
 
 // ============================================================
-// TOP TEXT / ANNOUNCEMENT
-// ============================================================
-
-function loadTopText() {
-    db.ref("media/topTextConfig").on("value", snapshot => {
-        const config = snapshot.val() || {};
-        const bar = document.getElementById("announcementBar");
-        if (!bar) return;
-        bar.textContent = config.text || "⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡";
-        bar.style.fontFamily = config.fontFamily || "Montserrat";
-        bar.style.fontSize = config.fontSize || "10px";
-    });
-}
-
-// ============================================================
 // HERO MEDIA
 // ============================================================
 
@@ -2464,12 +2449,28 @@ function loadHeroMedia() {
             button.textContent = config.buttonText || "EXPLORE NOW";
             button.href = config.buttonLink || "#storeGrid";
         }
-        if (layer && config.backgroundImage) {
+        if (layer) {
+            const videoUrl = config.backgroundVideo || (config.mediaType === "video" ? config.backgroundImage : "");
+            const imageUrl = config.backgroundImage && config.mediaType !== "video" ? config.backgroundImage : "";
             layer.innerHTML = "";
-            const img = document.createElement("img");
-            img.src = config.backgroundImage;
-            img.alt = "VORNEX Hero";
-            layer.appendChild(img);
+            if (videoUrl) {
+                const video = document.createElement("video");
+                video.autoplay = true;
+                video.muted = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.preload = "metadata";
+                const source = document.createElement("source");
+                source.src = videoUrl;
+                video.appendChild(source);
+                if (imageUrl) video.poster = imageUrl;
+                layer.appendChild(video);
+            } else if (imageUrl) {
+                const img = document.createElement("img");
+                img.src = imageUrl;
+                img.alt = "VORNEX Hero";
+                layer.appendChild(img);
+            }
         }
     });
 
