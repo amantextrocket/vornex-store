@@ -2697,10 +2697,28 @@ async function uploadHeroMedia(file){
 
             return await new Promise((resolve,reject)=>{
                 const task=ref.put(uploadFile,{contentType});
+                let lastProgress=Date.now();
+                let fallbackStarted=false;
+                const fallbackTimer=setTimeout(()=>{
+                    if(fallbackStarted) return;
+                    fallbackStarted=true;
+                    try{ task.cancel(); }catch(e){}
+                    showToast("🔄 Storage upload slow — trying direct upload...","info");
+                    uploadHeroMediaDirect(file,uploadFile,contentType,path).then(resolve).catch(reject);
+                },12000);
                 task.on("state_changed",snap=>{
+                    lastProgress=Date.now();
                     const pct=snap.totalBytes?Math.round((snap.bytesTransferred/snap.totalBytes)*100):0;
                     showToast(`⏳ Uploading Hero ${pct}%`,"info");
-                },error=>reject(error),async()=>{
+                },error=>{
+                    clearTimeout(fallbackTimer);
+                    if(fallbackStarted) return;
+                    fallbackStarted=true;
+                    showToast("🔄 Retrying Hero upload...","info");
+                    uploadHeroMediaDirect(file,uploadFile,contentType,path).then(resolve).catch(reject);
+                },async()=>{
+                    clearTimeout(fallbackTimer);
+                    if(fallbackStarted) return;
                     try{ resolve(await task.snapshot.ref.getDownloadURL()); }
                     catch(e){ reject(e); }
                 });
@@ -2721,6 +2739,45 @@ async function uploadHeroMedia(file){
 
     if(isVideo && file.size<=6*1024*1024) return await fileToBase64(file);
     throw new Error("Firebase Storage is not available for this video.");
+}
+
+async function uploadHeroMediaDirect(originalFile,uploadFile,contentType,path){
+    const bucket=(firebase.app().options.storageBucket||"").trim();
+    if(!bucket) throw new Error("Firebase Storage bucket is missing.");
+    const encodedName=encodeURIComponent(path).replace(/%2F/g,"/");
+    const endpoint=`https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(bucket)}/o?uploadType=media&name=${encodedName}`;
+    return await new Promise((resolve,reject)=>{
+        const xhr=new XMLHttpRequest();
+        xhr.open("POST",endpoint,true);
+        xhr.setRequestHeader("Content-Type",contentType||originalFile.type||"application/octet-stream");
+        xhr.upload.onprogress=e=>{
+            if(e.lengthComputable){
+                const pct=Math.round((e.loaded/e.total)*100);
+                showToast(`⏳ Direct Hero Upload ${pct}%`,"info");
+            }
+        };
+        xhr.onload=()=>{
+            if(xhr.status>=200 && xhr.status<300){
+                try{
+                    const data=JSON.parse(xhr.responseText||"{}");
+                    if(data.downloadTokens){
+                        const token=String(data.downloadTokens).split(",")[0];
+                        resolve(`https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodedName}?alt=media&token=${encodeURIComponent(token)}`);
+                    }else{
+                        resolve(`https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodedName}?alt=media`);
+                    }
+                }catch(e){ reject(e); }
+            }else{
+                let msg=`Storage HTTP ${xhr.status}`;
+                try{ const d=JSON.parse(xhr.responseText||"{}"); msg=d.error?.message||msg; }catch(e){}
+                reject(new Error(msg));
+            }
+        };
+        xhr.onerror=()=>reject(new Error("Network error while uploading Hero media."));
+        xhr.ontimeout=()=>reject(new Error("Hero upload timed out."));
+        xhr.timeout=120000;
+        xhr.send(uploadFile);
+    });
 }
 
 function loadHeroSettings(){
