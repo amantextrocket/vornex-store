@@ -1145,6 +1145,19 @@ Loading active coupons...
 </select>
 </div>
 <div class="form-group">
+<label>SECOND TEXT</label>
+<input type="text" id="topTextSecondaryInput" placeholder="🔥 NEW DROP IS LIVE — SHOP NOW 🔥">
+</div>
+<div class="form-group">
+<label>SLIDE SPEED</label>
+<select id="topTextSpeedInput">
+    <option value="18">FAST — 18s</option>
+    <option value="28">SLOW — 28s</option>
+    <option value="36">VERY SLOW — 36s</option>
+    <option value="45">ULTRA SLOW — 45s</option>
+</select>
+</div>
+<div class="form-group">
 <label>FONT SIZE</label>
 <select id="topTextSizeInput">
     <option value="9px">9px</option>
@@ -1164,9 +1177,10 @@ Loading active coupons...
 <form id="heroForm" onsubmit="saveHeroSettings(event)">
 
 <div class="form-group">
-<label>Hero Background Image</label>
-<input type="file" id="heroBackgroundFile" accept="image/*" onchange="previewHeroBackground(this)">
-<img id="heroBackgroundPreview" class="media-preview" alt="Hero Preview">
+<label>Hero Photo / Video</label>
+<input type="file" id="heroBackgroundFile" accept="image/*,video/mp4,video/webm,video/quicktime" onchange="previewHeroBackground(this)">
+<p style="font-size:.65rem;color:#777;margin:6px 0 0;">Photo aur video dono supported. Video autoplay + muted + loop chalega.</p>
+<img id="heroBackgroundPreview" class="media-preview" alt="Hero Preview"><video id="heroVideoPreview" class="media-preview" controls muted playsinline></video>
 </div>
 
 <div class="form-group">
@@ -2586,12 +2600,14 @@ let currentHeroSettings={};
 function previewHeroBackground(input){
     const file=input && input.files ? input.files[0] : null;
     if(!file)return;
-
     const img=document.getElementById("heroBackgroundPreview");
-    if(!img)return;
-
-    img.src=URL.createObjectURL(file);
-    img.style.display="block";
+    const video=document.getElementById("heroVideoPreview");
+    const url=URL.createObjectURL(file);
+    if(video) video.style.display="none";
+    if(img) img.style.display="none";
+    if(file.type.startsWith("video/")){
+        if(video){ video.src=url; video.style.display="block"; video.load(); }
+    }else if(img){ img.src=url; img.style.display="block"; }
 }
 
 function loadHeroSettings(){
@@ -2618,15 +2634,21 @@ function populateHeroForm(data){
     if(buttonText)buttonText.value=data.buttonText||"EXPLORE NOW";
     if(buttonLink)buttonLink.value=data.buttonLink||"#storeGrid";
 
-    if(preview && data.backgroundImage){
+    const videoPreview=document.getElementById("heroVideoPreview");
+    if(preview) preview.style.display="none";
+    if(videoPreview) videoPreview.style.display="none";
+    if(data.backgroundVideo && videoPreview){
+        videoPreview.src=data.backgroundVideo;
+        videoPreview.style.display="block";
+    }else if(preview && data.backgroundImage){
         preview.src=data.backgroundImage;
         preview.style.display="block";
     }
 
     if(status){
-        status.textContent=data.backgroundImage
+        status.textContent=(data.backgroundVideo||data.backgroundImage)
             ?"Current Hero settings loaded. Save changes to update the website."
-            :"No custom Hero background saved yet. Website default background will remain active.";
+            :"No custom Hero media saved yet. Website default background will remain active.";
     }
 }
 
@@ -2653,9 +2675,20 @@ async function saveHeroSettings(event){
         showToast("⏳ Saving Hero...","info");
 
         if(file){
-            data.backgroundImage=await fileToBase64(file);
-        }else if(currentHeroSettings.backgroundImage){
-            data.backgroundImage=currentHeroSettings.backgroundImage;
+            const encoded=await fileToBase64(file);
+            if(file.type.startsWith("video/")){
+                data.mediaType="video";
+                data.backgroundVideo=encoded;
+                if(currentHeroSettings.backgroundImage) data.backgroundImage=currentHeroSettings.backgroundImage;
+            }else{
+                data.mediaType="image";
+                data.backgroundImage=encoded;
+                if(currentHeroSettings.backgroundVideo) delete data.backgroundVideo;
+            }
+        }else{
+            data.mediaType=currentHeroSettings.mediaType || (currentHeroSettings.backgroundVideo ? "video" : "image");
+            if(currentHeroSettings.backgroundImage) data.backgroundImage=currentHeroSettings.backgroundImage;
+            if(currentHeroSettings.backgroundVideo) data.backgroundVideo=currentHeroSettings.backgroundVideo;
         }
 
         heroRef.set(data,err=>{
@@ -2692,10 +2725,12 @@ function showAdCustomPanel(panelId){
 function loadTopTextSettings(){ topTextRef.once("value",snapshot=>populateTopTextForm(snapshot.val()||{})); }
 function populateTopTextForm(data){
     data=data||{};
-    const text=document.getElementById("topTextInput"), font=document.getElementById("topTextFontInput"), size=document.getElementById("topTextSizeInput");
+    const text=document.getElementById("topTextInput"), secondary=document.getElementById("topTextSecondaryInput"), font=document.getElementById("topTextFontInput"), size=document.getElementById("topTextSizeInput"), speed=document.getElementById("topTextSpeedInput");
     if(text) text.value=data.text || "⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡";
+    if(secondary) secondary.value=data.secondaryText || "🔥 NEW DROP IS LIVE — SHOP NOW 🔥";
     if(font) font.value=data.fontFamily || "Montserrat";
     if(size) size.value=data.fontSize || "10px";
+    if(speed) speed.value=String(data.speed || 28);
     const status=document.getElementById("topTextStatus");
     if(status) status.textContent="Current Top Text settings loaded. Save changes to update the website.";
 }
@@ -2705,6 +2740,8 @@ function saveTopTextSettings(event){
         text:(document.getElementById("topTextInput")?.value || "").trim() || "⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡",
         fontFamily:document.getElementById("topTextFontInput")?.value || "Montserrat",
         fontSize:document.getElementById("topTextSizeInput")?.value || "10px",
+        secondaryText:(document.getElementById("topTextSecondaryInput")?.value || "").trim() || "🔥 NEW DROP IS LIVE — SHOP NOW 🔥",
+        speed:Number(document.getElementById("topTextSpeedInput")?.value || 28),
         updatedAt:new Date().toISOString()
     };
     topTextRef.set(data,err=>{
