@@ -2674,17 +2674,53 @@ function cropHeroImageToBlob(file){
 
 async function uploadHeroMedia(file){
     if(!file) return null;
-    if(typeof firebase.storage!="function") throw new Error("Firebase Storage is not available.");
+
+    const isVideo=file.type.startsWith("video/");
+    const isImage=file.type.startsWith("image/");
+    if(!isVideo && !isImage) throw new Error("Please select a photo or video file.");
+
     let uploadFile=file;
-    let contentType=file.type;
-    if(file.type.startsWith("image/")){
+    let contentType=file.type || (isVideo ? "video/mp4" : "image/jpeg");
+
+    if(isImage){
         uploadFile=await cropHeroImageToBlob(file);
         contentType="image/jpeg";
     }
-    const ext=contentType.startsWith("video/") ? (file.name.split(".").pop()||"mp4") : "jpg";
-    const ref=firebase.storage().ref().child(`hero/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`);
-    const snap=await ref.put(uploadFile,{contentType});
-    return await snap.ref.getDownloadURL();
+
+    /* Firebase Storage upload with progress + real error handling. */
+    if(typeof firebase.storage==="function"){
+        try{
+            const storage=firebase.storage();
+            const ext=(file.name.split(".").pop()|| (isVideo?"mp4":"jpg")).toLowerCase();
+            const path=`hero/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+            const ref=storage.ref().child(path);
+
+            return await new Promise((resolve,reject)=>{
+                const task=ref.put(uploadFile,{contentType});
+                task.on("state_changed",snap=>{
+                    const pct=snap.totalBytes?Math.round((snap.bytesTransferred/snap.totalBytes)*100):0;
+                    showToast(`⏳ Uploading Hero ${pct}%`,"info");
+                },error=>reject(error),async()=>{
+                    try{ resolve(await task.snapshot.ref.getDownloadURL()); }
+                    catch(e){ reject(e); }
+                });
+            });
+        }catch(storageError){
+            console.error("Firebase Storage upload failed:",storageError);
+
+            /* Small-video fallback: store a data URL only when it is small enough
+               for Realtime Database. This keeps the feature usable if Storage
+               rules/plan are not enabled, while avoiding huge database writes. */
+            if(isVideo && file.size<=6*1024*1024){
+                showToast("⚠️ Storage unavailable — using small-video fallback...","info");
+                return await fileToBase64(file);
+            }
+            throw new Error(storageError?.message || "Video upload failed. Please enable Firebase Storage and its upload rules.");
+        }
+    }
+
+    if(isVideo && file.size<=6*1024*1024) return await fileToBase64(file);
+    throw new Error("Firebase Storage is not available for this video.");
 }
 
 function loadHeroSettings(){
@@ -2716,6 +2752,7 @@ async function saveHeroSettings(event){
     try{
         showToast("⏳ Saving Hero...","info");
         if(file){
+            showToast(file.type.startsWith("video/") ? "🎥 Preparing video upload..." : "🖼️ Preparing image upload...","info");
             const url=await uploadHeroMedia(file);
             if(file.type.startsWith("video/")){data.mediaType="video";data.backgroundVideo=url;if(currentHeroSettings.backgroundImage)data.backgroundImage=currentHeroSettings.backgroundImage;}
             else{data.mediaType="image";data.backgroundImage=url;if(currentHeroSettings.backgroundVideo)delete data.backgroundVideo;}
