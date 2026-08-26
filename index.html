@@ -2204,6 +2204,23 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
                 id="detailPrice">
             </div>
 
+            <div class="detail-actions">
+
+                <button
+                    class="detail-cart-btn"
+                    onclick="addCurrentProductToCart()">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    ADD TO CART
+                </button>
+
+                <button
+                    class="detail-buy-btn"
+                    onclick="buyCurrentProduct()">
+                    BUY NOW
+                </button>
+
+            </div>
+
             <div
                 class="detail-description"
                 id="detailDescription">
@@ -2271,22 +2288,6 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 
             </div>
 
-            <div class="detail-actions">
-
-                <button
-                    class="detail-cart-btn"
-                    onclick="addCurrentProductToCart()">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                    ADD TO CART
-                </button>
-
-                <button
-                    class="detail-buy-btn"
-                    onclick="buyCurrentProduct()">
-                    BUY NOW
-                </button>
-
-            </div>
 
         </div>
 
@@ -2838,8 +2839,6 @@ function openProductDetail(id){
 
     modal.classList.add("active");
 
-    startDetailSlider();
-
 }
 
 
@@ -2856,23 +2855,8 @@ function closeProductDetail(){
 
 
 function startDetailSlider(){
-
+    // Auto sliding intentionally disabled. Customer controls the slide manually.
     stopDetailSlider();
-
-    detailSlideTimer=setInterval(()=>{
-
-        if(!currentProduct) return;
-
-        const second=document.getElementById("detailImage2");
-
-        if(second.src){
-
-            switchDetailImage();
-
-        }
-
-    },3000);
-
 }
 
 
@@ -2940,13 +2924,9 @@ function detailTouchEnd(e){
     if(Math.abs(diff)<50) return;
 
     if(diff<0){
-
         switchDetailImage();
-
     }else{
-
-        closeProductDetail();
-
+        switchDetailImage();
     }
 
 }
@@ -3033,6 +3013,18 @@ function addToCart(id,size=""){
     }
 
     saveCart();
+
+    document.querySelectorAll('.add-btn[data-product-id="'+CSS.escape(String(id))+'"]').forEach(btn=>{
+        btn.classList.remove("cart-just-added");
+        void btn.offsetWidth;
+        btn.classList.add("cart-just-added");
+        btn.innerHTML='<i class="fa-solid fa-check"></i> ADDED TO BAG';
+        setTimeout(()=>{
+            if(document.body.contains(btn)){
+                btn.innerHTML='ADD TO BAG';
+            }
+        },1800);
+    });
 
     showToast("🛍️ Added to Bag!","success");
 
@@ -3289,6 +3281,14 @@ function toggleWishlist(id){
     applyFilters();
 
     renderWishlist();
+
+    setTimeout(()=>{
+        document.querySelectorAll('.wishlist-btn[data-product-id="'+CSS.escape(String(id))+'"]').forEach(btn=>{
+            btn.classList.remove("wishlist-just-toggled");
+            void btn.offsetWidth;
+            btn.classList.add("wishlist-just-toggled");
+        });
+    },20);
 
 }
 
@@ -4918,7 +4918,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "beforeend",
             `
             <small class="vornex-edge-title">
-                OWN YOUR EDGE.
+                OWN YOUR EDGE
             </small>
             `
         );
@@ -6460,6 +6460,11 @@ document.addEventListener("DOMContentLoaded", function () {
 })();
 </script>
 
+
+<style id="vornex-premium-interactions">
+.detail-slider{touch-action:pan-y;overflow:hidden;position:relative;cursor:grab}.detail-slider:active{cursor:grabbing}.detail-slider img{transition:opacity .28s ease,transform .42s cubic-bezier(.22,.61,.36,1);will-change:opacity,transform}.detail-slider img.active{animation:vornexSlideIn .42s cubic-bezier(.22,.61,.36,1)}@keyframes vornexSlideIn{from{opacity:.35;transform:scale(.96) translateX(18px)}to{opacity:1;transform:scale(1) translateX(0)}}
+.detail-actions{margin-top:12px!important;padding-bottom:0!important;position:sticky;bottom:10px;z-index:8;background:linear-gradient(180deg,transparent,rgba(10,10,10,.96) 28%);padding-top:14px!important}.detail-cart-btn,.detail-buy-btn{min-height:48px!important;border-radius:14px!important;font-size:10px!important;font-weight:900!important;letter-spacing:.7px!important;box-shadow:0 10px 28px rgba(0,0,0,.25)!important;transition:transform .25s ease,box-shadow .25s ease,background .25s ease!important}.detail-cart-btn:active,.detail-buy-btn:active{transform:scale(.96)!important}.detail-buy-btn{background:linear-gradient(135deg,#ffd84a,#facc15)!important}.detail-cart-btn{background:linear-gradient(135deg,#fff,#e5e7eb)!important}.wishlist-btn{transition:transform .3s cubic-bezier(.175,.885,.32,1.275),background .25s ease,color .25s ease,box-shadow .3s ease}.wishlist-btn.active{background:#ff1744!important;color:#fff!important;box-shadow:0 0 0 5px rgba(255,23,68,.12),0 8px 25px rgba(255,23,68,.38)!important}.wishlist-just-toggled{animation:vornexHeartPop .55s cubic-bezier(.175,.885,.32,1.275)}@keyframes vornexHeartPop{0%{transform:scale(.7)}45%{transform:scale(1.28) rotate(-8deg)}75%{transform:scale(.92) rotate(4deg)}100%{transform:scale(1)}}.add-btn{transition:transform .28s ease,background .28s ease,color .28s ease,box-shadow .28s ease}.add-btn.cart-just-added{background:linear-gradient(135deg,#22c55e,#16a34a)!important;color:#fff!important;box-shadow:0 0 0 5px rgba(34,197,94,.12),0 10px 28px rgba(34,197,94,.3)!important;animation:vornexBagPop .5s cubic-bezier(.175,.885,.32,1.275)}@keyframes vornexBagPop{0%{transform:scale(.94)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+</style>
 <style id="vornex-toptext-sizechart-fixes">
 .announcement-bar{overflow:hidden;white-space:nowrap;position:relative;padding:9px 0!important;}
 .announcement-viewport{width:100%;overflow:hidden;}
