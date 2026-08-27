@@ -1416,10 +1416,8 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
     <div class="announcement-track" id="announcementTrack">
       <span class="announcement-item">⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡</span>
       <span class="announcement-item">🔥 NEW DROP IS LIVE — SHOP NOW 🔥</span>
-      <span class="announcement-item">✨ FREE SHIPPING • PREMIUM STREETWEAR ✨</span>
       <span class="announcement-item">⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡</span>
       <span class="announcement-item">🔥 NEW DROP IS LIVE — SHOP NOW 🔥</span>
-      <span class="announcement-item">✨ FREE SHIPPING • PREMIUM STREETWEAR ✨</span>
     </div>
   </div>
 </div>
@@ -1428,7 +1426,6 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
     <div class="logo">VORNEX</div>
 
     <div class="header-actions">
-        <button class="mode-toggle-btn" id="modeToggleBtn" type="button" onclick="toggleLightDark()" aria-label="Toggle dark light mode">☀️</button>
         <button class="hamburger-btn" onclick="toggleMenuDrawer(true)">
         <i class="fa-solid fa-bars-staggered"></i>
     </button>
@@ -1647,17 +1644,40 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 
             <h4>QUICK LINKS</h4>
 
-            <a href="#" onclick="openPolicy('Privacy Policy')">Privacy Policy</a>
-            <a href="#" onclick="openPolicy('Return & Shipping Policy')">Return & Shipping Policy</a>
-            <a href="#" onclick="openPolicy('Terms & Conditions')">Terms & Conditions</a>
+            <a href="#" onclick="openPolicy('Privacy Policy')">
+                Privacy Policy
+            </a>
 
-            <div class="footer-connect-block">
-                <h4>CONNECT WITH US</h4>
-                <a href="#" onclick="openPolicy('About Us')">About Us</a>
-                <a href="#" onclick="openPolicy('Contact Us')">Contact Us</a>
-                <a href="#" onclick="openOrderTracking()">Track Your Order</a>
-                <a href="tel:+918269444061"><i class="fa-solid fa-phone"></i> +91 8269444061</a>
-            </div>
+            <a href="#" onclick="openPolicy('Return & Shipping Policy')">
+                Return & Shipping Policy
+            </a>
+
+            <a href="#" onclick="openPolicy('Terms & Conditions')">
+                Terms & Conditions
+            </a>
+
+        </div>
+
+        <div class="footer-column">
+
+            <h4>CONNECT WITH US</h4>
+
+            <a href="#" onclick="openPolicy('About Us')">
+                About Us
+            </a>
+
+            <a href="#" onclick="openPolicy('Contact Us')">
+                Contact Us
+            </a>
+
+            <a href="#" onclick="openOrderTracking()">
+                Track Your Order
+            </a>
+
+            <a href="tel:+918269444061">
+                <i class="fa-solid fa-phone"></i>
+                +91 8269444061
+            </a>
 
         </div>
 
@@ -1975,7 +1995,7 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 
             <button
                 class="close-drawer"
-                onclick="closeModalStepBack('checkoutModal')">
+                onclick="closeCheckoutSummary()">
                 ×
             </button>
 
@@ -1993,6 +2013,11 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
             <div class="summary-row">
                 <span>Discount</span>
                 <span id="checkoutDiscount">₹0</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span id="checkoutShipping">FREE</span>
             </div>
 
             <div class="summary-row total">
@@ -2462,7 +2487,7 @@ function showToast(message,type="success"){
 
         text:message,
 
-        duration:1500,
+        duration:2500,
 
         gravity:"bottom",
 
@@ -3015,45 +3040,21 @@ function addToCart(id,size=""){
 
 
 function addCurrentProductToCart(){
-
-    if(!currentProduct) return;
-
+    if(!currentProduct) return false;
     const stocks=currentProduct.sizeStocks||{};
-
     if(Object.keys(stocks).length && !selectedSize){
-
         showToast("Please select a size","error");
-
-        return;
-
+        return false;
     }
-
-    addToCart(currentProduct.id,selectedSize);
-
+    addToCart(currentProduct.id, selectedSize || "");
+    return true;
 }
 
-
 function buyCurrentProduct(){
-
     if(!currentProduct) return;
-
-    const stocks=currentProduct.sizeStocks||{};
-    if(Object.keys(stocks).length && !selectedSize){
-        showToast("Please select a size","error");
-        return;
-    }
-
-    const stock=Object.keys(stocks).length ? Number(stocks[selectedSize]||0) : 1;
-    if(Object.keys(stocks).length && stock<=0){
-        showToast("Selected size is out of stock","error");
-        return;
-    }
-
-    addToCart(currentProduct.id,selectedSize);
-    showToast("⚡ Added — opening checkout","success");
+    if(!addCurrentProductToCart()) return;
     closeProductDetail();
-    setTimeout(openCheckoutModal,120);
-
+    setTimeout(openCheckoutModal, 120);
 }
 
 
@@ -3647,32 +3648,27 @@ function renderCheckoutSummary(){
 
 
 function updateCheckoutSummary(){
-
     let subtotal=0;
-
     cart.forEach(item=>{
-
-        subtotal+=
-            Number(item.price||0)*
-            Number(item.qty||1);
-
+        subtotal += Number(item.price||0) * Math.max(1, Number(item.qty||1));
     });
+    const discount=Math.min(subtotal, Math.max(0, Number(calculateDiscount(subtotal)||0)));
+    const afterDiscount=Math.max(0, subtotal-discount);
+    const shipping=cart.length ? (afterDiscount>=999 ? 0 : 99) : 0;
+    const total=afterDiscount+shipping;
 
-    const discount=calculateDiscount(subtotal);
-
-    const total=Math.max(0,subtotal-discount);
-
-    document.getElementById("checkoutSubtotal").textContent=
-        "₹"+subtotal.toLocaleString("en-IN");
-
-    document.getElementById("checkoutDiscount").textContent=
-        "₹"+discount.toLocaleString("en-IN");
-
-    document.getElementById("checkoutTotal").textContent=
-        "₹"+total.toLocaleString("en-IN");
-
+    const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=value; };
+    set("checkoutSubtotal", "₹"+subtotal.toLocaleString("en-IN"));
+    set("checkoutDiscount", "-₹"+discount.toLocaleString("en-IN"));
+    set("checkoutShipping", shipping===0 ? "FREE" : "₹"+shipping.toLocaleString("en-IN"));
+    set("checkoutTotal", "₹"+total.toLocaleString("en-IN"));
 }
 
+function closeCheckoutSummary(){
+    const modal=document.getElementById("checkoutModal");
+    if(modal) modal.classList.remove("active");
+    document.body.classList.remove("modal-open");
+}
 
 function lookupPincode(pin){
 
@@ -3913,6 +3909,7 @@ async function submitOrder(e){
                 items: emailItems,
                 subtotal: `₹${Number(order.subtotal || 0).toLocaleString("en-IN")}`,
                 discount: `₹${Number(order.discount || 0).toLocaleString("en-IN")}`,
+                shipping: `₹${Number(order.shipping || 0).toLocaleString("en-IN")}`,
                 coupon: order.coupon || "None",
                 payment_method: order.paymentMethod,
                 payment_status: order.paymentStatus,
@@ -6411,7 +6408,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const allowed=["dark","light"];
 
     window.setTheme=function(theme){
-        if(!allowed.includes(theme)) theme="light";
+        if(!allowed.includes(theme)) theme="dark";
         document.body.classList.remove(
             "theme-dark-active","theme-light-active",
             "theme-neon-active","theme-gold-active","theme-emerald-active",
@@ -6425,21 +6422,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.loadSavedTheme=function(){
         const saved=localStorage.getItem("vornex_theme");
-        window.setTheme(allowed.includes(saved)?saved:"light");
-        updateModeToggle();
-    };
-
-    window.updateModeToggle=function(){
-        const btn=document.getElementById("modeToggleBtn");
-        if(!btn) return;
-        const light=document.body.classList.contains("theme-light-active");
-        btn.textContent=light?"🌙":"☀️";
-        btn.setAttribute("aria-label",light?"Switch to dark mode":"Switch to light mode");
-    };
-
-    window.toggleLightDark=function(){
-        const light=document.body.classList.contains("theme-light-active");
-        window.setTheme(light?"dark":"light");
+        window.setTheme(allowed.includes(saved)?saved:"dark");
         updateModeToggle();
     };
 
@@ -6483,8 +6466,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if(!bar || !track) return;
             const primary=config.text || "⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡";
             const secondary=config.secondaryText || "🔥 NEW DROP IS LIVE — SHOP NOW 🔥";
-            const tertiary=config.tertiaryText || "✨ FREE SHIPPING • PREMIUM STREETWEAR ✨";
-            track.innerHTML='<span class="announcement-item">'+escapeHtml(primary)+'</span><span class="announcement-item">'+escapeHtml(secondary)+'</span><span class="announcement-item">'+escapeHtml(tertiary)+'</span><span class="announcement-item">'+escapeHtml(primary)+'</span><span class="announcement-item">'+escapeHtml(secondary)+'</span><span class="announcement-item">'+escapeHtml(tertiary)+'</span>';
+            track.innerHTML='<span class="announcement-item">'+escapeHtml(primary)+'</span><span class="announcement-item">'+escapeHtml(secondary)+'</span><span class="announcement-item">'+escapeHtml(primary)+'</span><span class="announcement-item">'+escapeHtml(secondary)+'</span>';
             bar.style.fontFamily=config.fontFamily || "Montserrat";
             bar.style.fontSize=config.fontSize || "10px";
             bar.style.setProperty("--announcement-speed",(Number(config.speed)||28)+"s");
@@ -6511,10 +6493,10 @@ document.addEventListener("DOMContentLoaded", function () {
 .announcement-viewport{width:100%;overflow:hidden;}
 .announcement-track{display:flex;width:max-content;align-items:center;will-change:transform;animation:vornexAnnouncementSlide var(--announcement-speed,28s) linear infinite;}
 .announcement-item{display:block;flex:0 0 100vw;width:100vw;text-align:center;padding:0 18px;box-sizing:border-box;}
-@keyframes vornexAnnouncementSlide{from{transform:translateX(0);}to{transform:translateX(-300vw);}}
+@keyframes vornexAnnouncementSlide{from{transform:translateX(0);}to{transform:translateX(-200vw);}}
 .announcement-bar:hover .announcement-track{animation-play-state:paused;}
 .hero-media-layer video{width:100%;height:100%;object-fit:cover;display:block;}
-.vornex-size-chart-btn{position:fixed;right:0;bottom:18px;z-index:1999;transform:rotate(-90deg);transform-origin:right bottom;width:auto!important;margin:0!important;padding:9px 12px!important;border-radius:999px!important;background:#111;color:#fff;border:1px solid rgba(255,255,255,.18);font-size:9px;font-weight:900;box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.vornex-size-chart-btn{position:fixed;right:12px;bottom:82px;z-index:1999;width:auto!important;margin:0!important;padding:9px 12px!important;border-radius:999px!important;background:#111;color:#fff;border:1px solid rgba(255,255,255,.18);font-size:9px;font-weight:900;box-shadow:0 8px 24px rgba(0,0,0,.3);}
 .vornex-size-modal{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.62);display:none;align-items:flex-end;justify-content:center;padding:14px;}
 .vornex-size-modal.active{display:flex;}
 .vornex-size-card{width:min(520px,100%);background:#fff;color:#111;border-radius:20px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35);}
@@ -6572,6 +6554,73 @@ body.theme-light-active .checkout-coupon-card{background:#fff;border-color:#d1d5
 body.theme-light-active .checkout-coupon-off{color:#6b7280;}
 </style>
 
+
+<style id="vornex-final-requested-fixes">
+/* FINAL LIGHT THEME */
+html,body{background:#fff!important;color:#111!important;overflow-x:hidden!important;}
+body{padding-bottom:90px!important;}
+.vornex-header{background:#fff!important;color:#111!important;border-bottom:1px solid #e5e7eb!important;backdrop-filter:none!important;}
+.vornex-header .logo{color:#111!important;}
+.hamburger-btn{background:#f3f4f6!important;color:#111!important;border:1px solid #d1d5db!important;}
+.announcement-bar{background:#111!important;color:#fff!important;}
+.ios-drawer,.cart-drawer,.modal-card,.product-detail-card{background:#fff!important;color:#111!important;border-color:#d1d5db!important;backdrop-filter:none!important;}
+.menu-item-btn,.acc-btn,.accordion-card,.about-card,.theme-picker-section,.product-card,.spec,.coupon-item,.checkout-summary,.checkout-coupon-card{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
+.input-group input,.input-group textarea,.input-group select,#storeSearch{background:#fff!important;color:#111!important;border-color:#cbd5e1!important;}
+.filter-bar{background:#fff!important;backdrop-filter:none!important;padding-left:0!important;padding-right:0!important;}
+.store-container{max-width:none!important;width:100%!important;padding-left:0!important;padding-right:0!important;}
+.categories-scroll{width:100%!important;padding-left:12px!important;padding-right:12px!important;}
+.search-wrapper{width:100%!important;padding:0 12px!important;}
+.product-grid{padding:0 12px!important;}
+.site-footer{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
+.footer-grid{grid-template-columns:1fr!important;gap:18px!important;}
+.footer-column a,.p-category,.detail-description,.hero-subtitle,.checkout-summary-item{color:#4b5563!important;}
+.p-title,.p-price,.product-card small,.detail-title,.detail-price,.detail-specs strong,.summary-row,.modal-header h3{color:#111!important;}
+.cat-btn{background:#fff!important;color:#374151!important;border-color:#cbd5e1!important;}
+.cat-btn.active{background:#111!important;color:#fff!important;border-color:#111!important;}
+.add-btn{background:#111!important;color:#fff!important;}
+.home-cart-sticky{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
+.home-buy-now{background:#111!important;color:#fff!important;}
+.vornex-size-chart-btn{right:8px!important;top:52%!important;bottom:auto!important;transform:translateY(-50%) rotate(-90deg)!important;transform-origin:center!important;width:auto!important;padding:6px 9px!important;font-size:8px!important;border-radius:7px!important;}
+.vornex-size-chart-btn:active{transform:translateY(-50%) rotate(-90deg) scale(.96)!important;}
+.detail-actions-after-size{position:static!important;}
+#checkoutModal .modal-card{position:relative!important;}
+#checkoutModal .modal-header .close-drawer{display:flex!important;align-items:center!important;justify-content:center!important;width:34px!important;height:34px!important;border-radius:50%!important;background:#f3f4f6!important;color:#111!important;font-size:24px!important;border:1px solid #d1d5db!important;}
+/* quick response */
+button,.add-btn,.cat-btn,.home-buy-now,.glass-buy-btn{transition:transform .08s ease,opacity .08s ease!important;}
+.custom-modal,.drawer-overlay,.cart-drawer,.ios-drawer{transition-duration:.12s!important;}
+</style>
+<script id="vornex-final-requested-js">
+(function(){
+  const originalAdd=window.addToCart;
+  window.addToCart=function(id,size){
+    const p=allProducts.find(x=>x.id===id); if(!p) return false;
+    const chosen=String(size||""); const stocks=p.sizeStocks||{};
+    if(Object.keys(stocks).length && chosen && Number(stocks[chosen]||0)<=0){showToast("Selected size is out of stock","error");return false;}
+    const keySize=chosen; const existing=cart.find(x=>x.id===id && String(x.size||"")===keySize);
+    if(existing) existing.qty=Number(existing.qty||1)+1; else cart.push({...p,size:keySize,qty:1});
+    saveCart(); updateBadges(); renderCart();
+    document.querySelectorAll('.add-btn[data-product-id="'+CSS.escape(String(id))+'"]').forEach(btn=>{btn.classList.add('cart-just-added');btn.innerHTML='<i class="fa-solid fa-check"></i> ADDED TO BAG';});
+    showToast("🛍️ Added to Bag!","success"); return true;
+  };
+  window.addCurrentProductToCart=function(){
+    if(!currentProduct)return false; const stocks=currentProduct.sizeStocks||{};
+    if(Object.keys(stocks).length && !selectedSize){showToast("Please select a size","error");return false;}
+    return window.addToCart(currentProduct.id,selectedSize||"");
+  };
+  window.buyCurrentProduct=function(){if(!currentProduct)return;if(!window.addCurrentProductToCart())return;closeProductDetail();setTimeout(openCheckoutModal,100);};
+  window.updateCartTotals=function(){
+    const subtotal=cart.reduce((s,i)=>s+Number(i.price||0)*Math.max(1,Number(i.qty||1)),0);
+    const discount=Math.min(subtotal,Math.max(0,Number(calculateDiscount(subtotal)||0)));
+    const after=Math.max(0,subtotal-discount); const shipping=cart.length?(after>=999?0:99):0; const total=after+shipping;
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set('cartSubtotal','₹'+subtotal.toLocaleString('en-IN'));set('cartDiscount','-₹'+discount.toLocaleString('en-IN'));set('cartShipping',shipping?'₹'+shipping.toLocaleString('en-IN'):'FREE');set('cartGrandTotal','₹'+total.toLocaleString('en-IN'));
+  };
+  window.openCheckoutModal=function(){if(!cart.length){showToast('Your cart is empty','error');return;}renderCheckoutSummary();document.getElementById('checkoutModal')?.classList.add('active');document.body.classList.add('modal-open');};
+  window.closeCheckoutSummary=function(){document.getElementById('checkoutModal')?.classList.remove('active');document.body.classList.remove('modal-open');};
+  document.addEventListener('DOMContentLoaded',function(){window.setTheme('light');});
+})();
+</script>
+
 </body>
 </html>
 
@@ -6580,60 +6629,3 @@ body.theme-light-active .checkout-coupon-off{color:#6b7280;}
 body.product-detail-open #homeCheckoutBtn{display:none!important;}
 #homeCheckoutBtn{transition:opacity .2s ease,transform .2s ease;}
 </style>
-
-<style id="vornex-v6-ui-fixes">
-/* V6: full-width store controls */
-.store-container{overflow:visible!important;}
-.store-container > .filter-bar{width:100vw!important;max-width:none!important;margin-left:calc(50% - 50vw)!important;padding-left:15px!important;padding-right:15px!important;box-sizing:border-box!important;}
-
-/* V6: pure white light mode and high contrast */
-body.theme-light-active{background:#fff!important;color:#111!important;}
-body.theme-light-active .store-container{background:#fff!important;}
-body.theme-light-active .product-detail-card,
-body.theme-light-active .cart-drawer,
-body.theme-light-active .ios-drawer,
-body.theme-light-active .modal-card,
-body.theme-light-active .site-footer{background:#fff!important;color:#111!important;}
-body.theme-light-active .detail-title,
-body.theme-light-active .detail-price,
-body.theme-light-active .detail-description,
-body.theme-light-active .size-title,
-body.theme-light-active .spec strong,
-body.theme-light-active .footer-column h4,
-body.theme-light-active .footer-column a,
-body.theme-light-active .cart-item-title,
-body.theme-light-active .summary-row{color:#111!important;}
-body.theme-light-active .detail-description,
-body.theme-light-active .footer-column a,
-body.theme-light-active .spec small{color:#4b5563!important;}
-body.theme-light-active .spec{background:#f8fafc!important;border-color:#d1d5db!important;}
-body.theme-light-active .size-btn{background:#fff!important;color:#111!important;border-color:#9ca3af!important;}
-body.theme-light-active .size-btn.selected{background:#111!important;color:#fff!important;border-color:#111!important;}
-body.theme-light-active .filter-bar{background:#fff!important;box-shadow:0 5px 20px rgba(0,0,0,.08)!important;}
-body.theme-light-active .search-wrapper input{background:#fff!important;color:#111!important;border-color:#9ca3af!important;}
-body.theme-light-active .cat-btn{background:#fff!important;color:#111!important;border-color:#cbd5e1!important;}
-body.theme-light-active .cat-btn.active{background:#111!important;color:#fff!important;}
-body.theme-light-active .footer-connect-block{border-top:1px solid #e5e7eb;margin-top:22px;padding-top:20px;}
-
-/* V6: compact rotated size chart */
-.vornex-size-chart-btn{font-size:8px!important;padding:7px 10px!important;border-radius:8px 8px 0 0!important;letter-spacing:.6px!important;box-shadow:0 5px 18px rgba(0,0,0,.22)!important;}
-
-/* V6: quick response / micro feedback */
-.toastify{animation:vornexQuickIn .16s cubic-bezier(.22,.61,.36,1)!important;font-weight:900!important;}
-@keyframes vornexQuickIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-.footer-connect-block h4{margin-top:0;}
-.detail-cart-btn,.detail-buy-btn{transition:transform .12s ease,box-shadow .16s ease,background .16s ease!important;}
-.detail-cart-btn:active,.detail-buy-btn:active{transform:scale(.97)!important;}
-</style>
-<script id="vornex-v6-fast-toast">
-(function(){
-    const originalShowToast=window.showToast;
-    if(typeof originalShowToast==='function'){
-        window.showToast=function(message,type){
-            const result=originalShowToast(message,type);
-            document.querySelectorAll('.toastify').forEach(function(el){el.style.animationDuration='.16s';});
-            return result;
-        };
-    }
-})();
-</script>
