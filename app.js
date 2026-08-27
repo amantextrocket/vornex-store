@@ -60,7 +60,7 @@ function toast(message, type = "success") {
 
     Toastify({
         text: message,
-        duration: 2200,
+        duration: 1500,
         gravity: "bottom",
         position: "center",
         close: false,
@@ -511,7 +511,7 @@ function setTheme(themeName) {
 function loadSavedTheme() {
 
     const theme =
-        localStorage.getItem("vornex_theme") || "dark";
+        localStorage.getItem("vornex_theme") || "light";
 
     setTheme(theme);
 }
@@ -2471,3 +2471,21 @@ function openQuickOrderModal() {
 // ============================================================
 // END
 // ============================================================
+
+// V6 TOP TEXT: third text support
+function bindVornexTopTextV6(){
+    if(typeof db==='undefined'||!db) return;
+    db.ref('media/topTextConfig').on('value',function(snap){
+        const c=snap.val()||{};
+        const bar=document.getElementById('announcementBar');
+        const track=document.getElementById('announcementTrack');
+        if(!bar||!track)return;
+        const a=c.text||'⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡';
+        const b=c.secondaryText||'🔥 NEW DROP IS LIVE — SHOP NOW 🔥';
+        const d=c.tertiaryText||'✨ FREE SHIPPING • PREMIUM STREETWEAR ✨';
+        track.innerHTML=[a,b,d,a,b,d].map(function(t){return '<span class="announcement-item">'+escapeHtml(t)+'</span>';}).join('');
+        bar.style.fontFamily=c.fontFamily||'Montserrat';
+        bar.style.fontSize=c.fontSize||'10px';
+        bar.style.setProperty('--announcement-speed',(Number(c.speed)||28)+'s');
+    });
+}
