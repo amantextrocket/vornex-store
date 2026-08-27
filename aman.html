@@ -1122,9 +1122,10 @@ Loading active coupons...
 यहाँ से website के Top Text और Hero banner को customise करें।
 </p>
 
-<div class="ad-subnav" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px;">
+<div class="ad-subnav" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:15px;">
     <button type="button" id="heroAdTab" onclick="showAdCustomPanel('heroAdPanel')" style="background:#fff;color:#000;">🖼️ HERO</button>
     <button type="button" id="topTextAdTab" onclick="showAdCustomPanel('topTextAdPanel')" style="background:#222;color:#fff;">🔤 TOP TEXT</button>
+    <button type="button" id="downBannerAdTab" onclick="showAdCustomPanel('downBannerAdPanel')" style="background:#222;color:#fff;">🖼️ DOWN BANNER</button>
 </div>
 
 <div id="topTextAdPanel" style="display:none;">
@@ -1172,6 +1173,18 @@ Loading active coupons...
 <button type="submit" style="background:#3b82f6;color:#fff;">SAVE TOP TEXT</button>
 </form>
 <div id="topTextStatus" style="margin-top:15px;color:#777;font-size:.7rem;">Loading current Top Text settings...</div>
+</div>
+
+<div id="downBannerAdPanel" style="display:none;">
+<form id="downBannerForm" onsubmit="saveDownBannerSettings(event)">
+<p style="font-size:.65rem;color:#777;margin-bottom:12px;">Website ke sabhi products ke baad 2-3 banners smooth sliding mein dikhेंगे.</p>
+<div class="form-group"><label>DOWN BANNER 1</label><input type="file" id="downBannerFile1" accept="image/*"></div>
+<div class="form-group"><label>DOWN BANNER 2</label><input type="file" id="downBannerFile2" accept="image/*"></div>
+<div class="form-group"><label>DOWN BANNER 3</label><input type="file" id="downBannerFile3" accept="image/*"></div>
+<div class="form-group"><label>SLIDE SPEED</label><select id="downBannerSpeedInput"><option value="3">3 SECONDS</option><option value="4">4 SECONDS</option><option value="5">5 SECONDS</option><option value="6">6 SECONDS</option></select></div>
+<button type="submit" style="background:#3b82f6;color:#fff;">SAVE DOWN BANNER</button>
+</form>
+<div id="downBannerStatus" style="margin-top:15px;color:#777;font-size:.7rem;">Loading current Down Banner settings...</div>
 </div>
 
 <div id="heroAdPanel">
@@ -2729,11 +2742,15 @@ async function uploadHeroMedia(file){
             /* Small-video fallback: store a data URL only when it is small enough
                for Realtime Database. This keeps the feature usable if Storage
                rules/plan are not enabled, while avoiding huge database writes. */
-            if(isVideo && file.size<=6*1024*1024){
-                showToast("⚠️ Storage unavailable — using small-video fallback...","info");
-                return await fileToBase64(file);
+            /* Browser/Storage network fallback: keep small media in RTDB as a data URL.
+               This also makes Hero photo uploads work when Firebase Storage is unavailable
+               or blocked by browser/network rules. */
+            const fallbackLimit = isVideo ? 5*1024*1024 : 2.5*1024*1024;
+            if(uploadFile.size<=fallbackLimit){
+                showToast(isVideo ? "⚠️ Storage unavailable — saving small video directly..." : "⚠️ Storage unavailable — saving image directly...","info");
+                return await fileToBase64(uploadFile);
             }
-            throw new Error(storageError?.message || "Video upload failed. Please enable Firebase Storage and its upload rules.");
+            throw new Error(storageError?.message || (isVideo ? "Video upload failed. Enable Firebase Storage or use a video under 5 MB." : "Image upload failed. Enable Firebase Storage or use an image under 2.5 MB."));
         }
     }
 
@@ -2832,15 +2849,22 @@ async function saveHeroSettings(event){
 const topTextRef=db.ref("media/topTextConfig");
 
 function showAdCustomPanel(panelId){
-    const heroPanel=document.getElementById("heroAdPanel");
-    const topPanel=document.getElementById("topTextAdPanel");
-    const heroTab=document.getElementById("heroAdTab");
-    const topTab=document.getElementById("topTextAdTab");
-    const showHero=panelId==="heroAdPanel";
-    if(heroPanel) heroPanel.style.display=showHero?"block":"none";
-    if(topPanel) topPanel.style.display=showHero?"none":"block";
-    if(heroTab){ heroTab.style.background=showHero?"#fff":"#222"; heroTab.style.color=showHero?"#000":"#fff"; }
-    if(topTab){ topTab.style.background=showHero?"#222":"#fff"; topTab.style.color=showHero?"#fff":"#000"; }
+    const panels={
+        heroAdPanel:document.getElementById("heroAdPanel"),
+        topTextAdPanel:document.getElementById("topTextAdPanel"),
+        downBannerAdPanel:document.getElementById("downBannerAdPanel")
+    };
+    const tabs={
+        heroAdPanel:document.getElementById("heroAdTab"),
+        topTextAdPanel:document.getElementById("topTextAdTab"),
+        downBannerAdPanel:document.getElementById("downBannerAdTab")
+    };
+    Object.keys(panels).forEach(id=>{if(panels[id])panels[id].style.display=id===panelId?"block":"none";});
+    Object.keys(tabs).forEach(id=>{
+        const active=id===panelId;
+        if(tabs[id]){tabs[id].style.background=active?"#fff":"#222";tabs[id].style.color=active?"#000":"#fff";}
+    });
+    if(panelId==="downBannerAdPanel") loadDownBannerSettings();
 }
 
 function loadTopTextSettings(){ topTextRef.once("value",snapshot=>populateTopTextForm(snapshot.val()||{})); }
@@ -2883,6 +2907,70 @@ heroRef.on("value",snapshot=>{
         populateHeroForm(currentHeroSettings);
     }
 });
+
+const downBannerRef=db.ref("media/downBannerConfig");
+
+function loadDownBannerSettings(){
+    downBannerRef.once("value",snapshot=>populateDownBannerForm(snapshot.val()||{}));
+}
+
+function populateDownBannerForm(data){
+    data=data||{};
+    const speed=document.getElementById("downBannerSpeedInput");
+    if(speed) speed.value=String(data.speed||4);
+    const status=document.getElementById("downBannerStatus");
+    const count=Array.isArray(data.banners)?data.banners.filter(Boolean).length:0;
+    if(status) status.textContent=count?`${count} Down Banner(s) currently saved. Select new files only for banners you want to replace.`:"No Down Banner saved yet.";
+}
+
+async function saveDownBannerSettings(event){
+    if(event)event.preventDefault();
+    const inputIds=["downBannerFile1","downBannerFile2","downBannerFile3"];
+    const oldSnap=await downBannerRef.once("value");
+    const old=oldSnap.val()||{};
+    const banners=Array.isArray(old.banners)?old.banners.slice(0,3):["","",""];
+    while(banners.length<3) banners.push("");
+    try{
+        showToast("⏳ Saving Down Banners...","info");
+        for(let i=0;i<inputIds.length;i++){
+            const file=document.getElementById(inputIds[i])?.files?.[0];
+            if(file){
+                if(!file.type.startsWith("image/")) throw new Error("Down Banner must be an image.");
+                banners[i]=await uploadDownBannerMedia(file,i+1);
+            }
+        }
+        const data={banners:banners.filter(Boolean),speed:Number(document.getElementById("downBannerSpeedInput")?.value||4),updatedAt:new Date().toISOString()};
+        await downBannerRef.set(data);
+        inputIds.forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+        populateDownBannerForm(data);
+        showToast("✅ Down Banner updated successfully!","success");
+    }catch(error){
+        console.error(error);
+        showToast("Down Banner upload failed: "+(error.message||"Please try again."),"error");
+    }
+}
+
+async function uploadDownBannerMedia(file,index){
+    const contentType=file.type||"image/jpeg";
+    const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
+    const path=`down-banners/${Date.now()}_${index}_${Math.random().toString(36).slice(2)}.${ext}`;
+    try{
+        if(typeof firebase.storage==="function"){
+            const ref=firebase.storage().ref().child(path);
+            const task=ref.put(file,{contentType});
+            return await new Promise((resolve,reject)=>{
+                task.on("state_changed",snap=>{
+                    const pct=snap.totalBytes?Math.round((snap.bytesTransferred/snap.totalBytes)*100):0;
+                    showToast(`⏳ Down Banner ${index}: ${pct}%`,"info");
+                },reject,async()=>{try{resolve(await task.snapshot.ref.getDownloadURL());}catch(e){reject(e);}});
+            });
+        }
+    }catch(error){
+        console.warn("Down Banner Storage upload failed:",error);
+    }
+    if(file.size<=2.5*1024*1024) return await fileToBase64(file);
+    throw new Error("Banner upload failed. Enable Firebase Storage or use an image under 2.5 MB.");
+}
 
 /* =====================================================
    ORDERS
