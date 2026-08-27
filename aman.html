@@ -2670,7 +2670,8 @@ function cropHeroImageToBlob(file){
         const img=new Image();
         img.onload=()=>{
             const canvas=document.createElement("canvas");
-            const targetW=1600,targetH=900;
+            // Keep the fallback image small enough for RTDB when Storage/network is unavailable.
+            const targetW=1200,targetH=675;
             canvas.width=targetW;canvas.height=targetH;
             const ctx=canvas.getContext("2d");
             const scale=Math.max(targetW/img.naturalWidth,targetH/img.naturalHeight)*heroCropState.zoom;
@@ -2678,7 +2679,7 @@ function cropHeroImageToBlob(file){
             const x=(targetW-w)*(heroCropState.x/100);
             const y=(targetH-h)*(heroCropState.y/100);
             ctx.drawImage(img,x,y,w,h);
-            canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Crop failed")),"image/jpeg",0.88);
+            canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Crop failed")),"image/jpeg",0.72);
         };
         img.onerror=reject;
         img.src=URL.createObjectURL(file);
@@ -2712,13 +2713,21 @@ async function uploadHeroMedia(file){
                 const task=ref.put(uploadFile,{contentType});
                 let lastProgress=Date.now();
                 let fallbackStarted=false;
-                const fallbackTimer=setTimeout(()=>{
+                const fallbackTimer=setTimeout(async()=>{
                     if(fallbackStarted) return;
                     fallbackStarted=true;
                     try{ task.cancel(); }catch(e){}
+                    // For a compressed photo, save a compact data URL instead of a failing CORS REST retry.
+                    if(isImage && uploadFile.size<=2.5*1024*1024){
+                        try{
+                            showToast("⚠️ Storage slow — saving compressed Hero image...","info");
+                            resolve(await fileToBase64(uploadFile));
+                            return;
+                        }catch(e){}
+                    }
                     showToast("🔄 Storage upload slow — trying direct upload...","info");
                     uploadHeroMediaDirect(file,uploadFile,contentType,path).then(resolve).catch(reject);
-                },12000);
+                },8000);
                 task.on("state_changed",snap=>{
                     lastProgress=Date.now();
                     const pct=snap.totalBytes?Math.round((snap.bytesTransferred/snap.totalBytes)*100):0;
@@ -2727,8 +2736,12 @@ async function uploadHeroMedia(file){
                     clearTimeout(fallbackTimer);
                     if(fallbackStarted) return;
                     fallbackStarted=true;
-                    showToast("🔄 Retrying Hero upload...","info");
-                    uploadHeroMediaDirect(file,uploadFile,contentType,path).then(resolve).catch(reject);
+                    if(isImage && uploadFile.size<=2.5*1024*1024){
+                        fileToBase64(uploadFile).then(resolve).catch(reject);
+                    }else{
+                        showToast("🔄 Retrying Hero upload...","info");
+                        uploadHeroMediaDirect(file,uploadFile,contentType,path).then(resolve).catch(reject);
+                    }
                 },async()=>{
                     clearTimeout(fallbackTimer);
                     if(fallbackStarted) return;
@@ -2968,7 +2981,7 @@ async function uploadDownBannerMedia(file,index){
     }catch(error){
         console.warn("Down Banner Storage upload failed:",error);
     }
-    if(file.size<=2.5*1024*1024) return await fileToBase64(file);
+    if(file.size<=3.5*1024*1024) return await fileToBase64(file);
     throw new Error("Banner upload failed. Enable Firebase Storage or use an image under 2.5 MB.");
 }
 
@@ -3269,7 +3282,7 @@ selectDiscountType("percentage");
    <button type="button" onclick="setHeroCropPosition(50,100)">BOTTOM</button><button type="button" onclick="resetHeroCrop()">RESET</button>
    <label class="hero-crop-range">ZOOM <input id="heroCropZoom" type="range" min="1" max="2.5" step=".05" value="1" oninput="setHeroCropZoom(this.value)"></label>
   </div>
-  <div class="hero-crop-note">Photo crop is applied before upload. Video is uploaded to Firebase Storage and its hero frame uses the selected crop/position safely without the Realtime Database size limit.</div>
+  <div class="hero-crop-note">Photo crop is applied before upload. Video uploads to Firebase Storage; if Storage is unavailable, a small compatible fallback is used where possible.</div>
   <div class="hero-crop-actions"><button type="button" onclick="closeHeroCropper()">CANCEL</button><button type="button" style="background:#3b82f6;color:#fff" onclick="closeHeroCropper()">USE THIS CROP</button></div>
  </div>
 </div>
