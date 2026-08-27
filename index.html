@@ -1426,20 +1426,26 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
     <div class="logo">VORNEX</div>
 
     <div class="header-actions">
-        <button class="header-icon-btn" type="button" onclick="openHeaderSearch()" aria-label="Search">
+        <button class="header-search-btn" type="button" onclick="openHeaderSearch()" aria-label="Search">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-
-        <button class="header-icon-btn header-cart-btn" type="button" onclick="openCartFromMenu()" aria-label="Shopping bag">
-            <i class="fa-solid fa-bag-shopping"></i>
-            <span class="header-cart-badge" id="headerCartCount">0</span>
+        <button class="header-cart-btn" type="button" onclick="openCartFromMenu()" aria-label="Shopping bag">
+            <i class="fa-solid fa-bag-shopping"></i><span id="headerCartCount">0</span>
         </button>
-
         <button class="hamburger-btn" onclick="toggleMenuDrawer(true)">
-            <i class="fa-solid fa-bars-staggered"></i>
-        </button>
+        <i class="fa-solid fa-bars-staggered"></i>
+    </button>
     </div>
 </header>
+
+<div class="header-search-panel" id="headerSearchPanel">
+    <div class="header-search-row">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="headerSearchInput" type="search" autocomplete="off" placeholder="Search streetwear..." oninput="handleHeaderSearchInput()">
+        <button type="button" onclick="closeHeaderSearch()" aria-label="Close search">×</button>
+    </div>
+    <div class="search-history" id="searchHistory"></div>
+</div>
 
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeAllDrawers()"></div>
 
@@ -1476,14 +1482,6 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
                 WISHLIST
             </span>
             <span class="badge" id="menuWishCount">0</span>
-        </button>
-
-        <button class="menu-item-btn" onclick="openCartFromMenu()">
-            <span class="btn-title">
-                <i class="fa-solid fa-bag-shopping"></i>
-                SHOPPING BAG
-            </span>
-            <span class="badge" id="menuCartCount">0</span>
         </button>
 
         <button class="menu-item-btn" onclick="openCouponsFromMenu()">
@@ -1606,6 +1604,12 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 
 </section>
 
+<!-- ================= DOWN BANNER ================= -->
+<section class="down-banner-section" id="downBannerSection" aria-label="Featured banners">
+    <div class="down-banner-slider" id="downBannerSlider"></div>
+    <div class="down-banner-dots" id="downBannerDots"></div>
+</section>
+
 <!-- ================= ALL CATEGORIES ================= -->
 <div class="custom-modal" id="allCategoriesModal" onclick="closeModalOnBg(event,'allCategoriesModal')">
     <div class="modal-card all-categories-card">
@@ -1683,13 +1687,20 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
                 Track Your Order
             </a>
 
-            <a href="tel:+918269444061">
-                <i class="fa-solid fa-phone"></i>
-                +91 8269444061
-            </a>
-
         </div>
 
+    </div>
+
+    <div class="conversation-section">
+        <h4>START A CONVERSATION</h4>
+        <a href="tel:+918269444061"><i class="fa-solid fa-phone"></i> 8269444061</a>
+        <a href="mailto:vornexcloth@gmail.com"><i class="fa-solid fa-envelope"></i> vornexcloth@gmail.com</a>
+        <div class="support-name"><i class="fa-solid fa-headset"></i> Vornex Support</div>
+    </div>
+
+    <div class="location-section">
+        <h4>LOCATION</h4>
+        <p>Vornex clothing, Mayanand parisar, Telipara, Bilaspur, 495001, Chhattisgarh, india</p>
     </div>
 
     <div class="copyright">
@@ -3244,9 +3255,6 @@ function updateBadges(){
     const cartCount=cart.reduce(
         (a,b)=>a+Number(b.qty||1),0
     );
-
-    document.getElementById("menuCartCount").textContent=
-        cartCount;
 
     const headerCartCount=document.getElementById("headerCartCount");
     if(headerCartCount) headerCartCount.textContent=cartCount;
@@ -6552,23 +6560,13 @@ body.theme-dark-active .vornex-size-table th{background:#1d1d1d;}
 body.theme-dark-active .vornex-size-table th,body.theme-dark-active .vornex-size-table td{border-color:#333;}
 </style>
 <script>
-function openHeaderSearch(){
-    const search=document.getElementById("storeSearch");
-    if(!search) return;
-    search.scrollIntoView({behavior:"smooth",block:"center"});
-    setTimeout(()=>search.focus(),350);
-}
-
 function openVornexSizeChart(){document.getElementById("vornexSizeModal")?.classList.add("active");document.body.style.overflow="hidden";}
 function closeVornexSizeChart(){document.getElementById("vornexSizeModal")?.classList.remove("active");document.body.style.overflow="";}
 </script>
 <style id="vornex-user-updates">
 .header-actions{display:flex;align-items:center;gap:8px;}
-.header-icon-btn{position:relative;width:42px;height:42px;border-radius:12px;border:1px solid rgba(127,127,127,.25);background:var(--v-surface,#111);color:var(--v-text,#fff);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;margin:0;}
-.header-cart-btn{overflow:visible;}
-.header-cart-badge{position:absolute;top:-6px;right:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#111;color:#fff;border:2px solid var(--v-surface,#111);font-size:9px;line-height:15px;font-weight:900;text-align:center;}
-body.theme-light-active .header-icon-btn{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
-body.theme-light-active .header-cart-badge{background:#111!important;color:#fff!important;border-color:#fff!important;}
+.mode-toggle-btn{width:42px;height:42px;border-radius:12px;border:1px solid rgba(127,127,127,.25);background:var(--v-surface,#111);color:var(--v-text,#fff);font-size:19px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+body.theme-light-active .mode-toggle-btn{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
 body.theme-light-active .vornex-header{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
 body.theme-light-active .hamburger-btn{color:#111!important;background:#f3f4f6!important;border-color:#d1d5db!important;}
 body.theme-light-active .announcement-bar{background:#111!important;color:#fff!important;}
@@ -6604,6 +6602,116 @@ body.theme-light-active .checkout-coupon-card{background:#fff;border-color:#d1d5
 body.theme-light-active .checkout-coupon-off{color:#6b7280;}
 </style>
 
+
+<style id="vornex-requested-v5">
+.header-actions{display:flex;align-items:center;gap:8px;}
+.header-search-btn,.header-cart-btn{position:relative;width:42px;height:42px;border-radius:50%;border:1px solid rgba(127,127,127,.25);background:var(--v-surface,#111);color:var(--v-text,#fff);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.header-cart-btn span{position:absolute;right:-3px;top:-3px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#111;color:#fff;border:2px solid #fff;font-size:8px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+.header-search-panel{position:fixed;left:0;right:0;top:65px;z-index:49;background:var(--v-surface,#111);border-bottom:1px solid var(--v-border,rgba(255,255,255,.12));padding:10px 14px 12px;display:none;box-shadow:0 12px 30px rgba(0,0,0,.22);}
+.header-search-panel.active{display:block;}
+.header-search-row{display:flex;align-items:center;gap:10px;border:1px solid #333;border-radius:12px;padding:0 10px;background:#0d0d0d;}
+.header-search-row i{color:#888;}
+.header-search-row input{flex:1;width:100%;border:0!important;background:transparent!important;padding:13px 0!important;color:#fff!important;outline:none!important;}
+.header-search-row button{background:none;border:0;color:#fff;font-size:22px;padding:3px 6px;}
+.search-history{display:flex;flex-direction:column;margin-top:8px;max-height:230px;overflow:auto;}
+.search-history-title{font-size:9px;font-weight:900;letter-spacing:1px;color:#888;padding:6px 2px;}
+.search-history-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 2px;border-bottom:1px solid rgba(127,127,127,.12);font-size:11px;}
+.search-history-item button{background:none;border:0;color:#888;font-size:18px;padding:2px 5px;}
+.search-history-item .history-query{flex:1;text-align:left;background:none;border:0;color:inherit;font-size:11px;padding:0;}
+.filter-bar .search-wrapper{display:none!important;}
+.categories-scroll{width:100vw;margin-left:calc((100% - 100vw)/2);padding-left:15px;padding-right:15px;}
+.store-container{overflow:visible;}
+.down-banner-section{width:100%;margin:28px 0 0;padding:0 15px;overflow:hidden;}
+.down-banner-slider{position:relative;width:100%;overflow:hidden;border-radius:16px;aspect-ratio:16/6.5;background:#111;}
+.down-banner-slide{position:absolute;inset:0;opacity:0;transform:translateX(18px);transition:opacity .6s ease,transform .6s ease;}
+.down-banner-slide.active{opacity:1;transform:translateX(0);z-index:2;}
+.down-banner-slide img{width:100%;height:100%;display:block;object-fit:cover;}
+.down-banner-dots{display:flex;justify-content:center;gap:5px;margin-top:8px;}
+.down-banner-dot{width:5px;height:5px;border-radius:50%;background:#666;}
+.down-banner-dot.active{background:#fff;transform:scale(1.25);}
+.conversation-section,.location-section{margin-top:28px;text-align:center;}
+.conversation-section h4,.location-section h4{font-size:10px;letter-spacing:1px;margin-bottom:12px;}
+.conversation-section a,.conversation-section .support-name{display:block;color:#777;font-size:9px;margin:9px 0;}
+.location-section p{max-width:520px;margin:auto;color:#777;font-size:9px;line-height:1.7;}
+body.theme-light-active .header-search-btn,body.theme-light-active .header-cart-btn{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
+body.theme-light-active .header-cart-btn span{background:#111;color:#fff;border-color:#fff;}
+body.theme-light-active .header-search-panel{background:#fff;color:#111;border-color:#d1d5db;}
+body.theme-light-active .header-search-row{background:#fff;border-color:#cbd5e1;}
+body.theme-light-active .header-search-row input{color:#111!important;}
+body.theme-light-active .header-search-row button{color:#111;}
+body.theme-light-active .search-history-item{border-color:#e5e7eb;}
+body.theme-light-active .down-banner-slider{background:#eee;}
+body.theme-light-active .down-banner-dot{background:#aaa;}
+body.theme-light-active .down-banner-dot.active{background:#111;}
+</style>
+<script id="vornex-requested-v5-js">
+(function(){
+    const HISTORY_KEY="vornex_search_history";
+    let history=[];
+    try{history=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");if(!Array.isArray(history))history=[];}catch(e){history=[];}
+    function syncSearch(value){
+        const q=String(value||"");
+        const main=document.getElementById("storeSearch");
+        if(main){main.value=q;}
+        if(typeof searchProducts==="function") searchProducts();
+    }
+    function saveHistory(value){
+        const q=String(value||"").trim();
+        if(!q)return;
+        history=[q,...history.filter(x=>x.toLowerCase()!==q.toLowerCase())].slice(0,8);
+        localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
+    }
+    function renderHistory(){
+        const box=document.getElementById("searchHistory");if(!box)return;
+        if(!history.length){box.innerHTML="";return;}
+        box.innerHTML='<div class="search-history-title">RECENT SEARCHES</div>'+history.map((q,i)=>'<div class="search-history-item"><button class="history-query" type="button" data-i="'+i+'">'+(typeof escapeHtml==="function"?escapeHtml(q):q)+'</button><button type="button" class="history-remove" data-i="'+i+'" aria-label="Remove search">×</button></div>').join("");
+        box.querySelectorAll(".history-query").forEach(btn=>btn.onclick=()=>{const q=history[Number(btn.dataset.i)]||"";const input=document.getElementById("headerSearchInput");if(input)input.value=q;syncSearch(q);input?.focus();});
+        box.querySelectorAll(".history-remove").forEach(btn=>btn.onclick=()=>{history.splice(Number(btn.dataset.i),1);localStorage.setItem(HISTORY_KEY,JSON.stringify(history));renderHistory();});
+    }
+    window.openHeaderSearch=function(){
+        const panel=document.getElementById("headerSearchPanel");if(!panel)return;
+        panel.classList.add("active");
+        renderHistory();
+        const input=document.getElementById("headerSearchInput");
+        const main=document.getElementById("storeSearch");
+        if(input) input.value=main?.value||"";
+        setTimeout(()=>input?.focus(),50);
+    };
+    window.closeHeaderSearch=function(){
+        const input=document.getElementById("headerSearchInput");
+        if(input?.value.trim()) saveHistory(input.value);
+        document.getElementById("headerSearchPanel")?.classList.remove("active");
+        input?.blur();
+    };
+    let historyTimer=null;
+    window.handleHeaderSearchInput=function(){
+        const input=document.getElementById("headerSearchInput");
+        const q=input?.value||"";
+        syncSearch(q);
+        if(historyTimer) clearTimeout(historyTimer);
+        if(q.trim()) historyTimer=setTimeout(()=>saveHistory(q),700);
+    };
+    document.addEventListener("keydown",e=>{if(e.key==="Escape")closeHeaderSearch();});
+
+    function loadDownBanners(){
+        if(typeof db==="undefined"||!db)return;
+        db.ref("media/downBannerConfig").on("value",snap=>{
+            const data=snap.val()||{};
+            const banners=Array.isArray(data.banners)?data.banners.filter(Boolean):[];
+            const slider=document.getElementById("downBannerSlider"),dots=document.getElementById("downBannerDots");
+            if(!slider||!dots)return;
+            if(!banners.length){document.getElementById("downBannerSection")?.style.setProperty("display","none");return;}
+            document.getElementById("downBannerSection")?.style.removeProperty("display");
+            slider.innerHTML=banners.map((url,i)=>'<div class="down-banner-slide '+(i===0?'active':'')+'"><img src="'+(typeof escapeHtml==="function"?escapeHtml(url):url)+'" alt="VORNEX banner '+(i+1)+'"></div>').join("");
+            dots.innerHTML=banners.map((_,i)=>'<span class="down-banner-dot '+(i===0?'active':'')+'"></span>').join("");
+            let index=0;const slides=[...slider.querySelectorAll(".down-banner-slide")],dotEls=[...dots.children];
+            if(window.__vornexDownBannerTimer)clearInterval(window.__vornexDownBannerTimer);
+            if(slides.length>1){window.__vornexDownBannerTimer=setInterval(()=>{slides[index]?.classList.remove("active");dotEls[index]?.classList.remove("active");index=(index+1)%slides.length;slides[index]?.classList.add("active");dotEls[index]?.classList.add("active");},Math.max(2,Number(data.speed)||4)*1000);}
+        });
+    }
+    if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",loadDownBanners);else loadDownBanners();
+})();
+</script>
 </body>
 </html>
 
