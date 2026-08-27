@@ -1407,7 +1407,6 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 .login-btn + .login-btn{margin-top:0!important;}
 @media(max-width:420px){.all-category-grid{grid-template-columns:1fr 1fr;gap:7px}.login-options{gap:12px!important;}}
 </style>
-<link rel="stylesheet" href="style.css?v=xcuze-ui-1">
 </head>
 
 <body>
@@ -1427,13 +1426,18 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
     <div class="logo">VORNEX</div>
 
     <div class="header-actions">
-        <button class="header-icon-btn header-cart-btn" type="button" onclick="openCartFromMenu()" aria-label="Shopping bag">
-            <i class="fa-solid fa-bag-shopping"></i><span id="headerCartCount">0</span>
+        <button class="header-icon-btn" type="button" onclick="openHeaderSearch()" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-        <button class="mode-toggle-btn" id="modeToggleBtn" type="button" onclick="toggleLightDark()" aria-label="Toggle dark light mode">☀️</button>
+
+        <button class="header-icon-btn header-cart-btn" type="button" onclick="openCartFromMenu()" aria-label="Shopping bag">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span class="header-cart-badge" id="headerCartCount">0</span>
+        </button>
+
         <button class="hamburger-btn" onclick="toggleMenuDrawer(true)">
-        <i class="fa-solid fa-bars-staggered"></i>
-    </button>
+            <i class="fa-solid fa-bars-staggered"></i>
+        </button>
     </div>
 </header>
 
@@ -1540,21 +1544,6 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 <!-- ================= STORE ================= -->
 
 <section class="store-container" id="storeGrid">
-
-    <div class="store-heading-row">
-        <div>
-            <span class="store-eyebrow">VORNEX EDIT</span>
-            <h2>SHOP THE COLLECTION</h2>
-            <p>Curated streetwear, fresh drops and everyday essentials.</p>
-        </div>
-        <span class="store-count-pill" id="visibleProductCount">ALL PRODUCTS</span>
-    </div>
-
-    <div class="trust-strip" aria-label="Store benefits">
-        <div><i class="fa-solid fa-truck-fast"></i><span>FAST SHIPPING</span></div>
-        <div><i class="fa-solid fa-shield-halved"></i><span>SECURE CHECKOUT</span></div>
-        <div><i class="fa-solid fa-rotate-left"></i><span>EASY SUPPORT</span></div>
-    </div>
 
     <div class="filter-bar">
 
@@ -6563,13 +6552,23 @@ body.theme-dark-active .vornex-size-table th{background:#1d1d1d;}
 body.theme-dark-active .vornex-size-table th,body.theme-dark-active .vornex-size-table td{border-color:#333;}
 </style>
 <script>
+function openHeaderSearch(){
+    const search=document.getElementById("storeSearch");
+    if(!search) return;
+    search.scrollIntoView({behavior:"smooth",block:"center"});
+    setTimeout(()=>search.focus(),350);
+}
+
 function openVornexSizeChart(){document.getElementById("vornexSizeModal")?.classList.add("active");document.body.style.overflow="hidden";}
 function closeVornexSizeChart(){document.getElementById("vornexSizeModal")?.classList.remove("active");document.body.style.overflow="";}
 </script>
 <style id="vornex-user-updates">
 .header-actions{display:flex;align-items:center;gap:8px;}
-.mode-toggle-btn{width:42px;height:42px;border-radius:12px;border:1px solid rgba(127,127,127,.25);background:var(--v-surface,#111);color:var(--v-text,#fff);font-size:19px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-body.theme-light-active .mode-toggle-btn{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
+.header-icon-btn{position:relative;width:42px;height:42px;border-radius:12px;border:1px solid rgba(127,127,127,.25);background:var(--v-surface,#111);color:var(--v-text,#fff);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;margin:0;}
+.header-cart-btn{overflow:visible;}
+.header-cart-badge{position:absolute;top:-6px;right:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#111;color:#fff;border:2px solid var(--v-surface,#111);font-size:9px;line-height:15px;font-weight:900;text-align:center;}
+body.theme-light-active .header-icon-btn{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
+body.theme-light-active .header-cart-badge{background:#111!important;color:#fff!important;border-color:#fff!important;}
 body.theme-light-active .vornex-header{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
 body.theme-light-active .hamburger-btn{color:#111!important;background:#f3f4f6!important;border-color:#d1d5db!important;}
 body.theme-light-active .announcement-bar{background:#111!important;color:#fff!important;}
@@ -6605,18 +6604,6 @@ body.theme-light-active .checkout-coupon-card{background:#fff;border-color:#d1d5
 body.theme-light-active .checkout-coupon-off{color:#6b7280;}
 </style>
 
-
-<script>
-(function(){
-  const originalRenderProducts = window.renderProducts;
-  if(typeof originalRenderProducts !== 'function') return;
-  window.renderProducts = function(list){
-    originalRenderProducts(list);
-    const el=document.getElementById('visibleProductCount');
-    if(el) el.textContent=(Array.isArray(list)?list.length:0)+' PRODUCTS';
-  };
-})();
-</script>
 </body>
 </html>
 
