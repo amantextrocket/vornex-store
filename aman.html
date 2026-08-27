@@ -1150,6 +1150,10 @@ Loading active coupons...
 <input type="text" id="topTextSecondaryInput" placeholder="🔥 NEW DROP IS LIVE — SHOP NOW 🔥">
 </div>
 <div class="form-group">
+<label>THIRD TEXT</label>
+<input type="text" id="topTextTertiaryInput" placeholder="✨ FREE SHIPPING • PREMIUM STREETWEAR ✨">
+</div>
+<div class="form-group">
 <label>SLIDE SPEED</label>
 <select id="topTextSpeedInput">
     <option value="18">FAST — 18s</option>
@@ -2846,9 +2850,10 @@ function showAdCustomPanel(panelId){
 function loadTopTextSettings(){ topTextRef.once("value",snapshot=>populateTopTextForm(snapshot.val()||{})); }
 function populateTopTextForm(data){
     data=data||{};
-    const text=document.getElementById("topTextInput"), secondary=document.getElementById("topTextSecondaryInput"), font=document.getElementById("topTextFontInput"), size=document.getElementById("topTextSizeInput"), speed=document.getElementById("topTextSpeedInput");
+    const text=document.getElementById("topTextInput"), secondary=document.getElementById("topTextSecondaryInput"), tertiary=document.getElementById("topTextTertiaryInput"), font=document.getElementById("topTextFontInput"), size=document.getElementById("topTextSizeInput"), speed=document.getElementById("topTextSpeedInput");
     if(text) text.value=data.text || "⚡ FREE EXPRESS SHIPPING ON ORDERS ABOVE ₹999 | UPTO 20% OFF ON COUPONS ⚡";
     if(secondary) secondary.value=data.secondaryText || "🔥 NEW DROP IS LIVE — SHOP NOW 🔥";
+    if(tertiary) tertiary.value=data.tertiaryText || "✨ FREE SHIPPING • PREMIUM STREETWEAR ✨";
     if(font) font.value=data.fontFamily || "Montserrat";
     if(size) size.value=data.fontSize || "10px";
     if(speed) speed.value=String(data.speed || 28);
@@ -2862,6 +2867,7 @@ function saveTopTextSettings(event){
         fontFamily:document.getElementById("topTextFontInput")?.value || "Montserrat",
         fontSize:document.getElementById("topTextSizeInput")?.value || "10px",
         secondaryText:(document.getElementById("topTextSecondaryInput")?.value || "").trim() || "🔥 NEW DROP IS LIVE — SHOP NOW 🔥",
+        tertiaryText:(document.getElementById("topTextTertiaryInput")?.value || "").trim() || "✨ FREE SHIPPING • PREMIUM STREETWEAR ✨",
         speed:Number(document.getElementById("topTextSpeedInput")?.value || 28),
         updatedAt:new Date().toISOString()
     };
