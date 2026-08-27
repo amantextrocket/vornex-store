@@ -1407,6 +1407,7 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 .login-btn + .login-btn{margin-top:0!important;}
 @media(max-width:420px){.all-category-grid{grid-template-columns:1fr 1fr;gap:7px}.login-options{gap:12px!important;}}
 </style>
+<link rel="stylesheet" href="style.css?v=xcuze-ui-1">
 </head>
 
 <body>
@@ -1426,6 +1427,10 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
     <div class="logo">VORNEX</div>
 
     <div class="header-actions">
+        <button class="header-icon-btn header-cart-btn" type="button" onclick="openCartFromMenu()" aria-label="Shopping bag">
+            <i class="fa-solid fa-bag-shopping"></i><span id="headerCartCount">0</span>
+        </button>
+        <button class="mode-toggle-btn" id="modeToggleBtn" type="button" onclick="toggleLightDark()" aria-label="Toggle dark light mode">☀️</button>
         <button class="hamburger-btn" onclick="toggleMenuDrawer(true)">
         <i class="fa-solid fa-bars-staggered"></i>
     </button>
@@ -1535,6 +1540,21 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 <!-- ================= STORE ================= -->
 
 <section class="store-container" id="storeGrid">
+
+    <div class="store-heading-row">
+        <div>
+            <span class="store-eyebrow">VORNEX EDIT</span>
+            <h2>SHOP THE COLLECTION</h2>
+            <p>Curated streetwear, fresh drops and everyday essentials.</p>
+        </div>
+        <span class="store-count-pill" id="visibleProductCount">ALL PRODUCTS</span>
+    </div>
+
+    <div class="trust-strip" aria-label="Store benefits">
+        <div><i class="fa-solid fa-truck-fast"></i><span>FAST SHIPPING</span></div>
+        <div><i class="fa-solid fa-shield-halved"></i><span>SECURE CHECKOUT</span></div>
+        <div><i class="fa-solid fa-rotate-left"></i><span>EASY SUPPORT</span></div>
+    </div>
 
     <div class="filter-bar">
 
@@ -1995,7 +2015,7 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
 
             <button
                 class="close-drawer"
-                onclick="closeCheckoutSummary()">
+                onclick="closeModalStepBack('checkoutModal')">
                 ×
             </button>
 
@@ -2013,11 +2033,6 @@ body.theme-neon-active,body.theme-gold-active,body.theme-emerald-active,body.the
             <div class="summary-row">
                 <span>Discount</span>
                 <span id="checkoutDiscount">₹0</span>
-            </div>
-
-            <div class="summary-row">
-                <span>Shipping</span>
-                <span id="checkoutShipping">FREE</span>
             </div>
 
             <div class="summary-row total">
@@ -3040,21 +3055,36 @@ function addToCart(id,size=""){
 
 
 function addCurrentProductToCart(){
-    if(!currentProduct) return false;
+
+    if(!currentProduct) return;
+
     const stocks=currentProduct.sizeStocks||{};
+
     if(Object.keys(stocks).length && !selectedSize){
+
         showToast("Please select a size","error");
-        return false;
+
+        return;
+
     }
-    addToCart(currentProduct.id, selectedSize || "");
-    return true;
+
+    addToCart(currentProduct.id,selectedSize);
+
 }
 
+
 function buyCurrentProduct(){
-    if(!currentProduct) return;
-    if(!addCurrentProductToCart()) return;
-    closeProductDetail();
-    setTimeout(openCheckoutModal, 120);
+
+    addCurrentProductToCart();
+
+    if(currentProduct){
+
+        closeProductDetail();
+
+        setTimeout(openCheckoutModal,250);
+
+    }
+
 }
 
 
@@ -3228,6 +3258,9 @@ function updateBadges(){
 
     document.getElementById("menuCartCount").textContent=
         cartCount;
+
+    const headerCartCount=document.getElementById("headerCartCount");
+    if(headerCartCount) headerCartCount.textContent=cartCount;
 
     document.getElementById("cartTotalItems").textContent=
         cartCount;
@@ -3648,27 +3681,32 @@ function renderCheckoutSummary(){
 
 
 function updateCheckoutSummary(){
+
     let subtotal=0;
+
     cart.forEach(item=>{
-        subtotal += Number(item.price||0) * Math.max(1, Number(item.qty||1));
+
+        subtotal+=
+            Number(item.price||0)*
+            Number(item.qty||1);
+
     });
-    const discount=Math.min(subtotal, Math.max(0, Number(calculateDiscount(subtotal)||0)));
-    const afterDiscount=Math.max(0, subtotal-discount);
-    const shipping=cart.length ? (afterDiscount>=999 ? 0 : 99) : 0;
-    const total=afterDiscount+shipping;
 
-    const set=(id,value)=>{ const el=document.getElementById(id); if(el) el.textContent=value; };
-    set("checkoutSubtotal", "₹"+subtotal.toLocaleString("en-IN"));
-    set("checkoutDiscount", "-₹"+discount.toLocaleString("en-IN"));
-    set("checkoutShipping", shipping===0 ? "FREE" : "₹"+shipping.toLocaleString("en-IN"));
-    set("checkoutTotal", "₹"+total.toLocaleString("en-IN"));
+    const discount=calculateDiscount(subtotal);
+
+    const total=Math.max(0,subtotal-discount);
+
+    document.getElementById("checkoutSubtotal").textContent=
+        "₹"+subtotal.toLocaleString("en-IN");
+
+    document.getElementById("checkoutDiscount").textContent=
+        "₹"+discount.toLocaleString("en-IN");
+
+    document.getElementById("checkoutTotal").textContent=
+        "₹"+total.toLocaleString("en-IN");
+
 }
 
-function closeCheckoutSummary(){
-    const modal=document.getElementById("checkoutModal");
-    if(modal) modal.classList.remove("active");
-    document.body.classList.remove("modal-open");
-}
 
 function lookupPincode(pin){
 
@@ -3909,7 +3947,6 @@ async function submitOrder(e){
                 items: emailItems,
                 subtotal: `₹${Number(order.subtotal || 0).toLocaleString("en-IN")}`,
                 discount: `₹${Number(order.discount || 0).toLocaleString("en-IN")}`,
-                shipping: `₹${Number(order.shipping || 0).toLocaleString("en-IN")}`,
                 coupon: order.coupon || "None",
                 payment_method: order.paymentMethod,
                 payment_status: order.paymentStatus,
@@ -6426,6 +6463,20 @@ document.addEventListener("DOMContentLoaded", function () {
         updateModeToggle();
     };
 
+    window.updateModeToggle=function(){
+        const btn=document.getElementById("modeToggleBtn");
+        if(!btn) return;
+        const light=document.body.classList.contains("theme-light-active");
+        btn.textContent=light?"🌙":"☀️";
+        btn.setAttribute("aria-label",light?"Switch to dark mode":"Switch to light mode");
+    };
+
+    window.toggleLightDark=function(){
+        const light=document.body.classList.contains("theme-light-active");
+        window.setTheme(light?"dark":"light");
+        updateModeToggle();
+    };
+
     function applyHero(config){
         config=config||{};
         const tag=document.getElementById("heroTag");
@@ -6555,72 +6606,17 @@ body.theme-light-active .checkout-coupon-off{color:#6b7280;}
 </style>
 
 
-<style id="vornex-final-requested-fixes">
-/* FINAL LIGHT THEME */
-html,body{background:#fff!important;color:#111!important;overflow-x:hidden!important;}
-body{padding-bottom:90px!important;}
-.vornex-header{background:#fff!important;color:#111!important;border-bottom:1px solid #e5e7eb!important;backdrop-filter:none!important;}
-.vornex-header .logo{color:#111!important;}
-.hamburger-btn{background:#f3f4f6!important;color:#111!important;border:1px solid #d1d5db!important;}
-.announcement-bar{background:#111!important;color:#fff!important;}
-.ios-drawer,.cart-drawer,.modal-card,.product-detail-card{background:#fff!important;color:#111!important;border-color:#d1d5db!important;backdrop-filter:none!important;}
-.menu-item-btn,.acc-btn,.accordion-card,.about-card,.theme-picker-section,.product-card,.spec,.coupon-item,.checkout-summary,.checkout-coupon-card{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
-.input-group input,.input-group textarea,.input-group select,#storeSearch{background:#fff!important;color:#111!important;border-color:#cbd5e1!important;}
-.filter-bar{background:#fff!important;backdrop-filter:none!important;padding-left:0!important;padding-right:0!important;}
-.store-container{max-width:none!important;width:100%!important;padding-left:0!important;padding-right:0!important;}
-.categories-scroll{width:100%!important;padding-left:12px!important;padding-right:12px!important;}
-.search-wrapper{width:100%!important;padding:0 12px!important;}
-.product-grid{padding:0 12px!important;}
-.site-footer{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
-.footer-grid{grid-template-columns:1fr!important;gap:18px!important;}
-.footer-column a,.p-category,.detail-description,.hero-subtitle,.checkout-summary-item{color:#4b5563!important;}
-.p-title,.p-price,.product-card small,.detail-title,.detail-price,.detail-specs strong,.summary-row,.modal-header h3{color:#111!important;}
-.cat-btn{background:#fff!important;color:#374151!important;border-color:#cbd5e1!important;}
-.cat-btn.active{background:#111!important;color:#fff!important;border-color:#111!important;}
-.add-btn{background:#111!important;color:#fff!important;}
-.home-cart-sticky{background:#fff!important;color:#111!important;border-color:#d1d5db!important;}
-.home-buy-now{background:#111!important;color:#fff!important;}
-.vornex-size-chart-btn{right:8px!important;top:52%!important;bottom:auto!important;transform:translateY(-50%) rotate(-90deg)!important;transform-origin:center!important;width:auto!important;padding:6px 9px!important;font-size:8px!important;border-radius:7px!important;}
-.vornex-size-chart-btn:active{transform:translateY(-50%) rotate(-90deg) scale(.96)!important;}
-.detail-actions-after-size{position:static!important;}
-#checkoutModal .modal-card{position:relative!important;}
-#checkoutModal .modal-header .close-drawer{display:flex!important;align-items:center!important;justify-content:center!important;width:34px!important;height:34px!important;border-radius:50%!important;background:#f3f4f6!important;color:#111!important;font-size:24px!important;border:1px solid #d1d5db!important;}
-/* quick response */
-button,.add-btn,.cat-btn,.home-buy-now,.glass-buy-btn{transition:transform .08s ease,opacity .08s ease!important;}
-.custom-modal,.drawer-overlay,.cart-drawer,.ios-drawer{transition-duration:.12s!important;}
-</style>
-<script id="vornex-final-requested-js">
+<script>
 (function(){
-  const originalAdd=window.addToCart;
-  window.addToCart=function(id,size){
-    const p=allProducts.find(x=>x.id===id); if(!p) return false;
-    const chosen=String(size||""); const stocks=p.sizeStocks||{};
-    if(Object.keys(stocks).length && chosen && Number(stocks[chosen]||0)<=0){showToast("Selected size is out of stock","error");return false;}
-    const keySize=chosen; const existing=cart.find(x=>x.id===id && String(x.size||"")===keySize);
-    if(existing) existing.qty=Number(existing.qty||1)+1; else cart.push({...p,size:keySize,qty:1});
-    saveCart(); updateBadges(); renderCart();
-    document.querySelectorAll('.add-btn[data-product-id="'+CSS.escape(String(id))+'"]').forEach(btn=>{btn.classList.add('cart-just-added');btn.innerHTML='<i class="fa-solid fa-check"></i> ADDED TO BAG';});
-    showToast("🛍️ Added to Bag!","success"); return true;
+  const originalRenderProducts = window.renderProducts;
+  if(typeof originalRenderProducts !== 'function') return;
+  window.renderProducts = function(list){
+    originalRenderProducts(list);
+    const el=document.getElementById('visibleProductCount');
+    if(el) el.textContent=(Array.isArray(list)?list.length:0)+' PRODUCTS';
   };
-  window.addCurrentProductToCart=function(){
-    if(!currentProduct)return false; const stocks=currentProduct.sizeStocks||{};
-    if(Object.keys(stocks).length && !selectedSize){showToast("Please select a size","error");return false;}
-    return window.addToCart(currentProduct.id,selectedSize||"");
-  };
-  window.buyCurrentProduct=function(){if(!currentProduct)return;if(!window.addCurrentProductToCart())return;closeProductDetail();setTimeout(openCheckoutModal,100);};
-  window.updateCartTotals=function(){
-    const subtotal=cart.reduce((s,i)=>s+Number(i.price||0)*Math.max(1,Number(i.qty||1)),0);
-    const discount=Math.min(subtotal,Math.max(0,Number(calculateDiscount(subtotal)||0)));
-    const after=Math.max(0,subtotal-discount); const shipping=cart.length?(after>=999?0:99):0; const total=after+shipping;
-    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-    set('cartSubtotal','₹'+subtotal.toLocaleString('en-IN'));set('cartDiscount','-₹'+discount.toLocaleString('en-IN'));set('cartShipping',shipping?'₹'+shipping.toLocaleString('en-IN'):'FREE');set('cartGrandTotal','₹'+total.toLocaleString('en-IN'));
-  };
-  window.openCheckoutModal=function(){if(!cart.length){showToast('Your cart is empty','error');return;}renderCheckoutSummary();document.getElementById('checkoutModal')?.classList.add('active');document.body.classList.add('modal-open');};
-  window.closeCheckoutSummary=function(){document.getElementById('checkoutModal')?.classList.remove('active');document.body.classList.remove('modal-open');};
-  document.addEventListener('DOMContentLoaded',function(){window.setTheme('light');});
 })();
 </script>
-
 </body>
 </html>
 
