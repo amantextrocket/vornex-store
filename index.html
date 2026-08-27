@@ -6619,7 +6619,7 @@ body.theme-light-active .checkout-coupon-off{color:#6b7280;}
 .search-history-item button{background:none;border:0;color:#888;font-size:18px;padding:2px 5px;}
 .search-history-item .history-query{flex:1;text-align:left;background:none;border:0;color:inherit;font-size:11px;padding:0;}
 .filter-bar .search-wrapper{display:none!important;}
-.categories-scroll{width:100vw;margin-left:calc((100% - 100vw)/2);padding-left:15px;padding-right:15px;}
+.categories-scroll{width:calc(100% + 30px);margin-left:-15px;padding-left:15px;padding-right:15px;box-sizing:border-box;}
 .store-container{overflow:visible;}
 .down-banner-section{width:100%;margin:28px 0 0;padding:0 15px;overflow:hidden;}
 .down-banner-slider{position:relative;width:100%;overflow:hidden;border-radius:16px;aspect-ratio:16/6.5;background:#111;}
@@ -6644,42 +6644,59 @@ body.theme-light-active .down-banner-slider{background:#eee;}
 body.theme-light-active .down-banner-dot{background:#aaa;}
 body.theme-light-active .down-banner-dot.active{background:#111;}
 </style>
-<script id="vornex-requested-v5-js">
+<script id="vornex-requested-v6-js">
 (function(){
     const HISTORY_KEY="vornex_search_history";
     let history=[];
     try{history=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]");if(!Array.isArray(history))history=[];}catch(e){history=[];}
-    function syncSearch(value){
-        const q=String(value||"");
-        const main=document.getElementById("storeSearch");
-        if(main){main.value=q;}
-        if(typeof searchProducts==="function") searchProducts();
-    }
+
     function saveHistory(value){
         const q=String(value||"").trim();
         if(!q)return;
-        history=[q,...history.filter(x=>x.toLowerCase()!==q.toLowerCase())].slice(0,8);
+        history=[q,...history.filter(x=>String(x).toLowerCase()!==q.toLowerCase())].slice(0,10);
         localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
     }
+    function syncSearch(value){
+        const q=String(value||"");
+        const main=document.getElementById("storeSearch");
+        if(main)main.value=q;
+        if(typeof searchProducts==="function")searchProducts();
+    }
     function renderHistory(){
-        const box=document.getElementById("searchHistory");if(!box)return;
+        const box=document.getElementById("searchHistory");
+        if(!box)return;
         if(!history.length){box.innerHTML="";return;}
         box.innerHTML='<div class="search-history-title">RECENT SEARCHES</div>'+history.map((q,i)=>'<div class="search-history-item"><button class="history-query" type="button" data-i="'+i+'">'+(typeof escapeHtml==="function"?escapeHtml(q):q)+'</button><button type="button" class="history-remove" data-i="'+i+'" aria-label="Remove search">×</button></div>').join("");
-        box.querySelectorAll(".history-query").forEach(btn=>btn.onclick=()=>{const q=history[Number(btn.dataset.i)]||"";const input=document.getElementById("headerSearchInput");if(input)input.value=q;syncSearch(q);input?.focus();});
-        box.querySelectorAll(".history-remove").forEach(btn=>btn.onclick=()=>{history.splice(Number(btn.dataset.i),1);localStorage.setItem(HISTORY_KEY,JSON.stringify(history));renderHistory();});
+        box.querySelectorAll(".history-query").forEach(btn=>btn.onclick=()=>{
+            const q=history[Number(btn.dataset.i)]||"";
+            const input=document.getElementById("headerSearchInput");
+            if(input)input.value=q;
+            syncSearch(q);
+            saveHistory(q);
+            if(input)input.focus();
+        });
+        box.querySelectorAll(".history-remove").forEach(btn=>btn.onclick=()=>{
+            history.splice(Number(btn.dataset.i),1);
+            localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
+            renderHistory();
+        });
     }
     window.openHeaderSearch=function(){
-        const panel=document.getElementById("headerSearchPanel");if(!panel)return;
+        const panel=document.getElementById("headerSearchPanel");
+        const input=document.getElementById("headerSearchInput");
+        if(!panel||!input)return;
         panel.classList.add("active");
         renderHistory();
-        const input=document.getElementById("headerSearchInput");
         const main=document.getElementById("storeSearch");
-        if(input) input.value=main?.value||"";
-        setTimeout(()=>input?.focus(),50);
+        input.value=main?.value||"";
+        // Focus synchronously from the header tap so iOS can open the keyboard.
+        input.focus();
+        try{input.setSelectionRange(input.value.length,input.value.length);}catch(e){}
+        setTimeout(()=>{input.focus();},0);
     };
     window.closeHeaderSearch=function(){
         const input=document.getElementById("headerSearchInput");
-        if(input?.value.trim()) saveHistory(input.value);
+        if(input?.value.trim())saveHistory(input.value);
         document.getElementById("headerSearchPanel")?.classList.remove("active");
         input?.blur();
     };
@@ -6688,8 +6705,8 @@ body.theme-light-active .down-banner-dot.active{background:#111;}
         const input=document.getElementById("headerSearchInput");
         const q=input?.value||"";
         syncSearch(q);
-        if(historyTimer) clearTimeout(historyTimer);
-        if(q.trim()) historyTimer=setTimeout(()=>saveHistory(q),700);
+        if(historyTimer)clearTimeout(historyTimer);
+        if(q.trim())historyTimer=setTimeout(()=>{saveHistory(q);renderHistory();},450);
     };
     document.addEventListener("keydown",e=>{if(e.key==="Escape")closeHeaderSearch();});
 
@@ -6698,20 +6715,46 @@ body.theme-light-active .down-banner-dot.active{background:#111;}
         db.ref("media/downBannerConfig").on("value",snap=>{
             const data=snap.val()||{};
             const banners=Array.isArray(data.banners)?data.banners.filter(Boolean):[];
-            const slider=document.getElementById("downBannerSlider"),dots=document.getElementById("downBannerDots");
-            if(!slider||!dots)return;
-            if(!banners.length){document.getElementById("downBannerSection")?.style.setProperty("display","none");return;}
-            document.getElementById("downBannerSection")?.style.removeProperty("display");
+            const section=document.getElementById("downBannerSection");
+            const slider=document.getElementById("downBannerSlider");
+            const dots=document.getElementById("downBannerDots");
+            if(!section||!slider||!dots)return;
+            if(!banners.length){section.style.display="none";slider.innerHTML="";dots.innerHTML="";return;}
+            section.style.display="block";
             slider.innerHTML=banners.map((url,i)=>'<div class="down-banner-slide '+(i===0?'active':'')+'"><img src="'+(typeof escapeHtml==="function"?escapeHtml(url):url)+'" alt="VORNEX banner '+(i+1)+'"></div>').join("");
-            dots.innerHTML=banners.map((_,i)=>'<span class="down-banner-dot '+(i===0?'active':'')+'"></span>').join("");
-            let index=0;const slides=[...slider.querySelectorAll(".down-banner-slide")],dotEls=[...dots.children];
+            dots.innerHTML=banners.map((_,i)=>'<button type="button" class="down-banner-dot '+(i===0?'active':'')+'" aria-label="Banner '+(i+1)+'"></button>').join("");
+            let index=0;
+            const slides=[...slider.querySelectorAll(".down-banner-slide")];
+            const dotEls=[...dots.children];
+            dotEls.forEach((dot,i)=>dot.onclick=()=>{
+                slides[index]?.classList.remove("active");dotEls[index]?.classList.remove("active");
+                index=i;slides[index]?.classList.add("active");dotEls[index]?.classList.add("active");
+            });
             if(window.__vornexDownBannerTimer)clearInterval(window.__vornexDownBannerTimer);
-            if(slides.length>1){window.__vornexDownBannerTimer=setInterval(()=>{slides[index]?.classList.remove("active");dotEls[index]?.classList.remove("active");index=(index+1)%slides.length;slides[index]?.classList.add("active");dotEls[index]?.classList.add("active");},Math.max(2,Number(data.speed)||4)*1000);}
+            if(slides.length>1){
+                window.__vornexDownBannerTimer=setInterval(()=>{
+                    slides[index]?.classList.remove("active");dotEls[index]?.classList.remove("active");
+                    index=(index+1)%slides.length;
+                    slides[index]?.classList.add("active");dotEls[index]?.classList.add("active");
+                },Math.max(2,Number(data.speed)||4)*1000);
+            }
         });
     }
     if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",loadDownBanners);else loadDownBanners();
 })();
 </script>
+
+<style id="vornex-final-request-fixes">
+/* Search is only available from the top header. */
+.filter-bar .search-wrapper{display:none!important;}
+.header-search-panel{position:fixed!important;left:0!important;right:0!important;top:65px!important;z-index:5000!important;}
+/* Categories use the full viewport width without being clipped by store padding. */
+.categories-scroll{width:calc(100% + 30px)!important;margin-left:-15px!important;padding-left:15px!important;padding-right:15px!important;box-sizing:border-box!important;}
+/* Down banner: smooth horizontal slide. */
+.down-banner-slide{transform:translateX(100%);opacity:0;transition:transform .65s ease,opacity .65s ease;}
+.down-banner-slide.active{transform:translateX(0);opacity:1;}
+.down-banner-dot{border:0;padding:0;cursor:pointer;}
+</style>
 </body>
 </html>
 
